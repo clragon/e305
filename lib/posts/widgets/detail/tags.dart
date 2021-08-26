@@ -9,9 +9,9 @@ import 'expand.dart';
 class TagDisplay extends StatelessWidget {
   final Post post;
   final bool? expanded;
-  final SearchCallback? onSearch;
+  final SearchCallback onSearch;
 
-  const TagDisplay({required this.post, this.expanded, this.onSearch});
+  const TagDisplay({required this.post, this.expanded, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +30,7 @@ class TagDisplay extends StatelessWidget {
         ),
         expanded: TagBody(
           post: post,
-          onSearch: (value) {
-            Navigator.of(context).maybePop();
-            onSearch?.call(value);
-          },
+          onSearch: onSearch,
         ),
       ),
     );

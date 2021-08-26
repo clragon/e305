@@ -35,9 +35,9 @@ class _PoolReaderState extends State<PoolReader> {
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: ScrollToTop(
+        appBar: ScrollToTopAppBar(
           controller: scrollController,
-          child: AnimatedBuilder(
+          builder: (context, gesture) => AnimatedBuilder(
             animation: scrollController,
             builder: (context, child) => AnimatedOpacity(
               opacity: scrollController.hasClients
@@ -47,7 +47,12 @@ class _PoolReaderState extends State<PoolReader> {
                   : 1,
               duration: defaultAnimationDuration,
               child: TransparentAppBar(
-                title: Text(widget.pool.name.replaceAll('_', ' ')),
+                title: gesture(
+                  context,
+                  Text(
+                    widget.pool.name.replaceAll('_', ' '),
+                  ),
+                ),
               ),
             ),
           ),

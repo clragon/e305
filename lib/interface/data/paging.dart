@@ -2,10 +2,13 @@ import 'package:e305/client/data/client.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:mutex/mutex.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 abstract class DataController<T> extends PagingController<int, T> {
   final int firstPageKey;
+  final Mutex requestLock = Mutex();
+  bool isRefreshing = false;
 
   DataController({
     this.firstPageKey = 1,
@@ -47,6 +50,17 @@ abstract class DataController<T> extends PagingController<int, T> {
 
   @override
   Future<void> refresh({bool background = false}) async {
+    // makes sure a singular refresh can be queued up
+    if (requestLock.isLocked) {
+      if (isRefreshing) {
+        return;
+      }
+      isRefreshing = true;
+      // waits for the current request to be done
+      await requestLock.acquire();
+      requestLock.release();
+      isRefreshing = false;
+    }
     try {
       if (background) {
         List<T>? items = await loadPage(firstPageKey);
@@ -66,6 +80,7 @@ abstract class DataController<T> extends PagingController<int, T> {
   }
 
   Future<void> requestPage(int page) async {
+    await requestLock.acquire();
     try {
       List<T>? items = await loadPage(page);
       if (items != null) {
@@ -78,6 +93,7 @@ abstract class DataController<T> extends PagingController<int, T> {
     } finally {
       success();
     }
+    requestLock.release();
   }
 }
 

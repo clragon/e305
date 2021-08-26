@@ -127,7 +127,7 @@ class _LoadingScreenState<T> extends State<LoadingScreen<T>> {
           builder: (context) => widget.builder(context, value!),
           secondChild: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Flexible(
                 child: Center(

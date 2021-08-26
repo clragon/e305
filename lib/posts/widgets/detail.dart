@@ -11,6 +11,7 @@ import 'package:e305/posts/widgets/detail/tags.dart';
 import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:expandable/expandable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,11 +19,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'detail/file.dart';
 
 class PostDetail extends StatefulWidget {
-  final SearchCallback? onSearch;
+  final SearchCallback onSearch;
   final String? hero;
   final Post post;
 
-  const PostDetail({required this.post, this.hero, this.onSearch});
+  const PostDetail({required this.post, this.hero, required this.onSearch});
 
   @override
   _PostDetailState createState() => _PostDetailState();
@@ -47,43 +48,48 @@ class _PostDetailState extends State<PostDetail> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    preloadImage(context: context, post: widget.post, size: ImageSize.file);
+    if (!['webm', 'mp4'].contains(widget.post.file.ext)) {
+      preloadImage(context: context, post: widget.post, size: ImageSize.file);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: ScrollToTop(
-        child: TransparentAppBar(
-          actions: [
-            PopupMenuButton<VoidCallback>(
-              icon: Icon(
-                Icons.more_vert,
-              ),
-              onSelected: (value) => value(),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: () async => launch(
-                      'https://${await client.host}/posts/${widget.post.id}'),
-                  child: Row(
-                    children: [
-                      Icon(
-                        FontAwesomeIcons.externalLinkAlt,
-                        size: 20,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 16),
-                        child: Text('Browse'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+      appBar: ScrollToTopAppBar(
         controller: scrollController,
+        builder: (context, gesture) {
+          return TransparentAppBar(
+            title: gesture(context),
+            actions: [
+              PopupMenuButton<VoidCallback>(
+                icon: Icon(
+                  Icons.more_vert,
+                ),
+                onSelected: (value) => value(),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: () async => launch(
+                        'https://${await client.host}/posts/${widget.post.id}'),
+                    child: Row(
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.externalLinkAlt,
+                          size: 20,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 16),
+                          child: Text('Browse'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       ),
       body: MediaQuery.removeViewInsets(
         context: context,
@@ -114,7 +120,11 @@ class _PostDetailState extends State<PostDetail> {
                       Divider(),
                       InteractionDisplay(post: widget.post),
                       Divider(),
-                      RelationDisplay(post: widget.post, expanded: expanded),
+                      RelationDisplay(
+                        post: widget.post,
+                        expanded: expanded,
+                        onSearch: widget.onSearch,
+                      ),
                       // no divider here
                       TagDisplay(
                         post: widget.post,

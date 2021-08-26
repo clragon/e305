@@ -18,10 +18,63 @@ class ScrollToTop extends StatelessWidget with AppBarSizeMixin {
   Widget build(BuildContext context) {
     return GestureDetector(
       child: child,
-      onDoubleTap: () => controller?.animateTo(
-        0,
-        duration: defaultAnimationDuration,
-        curve: Curves.easeOut,
+      onDoubleTap: controller != null
+          ? () => controller!.animateTo(
+                0,
+                duration: defaultAnimationDuration,
+                curve: Curves.easeOut,
+              )
+          : null,
+    );
+  }
+
+  @override
+  Size get preferredSize =>
+      height != null ? Size.fromHeight(height!) : super.preferredSize;
+}
+
+class ScrollToTopAppBar extends StatelessWidget with AppBarSizeMixin {
+  final Widget Function(
+    BuildContext context,
+    Widget Function(BuildContext context, [Widget? child]) gesture,
+  ) builder;
+  final ScrollController? controller;
+  final double? height;
+
+  const ScrollToTopAppBar(
+      {required this.builder, this.controller, this.height});
+
+  Widget tapWrapper(Size size, Widget? child) {
+    return ScrollToTop(
+      controller: controller,
+      child: Container(
+        color: Colors.transparent,
+        height: size.height,
+        width: size.width,
+        child: child != null
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Expanded(child: child),
+                      ],
+                    ),
+                  )
+                ],
+              )
+            : null,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => builder(
+        context,
+        (context, [child]) => tapWrapper(constraints.biggest, child),
       ),
     );
   }
@@ -85,7 +138,7 @@ class TransparentAppBar extends StatelessWidget with AppBarSizeMixin {
 }
 
 class SearchableAppBar extends StatefulWidget with AppBarSizeMixin {
-  final String title;
+  final Widget title;
   final String label;
   final bool canSearch;
   final bool transparent;
@@ -150,9 +203,7 @@ class _SearchableAppBarState extends State<SearchableAppBar> {
           onSubmitted: (_) => submit(),
         ),
         secondChild: Row(
-          children: [
-            Text(widget.title),
-          ],
+          children: [Expanded(child: widget.title)],
         ),
       ),
       actions: [

@@ -87,6 +87,7 @@ class PostPageTile extends StatelessWidget {
                   Positioned.fill(
                     child: Hero(
                       tag: hero ?? UniqueKey(),
+                      flightShuttleBuilder: imageFlightShuttleBuilder,
                       child: CachedNetworkImage(
                         imageUrl: post.sample.url!,
                         fit: BoxFit.cover,

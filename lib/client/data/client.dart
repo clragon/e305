@@ -122,7 +122,7 @@ class Client {
       if (post.file.url == null && !post.flags.deleted) {
         continue;
       }
-      if (post.file.ext == 'swf') {
+      if (['webm', 'mp4', 'swf'].contains(post.file.ext)) {
         continue;
       }
       posts.add(post);

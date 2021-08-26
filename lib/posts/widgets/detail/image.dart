@@ -13,6 +13,7 @@ class ImageDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String hero = this.hero ?? UniqueKey().toString();
     Size screenSize = MediaQuery.of(context).size;
 
     return Stack(
@@ -33,7 +34,7 @@ class ImageDisplay extends StatelessWidget {
                 child: PostImageOverlay(
                   post: post,
                   builder: (context) => Hero(
-                    tag: hero ?? UniqueKey(),
+                    tag: hero,
                     child: CachedNetworkImage(
                       imageUrl: post.sample.url!,
                       fit: BoxFit.contain,

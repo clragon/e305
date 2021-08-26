@@ -27,11 +27,11 @@ class _PoolPageState extends State<PoolPage> {
   }
 
   PreferredSizeWidget appBar() {
-    return ScrollToTop(
+    return ScrollToTopAppBar(
       controller: scrollController,
-      child: SearchableAppBar(
+      builder: (context, gesture) => SearchableAppBar(
         label: 'Title',
-        title: 'Pools',
+        title: gesture(context, Text('Pools')),
         getSearch: () => controller.search.value,
         setSearch: (value) => controller.search.value = value,
       ),

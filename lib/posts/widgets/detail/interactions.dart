@@ -86,7 +86,7 @@ class _InteractionDisplayState extends State<InteractionDisplay> {
 
     Widget downloadButton() {
       return IconButton(
-        onPressed: () {},
+        onPressed: () => download(context: context, post: widget.post),
         icon: Icon(
           FontAwesomeIcons.download,
           size: 20,

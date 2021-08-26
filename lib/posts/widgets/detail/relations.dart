@@ -4,6 +4,7 @@ import 'package:e305/client/models/post.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/pools/widgets/reader.dart';
 import 'package:e305/posts/widgets/detail.dart';
+import 'package:e305/posts/widgets/search.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,8 +14,10 @@ import 'expand.dart';
 class RelationDisplay extends StatelessWidget {
   final Post post;
   final bool? expanded;
+  final SearchCallback onSearch;
 
-  const RelationDisplay({required this.post, this.expanded});
+  const RelationDisplay(
+      {required this.post, this.expanded, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,8 @@ class RelationDisplay extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => LoadingScreen<Post>(
                 provide: () => client.post(post.relationships.parentId!),
-                builder: (context, value) => PostDetail(post: value),
+                builder: (context, value) =>
+                    PostDetail(post: value, onSearch: onSearch),
               ),
             ),
           ),
@@ -60,7 +64,8 @@ class RelationDisplay extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => LoadingScreen<Post>(
                   provide: () => client.post(e),
-                  builder: (context, value) => PostDetail(post: value),
+                  builder: (context, value) =>
+                      PostDetail(post: value, onSearch: onSearch),
                 ),
               ),
             ),

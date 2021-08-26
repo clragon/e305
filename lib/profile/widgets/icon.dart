@@ -50,7 +50,6 @@ class _ProfileButtonState extends State<ProfileButton> {
               ),
             ),
       onPressed: () {
-        return;
         Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(
             builder: (context) => ProfileDetail(),

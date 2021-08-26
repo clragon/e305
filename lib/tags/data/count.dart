@@ -1,5 +1,16 @@
-import 'package:e305/client/models/post.dart';
-import 'package:e305/tags/data/storage.dart';
+import 'package:e305/tags/data/post.dart';
+
+class CountedTag {
+  final String category;
+  final String tag;
+  final int count;
+
+  CountedTag({
+    required this.category,
+    required this.tag,
+    required this.count,
+  });
+}
 
 Map<String, int> categories = {
   'general': 0,
@@ -40,36 +51,18 @@ List<CountedTag> countTagsByItems<T>(List<T> items,
 
   for (MapEntry<String, Map<String, int>> category in categoryCounts.entries) {
     for (MapEntry<String, int> tags in category.value.entries) {
-      counted.add(
-          CountedTag(category: category.key, tag: tags.key, count: tags.value));
+      counted.add(CountedTag(
+        category: category.key,
+        tag: tags.key,
+        count: tags.value,
+      ));
     }
   }
 
   return counted;
 }
 
-List<CountedTag> countTagsFromPosts(List<Post> posts) {
-  return countTagsByItems<Post>(
-    posts,
-    (element, category) => element.tags[category] ?? [],
-  );
-}
-
-List<CountedTag> countTagsFromDataBase(TagDataBase storage) {
+List<CountedTag> countTagsBySlims(List<SlimPost> storage) {
   return countTagsByItems<SlimPost>(
-    storage.tags,
-    (element, category) => element.tags[category] ?? [],
-  );
-}
-
-class CountedTag {
-  final String category;
-  final String tag;
-  final int count;
-
-  CountedTag({
-    required this.category,
-    required this.tag,
-    required this.count,
-  });
+      storage, (element, category) => element.tags[category] ?? []);
 }

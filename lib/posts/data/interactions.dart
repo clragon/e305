@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:e305/client/data/client.dart';
 import 'package:e305/client/models/post.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 enum VoteStatus {
   upvoted,
@@ -63,4 +69,49 @@ Future<bool> toggleFavorite({
     }
   }
   return success;
+}
+
+Future<bool> download({
+  BuildContext? context,
+  required Post post,
+}) async {
+  try {
+    if (!Platform.isAndroid || !Platform.isIOS) {
+      throw PlatformException(code: 'unsupported platform');
+    }
+
+    if (!await Permission.storage.request().isGranted) {
+      return false;
+    }
+    File download = await DefaultCacheManager().getSingleFile(post.file.url!);
+    await ImageGallerySaver.saveFile(download.path);
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('downloaded post #${post.id}'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+    return true;
+  } on PlatformException {
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('platform not supported'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  } catch (_) {
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('failed to download #${post.id}'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+  return false;
 }

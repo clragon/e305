@@ -25,14 +25,9 @@ class _NavigationPageState extends State<NavigationPage> {
   String search = '';
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
-    super.dispose();
     controller.dispose();
+    super.dispose();
   }
 
   Future<bool> onTryPop() async {
@@ -69,10 +64,7 @@ class _NavigationPageState extends State<NavigationPage> {
         navBarStyle: NavBarStyle.style12,
         screens: [
           HomePage(onSearch: onSearch),
-          SearchPage(
-            controller: PostController(search: search),
-            onSearch: onSearch,
-          ),
+          SearchPage(controller: PostController(search: search)),
           FavoritesPage(onSearch: onSearch),
           PoolPage(),
           SettingsPage(),

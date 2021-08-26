@@ -5,9 +5,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ArtistDisplay extends StatelessWidget {
   final Post post;
-  final SearchCallback? onSearch;
+  final SearchCallback onSearch;
 
-  const ArtistDisplay({required this.post, this.onSearch});
+  const ArtistDisplay({required this.post, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class ArtistDisplay extends StatelessWidget {
               ? InkWell(
                   onTap: () {
                     Navigator.of(context).maybePop();
-                    onSearch?.call(artists!.join(' '));
+                    onSearch(artists!.join(' '));
                   },
                   child: Text(
                     artists!.join(', '),

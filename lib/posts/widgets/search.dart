@@ -39,14 +39,25 @@ class _SearchPageState extends State<SearchPage> {
 
   double notZero(double value) => value < 1 ? 1 : value;
 
+  void defaultOnSearch(String search) async {
+    await Navigator.of(context, rootNavigator: true).maybePop();
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => SearchPage(
+          controller: PostController(search: search),
+        ),
+      ),
+    );
+  }
+
   PreferredSizeWidget appBar() {
-    return ScrollToTop(
+    return ScrollToTopAppBar(
       controller: scrollController,
-      child: SearchableAppBar(
+      builder: (context, gesture) => SearchableAppBar(
         canSearch: !widget.static,
         transparent: true,
         label: 'Tags',
-        title: widget.title ?? 'Search',
+        title: gesture(context, Text(widget.title ?? 'Search')),
         getSearch: () => controller.search.value,
         setSearch: (value) => controller.search.value = value,
       ),
@@ -125,7 +136,7 @@ class _SearchPageState extends State<SearchPage> {
                           builder: (context) => PostDetail(
                             post: controller.itemList![index],
                             hero: '${hero}_${item.id}',
-                            onSearch: widget.onSearch,
+                            onSearch: widget.onSearch ?? defaultOnSearch,
                           ),
                         ),
                       ),

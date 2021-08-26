@@ -2,18 +2,22 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:e305/client/models/post.dart';
+import 'package:e305/tags/data/post.dart';
+
+typedef PostProvider = Future<List<Post>> Function(int page);
 
 class TagDataBase {
   TagDataBase({
     required this.creation,
-    required this.search,
-    required this.tags,
+    required this.name,
+    required this.posts,
+    this.path,
   });
 
+  String name;
   DateTime creation;
-  String search;
-  List<SlimPost> tags;
-  String? file;
+  List<SlimPost> posts;
+  String? path;
 
   factory TagDataBase.fromJson(String str) =>
       TagDataBase.fromMap(json.decode(str));
@@ -21,84 +25,58 @@ class TagDataBase {
   String toJson() => json.encode(toMap());
 
   factory TagDataBase.fromMap(Map<String, dynamic> json) => TagDataBase(
-        search: json["search"],
-        tags: List<SlimPost>.from(json["tags"].map((x) => SlimPost.fromMap(x))),
+        name: json["name"],
+        posts:
+            List<SlimPost>.from(json["tags"].map((x) => SlimPost.fromMap(x))),
         creation: DateTime.parse(json["creation"]),
       );
 
   Map<String, dynamic> toMap() => {
-        "search": search,
-        "tags": List<dynamic>.from(tags.map((x) => x.toMap())),
+        "name": name,
+        "tags": List<dynamic>.from(posts.map((x) => x.toMap())),
         "creation": creation.toIso8601String(),
       };
 
-  factory TagDataBase.read(File data) {
-    return TagDataBase.fromJson(data.readAsStringSync())..file = data.path;
+  factory TagDataBase.read(String path) {
+    return TagDataBase.fromJson(File(path).readAsStringSync())..path = path;
   }
 
-  Future<TagDataBase> create({
-    String search = '',
-    required Future<List<Post>> Function(String search, int page) provide,
-    int limit = 6,
+  static Future<TagDataBase> create({
+    String name = '',
+    required PostProvider provide,
+    String? path,
+    int limit = 1200,
   }) async {
     List<SlimPost> slims = [];
-    for (int i = 1; i <= limit; i++) {
-      List<SlimPost> posts = (await provide(search, i)).toSlims();
+    for (int i = 1; true; i++) {
+      List<SlimPost> posts = (await provide(i)).toSlims();
       if (posts.isEmpty) {
         break;
       }
       slims.addAll(posts);
+      if (slims.length >= limit) {
+        break;
+      }
       await Future.delayed(Duration(milliseconds: 500));
     }
-    return TagDataBase(creation: DateTime.now(), search: search, tags: slims);
+    return TagDataBase(
+        creation: DateTime.now(), name: name, posts: slims, path: path);
   }
 
   void write() {
-    if (file != null) {
+    if (path != null) {
       JsonEncoder encoder = JsonEncoder.withIndent(" " * 2);
-      File(file!).writeAsStringSync(encoder.convert(toJson()));
+      File(path!).writeAsStringSync(encoder.convert(toMap()));
     } else {
-      throw StateError('database doesnt have file');
+      throw StateError('no database file path specified');
     }
   }
 
   void delete() {
-    if (file != null) {
-      File(file!).deleteSync();
+    if (path != null) {
+      File(path!).deleteSync();
     } else {
-      throw StateError('database doesnt have file');
+      throw StateError('no database file path specified');
     }
   }
-}
-
-class SlimPost {
-  SlimPost({
-    required this.id,
-    required this.tags,
-  });
-
-  int id;
-  Map<String, List<String>> tags;
-
-  factory SlimPost.fromPost(Post post) =>
-      SlimPost(id: post.id, tags: post.tags);
-
-  factory SlimPost.fromJson(String str) => SlimPost.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory SlimPost.fromMap(Map json) => SlimPost(
-        id: json['id'],
-        tags: Map<String, dynamic>.from(json['tags']).map((key, value) =>
-            MapEntry<String, List<String>>(key, List<String>.from(value))),
-      );
-
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'tags': tags,
-      };
-}
-
-extension slims on List<Post> {
-  List<SlimPost> toSlims() => this.map((e) => SlimPost.fromPost(e)).toList();
 }
