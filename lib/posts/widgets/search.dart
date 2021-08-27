@@ -40,7 +40,8 @@ class _SearchPageState extends State<SearchPage> {
   double notZero(double value) => value < 1 ? 1 : value;
 
   void defaultOnSearch(String search) async {
-    await Navigator.of(context, rootNavigator: true).maybePop();
+    Navigator.of(context, rootNavigator: true)
+        .popUntil((route) => route.isFirst);
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => SearchPage(
@@ -86,14 +87,17 @@ class _SearchPageState extends State<SearchPage> {
               return null;
             }
 
+            int crossAxiscount =
+                notZero(constraints.maxWidth / tileSize).round();
+
             return MultiSliver(
               children: [
                 SliverStaggeredGrid(
+                  key: Key(crossAxiscount.toString()),
                   gridDelegate:
                       SliverStaggeredGridDelegateWithFixedCrossAxisCount(
                     staggeredTileBuilder: tileBuilder,
-                    crossAxisCount:
-                        notZero(constraints.maxWidth / tileSize).round(),
+                    crossAxisCount: crossAxiscount,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     itemBuilder,

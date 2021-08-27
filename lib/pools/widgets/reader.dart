@@ -79,8 +79,8 @@ class _PoolReaderState extends State<PoolReader> {
                       behavior: HitTestBehavior.translucent,
                       onTap: Navigator.of(context).maybePop,
                       child: FullScreenGallery(
-                        initialPage: index,
-                        posts: controller.itemList!,
+                        controller: controller,
+                        pageController: PageController(initialPage: index),
                         hero: hero,
                       ),
                     ),

@@ -19,6 +19,7 @@ abstract class DataController<T> extends PagingController<int, T> {
 
   @override
   void dispose() {
+    super.removePageRequestListener(requestPage);
     getRefreshListeners().forEach((element) => element.removeListener(refresh));
     super.dispose();
   }
@@ -61,38 +62,32 @@ abstract class DataController<T> extends PagingController<int, T> {
       requestLock.release();
       isRefreshing = false;
     }
-    try {
-      if (background) {
-        List<T>? items = await loadPage(firstPageKey);
-        if (items != null) {
-          value = PagingState(
-            nextPageKey: firstPageKey + 1,
-            error: null,
-            itemList: items,
-          );
-        }
-      } else {
-        super.refresh();
+    if (background) {
+      List<T>? items = await loadPage(firstPageKey);
+      if (items != null) {
+        value = PagingState(
+          nextPageKey: firstPageKey + 1,
+          error: null,
+          itemList: items,
+        );
       }
-    } finally {
-      success();
+    } else {
+      super.refresh();
     }
+    success();
   }
 
   Future<void> requestPage(int page) async {
     await requestLock.acquire();
-    try {
-      List<T>? items = await loadPage(page);
-      if (items != null) {
-        if (items.isEmpty) {
-          appendLastPage(items);
-        } else {
-          appendPage(items, ++page);
-        }
+    List<T>? items = await loadPage(page);
+    if (items != null) {
+      if (items.isEmpty) {
+        appendLastPage(items);
+      } else {
+        appendPage(items, ++page);
       }
-    } finally {
-      success();
     }
+    success();
     requestLock.release();
   }
 }

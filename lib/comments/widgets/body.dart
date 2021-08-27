@@ -68,7 +68,7 @@ class _CommentAppenderState extends State<CommentAppender> {
           sliver: PagedSliverList(
             pagingController: controller,
             builderDelegate: PagedChildBuilderDelegate(
-              itemBuilder: (BuildContext context, Comment item, int index) =>
+              itemBuilder: (context, Comment item, index) =>
                   CommentTile(comment: item),
               firstPageProgressIndicatorBuilder: (context) =>
                   loadingIndicator(),

@@ -102,14 +102,15 @@ class TransparentAppBar extends StatelessWidget with AppBarSizeMixin {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-            colors: [
-              Colors.black38,
-              Colors.transparent,
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp),
+          colors: [
+            Colors.black38,
+            Colors.transparent,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [0.0, 1.0],
+          tileMode: TileMode.clamp,
+        ),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(

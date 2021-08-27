@@ -21,6 +21,10 @@ Future<bool> vote({
   required VoteStatus current,
   required Function(VoteStatus value) onChange,
 }) async {
+  if (!await checkLogin(context)) {
+    return false;
+  }
+
   bool replace = current == VoteStatus.unknown;
   onChange(upvote
       ? current == VoteStatus.upvoted
@@ -50,6 +54,10 @@ Future<bool> toggleFavorite({
   required bool current,
   required Function(bool value) onChange,
 }) async {
+  if (!await checkLogin(context)) {
+    return false;
+  }
+
   bool favorite = !current;
   onChange(favorite);
   bool success = favorite
@@ -76,7 +84,7 @@ Future<bool> download({
   required Post post,
 }) async {
   try {
-    if (!Platform.isAndroid || !Platform.isIOS) {
+    if (!Platform.isAndroid && !Platform.isIOS) {
       throw PlatformException(code: 'unsupported platform');
     }
 
@@ -114,4 +122,20 @@ Future<bool> download({
     }
   }
   return false;
+}
+
+Future<bool> checkLogin([BuildContext? context]) async {
+  if (await client.hasLogin) {
+    return true;
+  } else {
+    if (context != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('you are not logged in'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+    return false;
+  }
 }

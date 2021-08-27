@@ -30,8 +30,8 @@ class _NavigationPageState extends State<NavigationPage> {
     super.dispose();
   }
 
-  Future<bool> onTryPop() async {
-    if (!willExit) {
+  Future<bool> onTryPop([BuildContext? context]) async {
+    if (context != null && ModalRoute.of(context)!.isCurrent && !willExit) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Press back again to exit'),
@@ -41,9 +41,8 @@ class _NavigationPageState extends State<NavigationPage> {
       willExit = true;
       exitResetTimer = Timer(Duration(seconds: 2), () => willExit = false);
       return false;
-    } else {
-      return true;
     }
+    return true;
   }
 
   void onSearch(String search) {
@@ -55,58 +54,56 @@ class _NavigationPageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return PersistentTabView(
+      context,
+      controller: controller,
       onWillPop: onTryPop,
-      child: PersistentTabView(
-        context,
-        controller: controller,
-        resizeToAvoidBottomInset: true,
-        navBarStyle: NavBarStyle.style12,
-        screens: [
-          HomePage(onSearch: onSearch),
-          SearchPage(controller: PostController(search: search)),
-          FavoritesPage(onSearch: onSearch),
-          PoolPage(),
-          SettingsPage(),
-        ],
-        backgroundColor: Theme.of(context).canvasColor,
-        items: [
-          PersistentBottomNavBarItem(
-            icon: Icon(FontAwesomeIcons.home),
-            title: "Recommended",
-            activeColorPrimary: Colors.orange,
-            inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
-          ),
-          PersistentBottomNavBarItem(
-            icon: Icon(FontAwesomeIcons.search),
-            title: "Search",
-            activeColorPrimary: Colors.green,
-            inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
-          ),
-          PersistentBottomNavBarItem(
-            icon: Icon(FontAwesomeIcons.solidHeart),
-            title: "Favorites",
-            activeColorPrimary: Colors.pink,
-            inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
-          ),
-          PersistentBottomNavBarItem(
-            icon: Icon(FontAwesomeIcons.layerGroup),
-            title: "Pools",
-            activeColorPrimary: Colors.blue,
-            inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
-          ),
-          PersistentBottomNavBarItem(
-            icon: Icon(FontAwesomeIcons.cog),
-            title: "Settings",
-            activeColorPrimary: Colors.blueGrey,
-            inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
-          ),
-        ],
-        screenTransitionAnimation: ScreenTransitionAnimation(
-          animateTabTransition: true,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
+      resizeToAvoidBottomInset: true,
+      navBarStyle: NavBarStyle.style12,
+      screens: [
+        HomePage(onSearch: onSearch),
+        SearchPage(controller: PostController(search: search)),
+        FavoritesPage(onSearch: onSearch),
+        PoolPage(),
+        SettingsPage(),
+      ],
+      backgroundColor: Theme.of(context).canvasColor,
+      items: [
+        PersistentBottomNavBarItem(
+          icon: Icon(FontAwesomeIcons.home),
+          title: "Recommended",
+          activeColorPrimary: Colors.orange,
+          inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
         ),
+        PersistentBottomNavBarItem(
+          icon: Icon(FontAwesomeIcons.search),
+          title: "Search",
+          activeColorPrimary: Colors.green,
+          inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
+        ),
+        PersistentBottomNavBarItem(
+          icon: Icon(FontAwesomeIcons.solidHeart),
+          title: "Favorites",
+          activeColorPrimary: Colors.pink,
+          inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
+        ),
+        PersistentBottomNavBarItem(
+          icon: Icon(FontAwesomeIcons.layerGroup),
+          title: "Pools",
+          activeColorPrimary: Colors.blue,
+          inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
+        ),
+        PersistentBottomNavBarItem(
+          icon: Icon(FontAwesomeIcons.cog),
+          title: "Settings",
+          activeColorPrimary: Colors.blueGrey,
+          inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
+        ),
+      ],
+      screenTransitionAnimation: ScreenTransitionAnimation(
+        animateTabTransition: true,
+        curve: Curves.ease,
+        duration: Duration(milliseconds: 200),
       ),
     );
   }

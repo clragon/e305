@@ -33,19 +33,22 @@ class ImageDisplay extends StatelessWidget {
               Flexible(
                 child: PostImageOverlay(
                   post: post,
-                  builder: (context) => Hero(
-                    tag: hero,
-                    child: CachedNetworkImage(
-                      imageUrl: post.sample.url!,
-                      fit: BoxFit.contain,
-                      progressIndicatorBuilder: (context, url, progress) =>
-                          Center(
-                        child: PulseLoadingIndicator(
-                          size: 60,
+                  builder: (context) => Center(
+                    child: Hero(
+                      tag: hero,
+                      transitionOnUserGestures: true,
+                      child: CachedNetworkImage(
+                        imageUrl: post.sample.url!,
+                        fit: BoxFit.cover,
+                        progressIndicatorBuilder: (context, url, progress) =>
+                            Center(
+                          child: PulseLoadingIndicator(
+                            size: 60,
+                          ),
                         ),
+                        errorWidget: (context, url, error) =>
+                            Center(child: Icon(Icons.error_outline)),
                       ),
-                      errorWidget: (context, url, error) =>
-                          Center(child: Icon(Icons.error_outline)),
                     ),
                   ),
                 ),

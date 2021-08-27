@@ -93,16 +93,3 @@ class PostImageOverlay extends StatelessWidget {
     return builder(context);
   }
 }
-
-Widget imageFlightShuttleBuilder(
-  BuildContext flightContext,
-  Animation<double> animation,
-  HeroFlightDirection flightDirection,
-  BuildContext fromHeroContext,
-  BuildContext toHeroContext,
-) {
-  final Hero hero = flightDirection == HeroFlightDirection.push
-      ? fromHeroContext.widget as Hero
-      : toHeroContext.widget as Hero;
-  return hero.child;
-}

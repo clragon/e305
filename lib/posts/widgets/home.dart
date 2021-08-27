@@ -1,4 +1,5 @@
 import 'package:e305/client/data/client.dart';
+import 'package:e305/client/models/post.dart';
 import 'package:e305/interface/widgets/animation.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
@@ -8,9 +9,9 @@ import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/posts/widgets/tile.dart';
 import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/settings/data/settings.dart';
-import 'package:e305/settings/pages/host.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,7 +23,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with HostMixin {
+class _HomePageState extends State<HomePage> {
   RecommendationStatus recommendationStatus = RecommendationStatus.insufficient;
 
   PostController controller = PostController(search: 'score:>=20');
@@ -43,10 +44,6 @@ class _HomePageState extends State<HomePage> with HostMixin {
     });
   }
 
-  void updatePosts() {
-    setState(() {});
-  }
-
   void updatePageController(double maxWidth) {
     double oneOrHigher(double value) => (value > 1) ? 1 : value;
     pageController = PageController(
@@ -58,59 +55,68 @@ class _HomePageState extends State<HomePage> with HostMixin {
   void initState() {
     super.initState();
     settings.credentials.addListener(updateLogin);
-    controller.addListener(updatePosts);
-    controller.notifyPageRequestListeners(controller.nextPageKey!);
   }
 
   @override
   void dispose() {
     settings.credentials.removeListener(updateLogin);
-    controller.removeListener(updatePosts);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     Widget body() {
-      return Replacer(
-        showChild: controller.itemList != null,
-        child: SafeBuilder(
-          showChild: controller.itemList != null,
-          builder: (context) => Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 24),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                updatePageController(constraints.maxWidth);
-                return PageView.builder(
-                  onPageChanged: (index) => preloadImages(
-                      context: context,
-                      index: index,
-                      posts: controller.itemList!,
-                      size: ImageSize.sample),
-                  controller: pageController,
-                  itemCount: controller.itemList!.length,
-                  itemBuilder: (context, index) => PostPageTile(
-                    size: constraints.biggest,
-                    post: controller.itemList![index],
-                    hero: '${hero}_${controller.itemList![index].id}',
-                    onTap: () =>
-                        Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => PostDetail(
-                          post: controller.itemList![index],
-                          hero: '${hero}_${controller.itemList![index].id}',
-                          onSearch: onSearch,
-                        ),
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            updatePageController(constraints.maxWidth);
+            return PagedPageView(
+              pageController: pageController,
+              pagingController: controller,
+              builderDelegate: PagedChildBuilderDelegate(
+                itemBuilder: (context, Post item, index) => PostPageTile(
+                  size: constraints.biggest,
+                  post: controller.itemList![index],
+                  hero: '${hero}_${controller.itemList![index].id}',
+                  onTap: () => Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => PostDetail(
+                        post: controller.itemList![index],
+                        hero: '${hero}_${controller.itemList![index].id}',
+                        onSearch: onSearch,
                       ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),
-        ),
-        secondChild: Center(
-          child: OrbitLoadingIndicator(size: 100),
+                ),
+                firstPageProgressIndicatorBuilder: (context) => Center(
+                  child: OrbitLoadingIndicator(size: 100),
+                ),
+                newPageProgressIndicatorBuilder: (context) => Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: PulseLoadingIndicator(size: 60)),
+                ),
+                noItemsFoundIndicatorBuilder: (context) => Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      'no posts',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText2!
+                          .copyWith(fontSize: 16),
+                    ),
+                  ),
+                ),
+              ),
+              onPageChanged: (index) => preloadImages(
+                context: context,
+                index: index,
+                posts: controller.itemList!,
+                size: ImageSize.sample,
+              ),
+            );
+          },
         ),
       );
     }
