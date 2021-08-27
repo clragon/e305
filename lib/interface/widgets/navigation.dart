@@ -22,7 +22,7 @@ class _NavigationPageState extends State<NavigationPage> {
   PersistentTabController controller = PersistentTabController();
   Timer? exitResetTimer;
   bool willExit = false;
-  String search = '';
+  PostController postController = PostController();
 
   @override
   void dispose() {
@@ -46,9 +46,7 @@ class _NavigationPageState extends State<NavigationPage> {
   }
 
   void onSearch(String search) {
-    setState(() {
-      this.search = search;
-    });
+    postController.search.value = search;
     controller.jumpToTab(1);
   }
 
@@ -62,7 +60,7 @@ class _NavigationPageState extends State<NavigationPage> {
       navBarStyle: NavBarStyle.style12,
       screens: [
         HomePage(onSearch: onSearch),
-        SearchPage(controller: PostController(search: search)),
+        SearchPage(controller: postController),
         FavoritesPage(onSearch: onSearch),
         PoolPage(),
         SettingsPage(),

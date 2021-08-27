@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'detail/description.dart';
 import 'detail/file.dart';
 
 class PostDetail extends StatefulWidget {
@@ -124,6 +125,11 @@ class _PostDetailState extends State<PostDetail> {
                         post: widget.post,
                         expanded: expanded,
                         onSearch: widget.onSearch,
+                      ),
+                      // no divider here
+                      DescriptionDisplay(
+                        post: widget.post,
+                        expanded: expanded,
                       ),
                       // no divider here
                       TagDisplay(

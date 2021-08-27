@@ -23,7 +23,7 @@ class SearchPage extends StatefulWidget {
     this.static = false,
     this.title,
     this.onSearch,
-  }) : super(key: Key(controller?.search.value ?? UniqueKey().toString()));
+  });
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -63,6 +63,22 @@ class _SearchPageState extends State<SearchPage> {
         setSearch: (value) => controller.search.value = value,
       ),
     );
+  }
+
+  void ensureIsFirst() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller.search.addListener(ensureIsFirst);
+  }
+
+  @override
+  void dispose() {
+    controller.search.removeListener(ensureIsFirst);
+    super.dispose();
   }
 
   @override
@@ -127,38 +143,35 @@ class _SearchPageState extends State<SearchPage> {
                 SliverPadding(
                   padding:
                       EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                ),
-                PagedSliverBuilder<int, Post>(
-                  pagingController: controller,
-                  builderDelegate: PagedChildBuilderDelegate<Post>(
-                    itemBuilder: (context, item, index) => PostTile(
-                      post: item,
-                      hero: '${hero}_${item.id}',
-                      onPressed: () =>
-                          Navigator.of(context, rootNavigator: true).push(
-                        MaterialPageRoute(
-                          builder: (context) => PostDetail(
-                            post: controller.itemList![index],
-                            hero: '${hero}_${item.id}',
-                            onSearch: widget.onSearch ?? defaultOnSearch,
+                  sliver: PagedSliverBuilder<int, Post>(
+                    pagingController: controller,
+                    builderDelegate: PagedChildBuilderDelegate<Post>(
+                      itemBuilder: (context, item, index) => PostTile(
+                        post: item,
+                        hero: '${hero}_${item.id}',
+                        onPressed: () =>
+                            Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (context) => PostDetail(
+                              post: controller.itemList![index],
+                              hero: '${hero}_${item.id}',
+                              onSearch: widget.onSearch ?? defaultOnSearch,
+                            ),
                           ),
                         ),
                       ),
+                      firstPageProgressIndicatorBuilder: (context) => Center(
+                        child: OrbitLoadingIndicator(size: 100),
+                      ),
+                      newPageProgressIndicatorBuilder: (context) => Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(child: PulseLoadingIndicator(size: 60)),
+                      ),
                     ),
-                    firstPageProgressIndicatorBuilder: (context) => Center(
-                      child: OrbitLoadingIndicator(size: 100),
-                    ),
-                    newPageProgressIndicatorBuilder: (context) => Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: PulseLoadingIndicator(size: 60)),
-                    ),
+                    completedListingBuilder: gridBuilder,
+                    loadingListingBuilder: gridBuilder,
+                    errorListingBuilder: gridBuilder,
                   ),
-                  completedListingBuilder: gridBuilder,
-                  loadingListingBuilder: gridBuilder,
-                  errorListingBuilder: gridBuilder,
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.only(bottom: kBottomNavigationBarHeight),
                 ),
               ],
             ),
