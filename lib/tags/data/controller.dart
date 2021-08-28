@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:e305/client/data/client.dart';
+import 'package:e305/client/models/post.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/tags/data/post.dart';
 import 'package:e305/tags/data/storage.dart';
@@ -10,8 +11,6 @@ import 'package:path_provider/path_provider.dart';
 final FavoriteDatabase favoriteDatabase = FavoriteDatabase();
 
 class FavoriteDatabase extends DatabaseController {
-  String? search;
-
   FavoriteDatabase() : super(name: 'favorites') {
     settings.credentials.addListener(reinitialize);
     settings.safe.addListener(reinitialize);
@@ -20,11 +19,11 @@ class FavoriteDatabase extends DatabaseController {
   @override
   void dispose() {
     settings.credentials.removeListener(reinitialize);
+    settings.safe.removeListener(reinitialize);
     super.dispose();
   }
 
   Future<void> reinitialize() async {
-    search = null;
     database = null;
     await initialize();
     notifyListeners();
@@ -38,34 +37,37 @@ class FavoriteDatabase extends DatabaseController {
         'favs_${safe ? 'e9' : 'e6'}.json'
       ].join('/');
     }
-    if (search == null) {
-      String? username = (await client.credentials)?.username;
-      search = username != null ? 'fav:$username' : null;
-    }
   }
 
-  PostProvider provider(String search) =>
-      (page) => client.posts(search, page, limit: 200);
+  Future<List<Post>> provider(page) => client.favorites(page, limit: 200);
 
   Future<List<SlimPost>?> getFavorites() async {
     await initialize();
-    if (search != null) {
-      await getDatabase(
-        provide: provider(search!),
-      );
-      if (database != null) {
-        return database!.posts;
+    try {
+      if (await client.hasLogin) {
+        await getDatabase(
+          provide: provider,
+        );
+        if (database != null) {
+          return database!.posts;
+        }
       }
+    } on DioError {
+      return null;
     }
   }
 
   Future<List<SlimPost>?> refreshFavorites() async {
     await initialize();
-    if (search != null) {
-      await recreate(provider(search!));
-      if (database != null) {
-        return database!.posts;
+    try {
+      if (await client.hasLogin) {
+        await recreate(provider);
+        if (database != null) {
+          return database!.posts;
+        }
       }
+    } on DioError {
+      return null;
     }
   }
 }

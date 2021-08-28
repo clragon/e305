@@ -55,6 +55,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> initializeFavs() async {
+    setState(() {
+      recommendationStatus = RecommendationStatus.loading;
+    });
     List<SlimPost>? favs = await favoriteDatabase.getFavorites();
     setState(() {
       if (favs == null) {
@@ -72,12 +75,14 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    settings.credentials.addListener(updateLogin);
     initializeFavs();
+    favoriteDatabase.addListener(initializeFavs);
+    settings.credentials.addListener(updateLogin);
   }
 
   @override
   void dispose() {
+    favoriteDatabase.removeListener(initializeFavs);
     settings.credentials.removeListener(updateLogin);
     super.dispose();
   }
