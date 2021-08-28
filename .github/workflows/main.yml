@@ -85,7 +85,6 @@ jobs:
         flutter precache
     - name: Get Flutter packages
       run: flutter pub get
-      working-directory: code
 
     # all
     - name: Parse the release tag
@@ -93,11 +92,10 @@ jobs:
       run: | # remove the leading "v"
         VERSION=${{ github.event.release.tag_name }}
         echo "::set-output name=version::${VERSION#v}"
-      working-directory: code
     - name: Set the app version
       uses: microsoft/variable-substitution@6287962da9e5b6e68778dc51e840caa03ca84495
       with:
-        files: 'code/pubspec.yaml'
+        files: 'pubspec.yaml'
       env:
         version: ${{ steps.parse-release-tag.outputs.version }}
 
@@ -108,7 +106,6 @@ jobs:
         flutter build apk --obfuscate --split-debug-info=$FLUTTER_DEBUG_INFO_PATH
         mv build/app/outputs/flutter-apk/app-release.apk ../app.apk
         mv build/app/outputs/mapping/release/mapping.txt ../apk-mapping.txt
-      working-directory: code
     
     # aab
     - name: Build an Android App Bundle file
@@ -117,7 +114,6 @@ jobs:
         flutter build appbundle --obfuscate --split-debug-info=$FLUTTER_DEBUG_INFO_PATH
         mv build/app/outputs/bundle/release/app-release.aab ../app.aab
         mv build/app/outputs/mapping/release/mapping.txt ../aab-mapping.txt
-      working-directory: code
 
     # apk/aab
     - name: Upload the artifacts — ${{ matrix.file }}-mapping.txt file
@@ -144,12 +140,11 @@ jobs:
         flutter build ios --no-codesign --obfuscate --split-debug-info=$FLUTTER_DEBUG_INFO_PATH
         echo "::warning::TODO: fastlane export_ipa"
         echo "TODO: mv code/build/app/outputs/ipa/app.ipa ../app.ipa"
-      working-directory: code
 
     # all
     - name: Archive Flutter ${{ matrix.file }} symbols
       run: zip --recurse-paths ${{ github.workspace }}/code/flutter-${{ matrix.file }}-symbols.zip .
-      working-directory: code/${{ env.FLUTTER_DEBUG_INFO_PATH }}
+      working-directory: ${{ env.FLUTTER_DEBUG_INFO_PATH }}
     - name: Upload the artifacts — flutter-${{ matrix.file }}-symbols.zip file
       uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074
       with:
