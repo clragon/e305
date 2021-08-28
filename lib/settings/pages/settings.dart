@@ -170,11 +170,32 @@ class _SettingsPageState extends State<SettingsPage> {
                 showChild: snapshot.connectionState == ConnectionState.done,
                 child: SafeCrossFade(
                   showChild: snapshot.data != null && snapshot.data!,
-                  builder: (context) => ListTile(
-                    title: Text('Logout'),
-                    subtitle: Text(username ?? ''),
-                    leading: Icon(FontAwesomeIcons.signOutAlt),
-                    onTap: () => onSignOut(context),
+                  builder: (context) => Column(
+                    children: [
+                      ListTile(
+                        title: Text('Logout'),
+                        subtitle: Text(username ?? ''),
+                        leading: Icon(FontAwesomeIcons.signOutAlt),
+                        onTap: () => onSignOut(context),
+                      ),
+                      ListTile(
+                        leading: Icon(
+                          FontAwesomeIcons.database,
+                          size: 20,
+                        ),
+                        title: Text('Reset database'),
+                        subtitle: Text('recreate favorite tag database'),
+                        onTap: () async {
+                          await favoriteDatabase.refreshFavorites();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Reset database!'),
+                              duration: Duration(milliseconds: 500),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                   secondChild: ListTile(
                     title: Text('Login'),
@@ -192,23 +213,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 secondChild:
                     Center(child: SizedCircularProgressIndicator(size: 32)),
               ),
-            ),
-            ListTile(
-              leading: Icon(
-                FontAwesomeIcons.database,
-                size: 20,
-              ),
-              title: Text('Reset database'),
-              subtitle: Text('recreate favorite tag database'),
-              onTap: () async {
-                await favoriteDatabase.refreshFavorites();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Reset database!'),
-                    duration: Duration(milliseconds: 500),
-                  ),
-                );
-              },
             ),
             Divider(),
             settingsHeader('Info'),

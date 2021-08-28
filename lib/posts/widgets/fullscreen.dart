@@ -63,17 +63,18 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
             pagingController: widget.controller,
             pageController: pageController,
             builderDelegate: PagedChildBuilderDelegate<Post>(
-              itemBuilder: (context, item, index) => PhotoView.customChild(
-                heroAttributes: PhotoViewHeroAttributes(
-                  tag: widget.hero != null
-                      ? '${widget.hero}_${item.id}'
-                      : UniqueKey(),
-                  transitionOnUserGestures: true,
-                ),
-                childSize: Size(
-                    item.file.width.toDouble(), item.file.height.toDouble()),
-                child: PhotoViewGestureDetectorScope(
-                  axis: Axis.horizontal,
+              itemBuilder: (context, item, index) =>
+                  PhotoViewGestureDetectorScope(
+                axis: Axis.horizontal,
+                child: PhotoView.customChild(
+                  heroAttributes: PhotoViewHeroAttributes(
+                    tag: widget.hero != null
+                        ? '${widget.hero}_${item.id}'
+                        : UniqueKey(),
+                    transitionOnUserGestures: true,
+                  ),
+                  childSize: Size(
+                      item.file.width.toDouble(), item.file.height.toDouble()),
                   child: FullPostImage(
                     post: item,
                     progressIndicatorBuilder: (context, url, progress) =>
@@ -81,10 +82,10 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
                       child: PulseLoadingIndicator(size: 100),
                     ),
                   ),
+                  initialScale: PhotoViewComputedScale.contained,
+                  minScale: PhotoViewComputedScale.contained,
+                  maxScale: PhotoViewComputedScale.covered * 6,
                 ),
-                initialScale: PhotoViewComputedScale.contained,
-                minScale: PhotoViewComputedScale.contained,
-                maxScale: PhotoViewComputedScale.covered * 6,
               ),
               firstPageProgressIndicatorBuilder: (context) => Center(
                 child: OrbitLoadingIndicator(size: 100),

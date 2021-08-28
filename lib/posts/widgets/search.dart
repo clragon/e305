@@ -42,11 +42,10 @@ class _SearchPageState extends State<SearchPage> {
 
   Future<void> initializeFavs() async {
     if (controller is RecommendationController) {
+      (controller as RecommendationController).favs.value = null;
       List<SlimPost>? favs = await favoriteDatabase.getFavorites();
       if (favs != null && favs.length > 200) {
-        setState(() {
-          (controller as RecommendationController).favs.value = favs;
-        });
+        (controller as RecommendationController).favs.value = favs;
       }
     }
   }
@@ -72,12 +71,14 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    controller.search.addListener(ensureIsFirst);
     initializeFavs();
+    favoriteDatabase.addListener(initializeFavs);
+    controller.search.addListener(ensureIsFirst);
   }
 
   @override
   void dispose() {
+    favoriteDatabase.removeListener(initializeFavs);
     controller.search.removeListener(ensureIsFirst);
     super.dispose();
   }
