@@ -7,6 +7,7 @@ import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/settings/data/info.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/settings/pages/login.dart';
+import 'package:e305/tags/data/controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -191,6 +192,23 @@ class _SettingsPageState extends State<SettingsPage> {
                 secondChild:
                     Center(child: SizedCircularProgressIndicator(size: 32)),
               ),
+            ),
+            ListTile(
+              leading: Icon(
+                FontAwesomeIcons.database,
+                size: 20,
+              ),
+              title: Text('Reset database'),
+              subtitle: Text('recreate favorite tag database'),
+              onTap: () async {
+                await favoriteDatabase.refreshFavorites();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Reset database!'),
+                    duration: Duration(milliseconds: 500),
+                  ),
+                );
+              },
             ),
             Divider(),
             settingsHeader('Info'),

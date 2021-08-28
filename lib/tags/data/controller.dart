@@ -1,32 +1,20 @@
 import 'dart:io';
 
 import 'package:e305/client/data/client.dart';
-import 'package:e305/client/models/post.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/tags/data/post.dart';
 import 'package:e305/tags/data/storage.dart';
-import 'package:e305/tags/data/suggestions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
-// final Recommendations recommendations = Recommendations();
-
-class Recommendations {
-  final FavoriteDatabase database = FavoriteDatabase();
-
-  Future<Map<Post, double>?> rate(List<Post> posts) async {
-    List<SlimPost>? favs = await database.getFavorites();
-    if (favs != null) {
-      return ratePosts(favs, posts);
-    }
-  }
-}
+final FavoriteDatabase favoriteDatabase = FavoriteDatabase();
 
 class FavoriteDatabase extends DatabaseController {
-  late String? search;
+  String? search;
 
   FavoriteDatabase() : super(name: 'favorites') {
     settings.credentials.addListener(reinitialize);
+    settings.safe.addListener(reinitialize);
   }
 
   @override
@@ -44,8 +32,11 @@ class FavoriteDatabase extends DatabaseController {
 
   Future<void> initialize() async {
     if (super.path == null) {
-      super.path = [(await getApplicationSupportDirectory()).path, 'favs.json']
-          .join('/');
+      bool safe = await client.safe;
+      super.path = [
+        (await getApplicationSupportDirectory()).path,
+        'favs_${safe ? 'e9' : 'e6'}.json'
+      ].join('/');
     }
     if (search == null) {
       String? username = (await client.credentials)?.username;
@@ -53,11 +44,14 @@ class FavoriteDatabase extends DatabaseController {
     }
   }
 
+  PostProvider provider(String search) =>
+      (page) => client.posts(search, page, limit: 200);
+
   Future<List<SlimPost>?> getFavorites() async {
     await initialize();
     if (search != null) {
       await getDatabase(
-        provide: (page) => client.posts(search!, page, limit: 200),
+        provide: provider(search!),
       );
       if (database != null) {
         return database!.posts;
@@ -68,7 +62,7 @@ class FavoriteDatabase extends DatabaseController {
   Future<List<SlimPost>?> refreshFavorites() async {
     await initialize();
     if (search != null) {
-      await recreate((page) => client.posts(search!, page, limit: 200));
+      await recreate(provider(search!));
       if (database != null) {
         return database!.posts;
       }

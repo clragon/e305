@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e305/client/models/post.dart';
 import 'package:e305/interface/widgets/loading.dart';
+import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,11 +14,13 @@ class PostTile extends StatelessWidget {
   final Post post;
   final String? hero;
   final VoidCallback? onPressed;
+  final PostController? controller;
 
   PostTile({
     required this.post,
     this.onPressed,
     this.hero,
+    this.controller,
   });
 
   @override
@@ -51,6 +54,15 @@ class PostTile extends StatelessWidget {
               right: 0,
               child: PostTileOverlay(post: post),
             ),
+            if (controller != null)
+              Positioned(
+                bottom: 0,
+                right: 0,
+                child: PostScoreOverly(
+                  post: post,
+                  controller: controller!,
+                ),
+              ),
             Material(
               type: MaterialType.transparency,
               child: InkWell(
@@ -67,11 +79,14 @@ class PostTile extends StatelessWidget {
 class PostPageTile extends StatelessWidget {
   final Post post;
   final String? hero;
-  final Size? size;
   final VoidCallback onTap;
+  final PostController controller;
 
   const PostPageTile(
-      {required this.post, this.size, required this.onTap, this.hero});
+      {required this.post,
+      required this.onTap,
+      this.hero,
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +120,14 @@ class PostPageTile extends StatelessWidget {
                     top: 0,
                     right: 0,
                     child: PostTileOverlay(post: post),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: PostScoreOverly(
+                      post: post,
+                      controller: controller,
+                    ),
                   ),
                   Positioned.fill(
                     child: Material(

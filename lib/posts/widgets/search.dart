@@ -4,6 +4,8 @@ import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/detail.dart';
 import 'package:e305/posts/widgets/tile.dart';
+import 'package:e305/tags/data/controller.dart';
+import 'package:e305/tags/data/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -33,9 +35,21 @@ class _SearchPageState extends State<SearchPage> {
   String hero = 'post_search_${UniqueKey()}';
   bool searching = false;
   int tileSize = 200;
-  late PostController controller = widget.controller ?? PostController();
+  late PostController controller =
+      widget.controller ?? RecommendationController();
   ScrollController scrollController = ScrollController();
   TextEditingController textController = TextEditingController();
+
+  Future<void> initializeFavs() async {
+    if (controller is RecommendationController) {
+      List<SlimPost>? favs = await favoriteDatabase.getFavorites();
+      if (favs != null && favs.length > 200) {
+        setState(() {
+          (controller as RecommendationController).favs.value = favs;
+        });
+      }
+    }
+  }
 
   double notZero(double value) => value < 1 ? 1 : value;
 
@@ -45,10 +59,27 @@ class _SearchPageState extends State<SearchPage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => SearchPage(
-          controller: PostController(search: search),
+          controller: RecommendationController(search: search),
         ),
       ),
     );
+  }
+
+  void ensureIsFirst() {
+    Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    controller.search.addListener(ensureIsFirst);
+    initializeFavs();
+  }
+
+  @override
+  void dispose() {
+    controller.search.removeListener(ensureIsFirst);
+    super.dispose();
   }
 
   PreferredSizeWidget appBar() {
@@ -63,22 +94,6 @@ class _SearchPageState extends State<SearchPage> {
         setSearch: (value) => controller.search.value = value,
       ),
     );
-  }
-
-  void ensureIsFirst() {
-    Navigator.of(context).popUntil((route) => route.isFirst);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    controller.search.addListener(ensureIsFirst);
-  }
-
-  @override
-  void dispose() {
-    controller.search.removeListener(ensureIsFirst);
-    super.dispose();
   }
 
   @override
@@ -149,6 +164,7 @@ class _SearchPageState extends State<SearchPage> {
                       itemBuilder: (context, item, index) => PostTile(
                         post: item,
                         hero: '${hero}_${item.id}',
+                        controller: controller,
                         onPressed: () =>
                             Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute(
@@ -156,6 +172,7 @@ class _SearchPageState extends State<SearchPage> {
                               post: controller.itemList![index],
                               hero: '${hero}_${item.id}',
                               onSearch: widget.onSearch ?? defaultOnSearch,
+                              controller: controller,
                             ),
                           ),
                         ),

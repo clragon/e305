@@ -9,6 +9,8 @@ import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/posts/widgets/tile.dart';
 import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/settings/data/settings.dart';
+import 'package:e305/tags/data/controller.dart';
+import 'package:e305/tags/data/post.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -24,9 +26,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  RecommendationStatus recommendationStatus = RecommendationStatus.insufficient;
+  RecommendationStatus recommendationStatus = RecommendationStatus.loading;
 
-  PostController controller = PostController(search: 'score:>=20');
+  RecommendationController controller =
+      RecommendationController(search: 'score:>=20', sort: true);
   PageController pageController = PageController();
   String hero = 'home_screen_${UniqueKey()}';
 
@@ -51,10 +54,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> initializeFavs() async {
+    List<SlimPost>? favs = await favoriteDatabase.getFavorites();
+    setState(() {
+      if (favs == null) {
+        recommendationStatus = RecommendationStatus.anonymous;
+      } else if (favs.length < 200) {
+        recommendationStatus = RecommendationStatus.insufficient;
+      } else {
+        recommendationStatus = RecommendationStatus.functional;
+      }
+      controller.favs.value = favs;
+      controller.search.value = 'order:random';
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     settings.credentials.addListener(updateLogin);
+    initializeFavs();
   }
 
   @override
@@ -76,7 +95,7 @@ class _HomePageState extends State<HomePage> {
               pagingController: controller,
               builderDelegate: PagedChildBuilderDelegate(
                 itemBuilder: (context, Post item, index) => PostPageTile(
-                  size: constraints.biggest,
+                  controller: controller,
                   post: controller.itemList![index],
                   hero: '${hero}_${controller.itemList![index].id}',
                   onTap: () => Navigator.of(context, rootNavigator: true).push(
@@ -85,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                         post: controller.itemList![index],
                         hero: '${hero}_${controller.itemList![index].id}',
                         onSearch: onSearch,
+                        controller: controller,
                       ),
                     ),
                   ),
@@ -144,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                         return SafeCrossFade(
                           showChild: true,
                           builder: (context) => RecommendationInfo(
-                            status: RecommendationStatus.anonymous,
+                            status: recommendationStatus,
                           ),
                         );
                       },
@@ -164,7 +184,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SmartRefresher(
         controller: controller.refreshController,
-        onRefresh: () => controller.refresh(background: true),
+        onRefresh: () {
+          controller.refresh(background: true);
+          pageController.animateToPage(0,
+              curve: Curves.easeOut, duration: defaultAnimationDuration);
+        },
         child: body(),
       ),
     );
@@ -213,8 +237,8 @@ class RecommendationInfo extends StatelessWidget {
         title = 'Recommendations with Favorites';
         desc =
             'Your recommendations are based on your most recent up to 1200 favorites. '
-            'New posts from the site are fetched and sorted by correlation score. '
-            'The highest scoring posts are then displayed here. ';
+            'Random posts from the site are fetched and sorted by correlation score. '
+            '\nRefresh to get new posts. ';
         break;
     }
 

@@ -1,4 +1,5 @@
 import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/tags/widgets/body.dart';
 import 'package:expandable/expandable.dart';
@@ -10,8 +11,13 @@ class TagDisplay extends StatelessWidget {
   final Post post;
   final bool? expanded;
   final SearchCallback onSearch;
+  final PostController? postController;
 
-  const TagDisplay({required this.post, this.expanded, required this.onSearch});
+  const TagDisplay(
+      {required this.post,
+      this.expanded,
+      required this.onSearch,
+      this.postController});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +37,7 @@ class TagDisplay extends StatelessWidget {
         expanded: TagBody(
           post: post,
           onSearch: onSearch,
+          controller: postController,
         ),
       ),
     );

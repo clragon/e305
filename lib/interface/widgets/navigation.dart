@@ -22,7 +22,7 @@ class _NavigationPageState extends State<NavigationPage> {
   PersistentTabController controller = PersistentTabController();
   Timer? exitResetTimer;
   bool willExit = false;
-  PostController postController = PostController();
+  RecommendationController postController = RecommendationController();
 
   @override
   void dispose() {

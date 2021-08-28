@@ -16,7 +16,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   settings.theme.addListener(updateTheme);
   await updateTheme();
-  ErrorWidget.builder = (FlutterErrorDetails details) => DefaultErrorWidget();
+  // ErrorWidget.builder = (FlutterErrorDetails details) => DefaultErrorWidget();
   runApp(App());
 }
 

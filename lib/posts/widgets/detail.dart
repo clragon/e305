@@ -2,6 +2,7 @@ import 'package:e305/client/data/client.dart';
 import 'package:e305/client/models/post.dart';
 import 'package:e305/comments/widgets/body.dart';
 import 'package:e305/interface/widgets/appbar.dart';
+import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/data/image.dart';
 import 'package:e305/posts/widgets/detail/artists.dart';
 import 'package:e305/posts/widgets/detail/image.dart';
@@ -23,8 +24,10 @@ class PostDetail extends StatefulWidget {
   final SearchCallback onSearch;
   final String? hero;
   final Post post;
+  final PostController? controller;
 
-  const PostDetail({required this.post, this.hero, required this.onSearch});
+  const PostDetail(
+      {required this.post, this.hero, required this.onSearch, this.controller});
 
   @override
   _PostDetailState createState() => _PostDetailState();
@@ -121,21 +124,22 @@ class _PostDetailState extends State<PostDetail> {
                       Divider(),
                       InteractionDisplay(post: widget.post),
                       Divider(),
+                      DescriptionDisplay(
+                        post: widget.post,
+                        expanded: expanded,
+                      ),
+                      // no divider here
                       RelationDisplay(
                         post: widget.post,
                         expanded: expanded,
                         onSearch: widget.onSearch,
                       ),
                       // no divider here
-                      DescriptionDisplay(
-                        post: widget.post,
-                        expanded: expanded,
-                      ),
-                      // no divider here
                       TagDisplay(
                         post: widget.post,
                         expanded: expanded,
                         onSearch: widget.onSearch,
+                        postController: widget.controller,
                       ),
                       Divider(),
                       FileDisplay(post: widget.post, expanded: expanded),

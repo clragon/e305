@@ -38,6 +38,7 @@ Map<String, double> defaultWeights = {
   'species': 1,
   'character': 5,
   'artist': 6,
+  'meta': 0.5,
 };
 
 List<ScoredTag> createScoreTable(List<CountedTag> counts,
@@ -78,7 +79,7 @@ List<ScoredTag> createScoreTable(List<CountedTag> counts,
 
 double scoreItem<T>(List<ScoredTag> scores, T item,
     List<String> Function(T element, String category) getCategory,
-    {int cap = 10}) {
+    {int? cap}) {
   List<double> values = [];
   for (String category in categories.keys) {
     for (String tag in getCategory(item, category)) {
@@ -94,7 +95,9 @@ double scoreItem<T>(List<ScoredTag> scores, T item,
   }
 
   values.sort((a, b) => b.compareTo(a));
-  values = values.take(cap).toList();
+  if (cap != null) {
+    values = values.take(cap).toList();
+  }
 
   double value =
       values.fold(0, (previousValue, element) => previousValue + element);
@@ -102,7 +105,7 @@ double scoreItem<T>(List<ScoredTag> scores, T item,
   return value;
 }
 
-ScoredPost scoreSlim(List<ScoredTag> scores, SlimPost post, {int cap = 10}) {
+ScoredPost scoreSlim(List<ScoredTag> scores, SlimPost post, {int? cap}) {
   double value = scoreItem<SlimPost>(
     scores,
     post,
@@ -117,7 +120,7 @@ ScoredPost scoreSlim(List<ScoredTag> scores, SlimPost post, {int cap = 10}) {
   );
 }
 
-double scorePost(List<ScoredTag> scores, Post post, {int cap = 10}) {
+double scorePost(List<ScoredTag> scores, Post post, {int? cap}) {
   return scoreItem<Post>(
       scores, post, (element, category) => element.tags[category]!,
       cap: cap);

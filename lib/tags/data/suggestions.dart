@@ -20,15 +20,29 @@ List<CountedTag> getRecommendedTags(List<SlimPost> posts, {int? threshold}) {
 }
 
 Future<Map<Post, double>> ratePosts(List<SlimPost> favs, List<Post> posts,
-    {Map<String, double>? weights}) async {
+    {bool sort = true, Map<String, double>? weights}) async {
   List<CountedTag> counts = countTagsBySlims(favs);
   List<ScoredTag> scores = createScoreTable(counts, weigths: weights);
   List<MapEntry<Post, double>> unsorted = [];
+
+  List<int> tagCounts = posts
+      .map((e) => e.tags.values.fold<int>(
+          0, (previousValue, element) => previousValue + element.length))
+      .toList();
+  tagCounts.sort();
+
+  int? median;
+  if (tagCounts.isNotEmpty) {
+    median = tagCounts[(tagCounts.length * 0.75).floor()];
+  }
+
   for (Post post in posts) {
-    double value = scorePost(scores, post);
+    double value = scorePost(scores, post, cap: median);
     unsorted.add(MapEntry(post, value));
   }
-  unsorted.sort((a, b) => b.value.compareTo(a.value));
+  if (sort) {
+    unsorted.sort((a, b) => b.value.compareTo(a.value));
+  }
 
   Map<Post, double> scored = {};
   scored.addEntries(unsorted);

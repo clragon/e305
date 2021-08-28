@@ -29,7 +29,7 @@ class Post {
 
   int id;
   DateTime createdAt;
-  DateTime updatedAt;
+  DateTime? updatedAt;
   FileClass file;
   Preview preview;
   Sample sample;
@@ -51,6 +51,8 @@ class Post {
   bool hasNotes;
   double? duration;
 
+  double? recommendationValue;
+
   factory Post.fromJson(String str) => Post.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
@@ -58,7 +60,9 @@ class Post {
   factory Post.fromMap(Map json) => Post(
         id: json["id"],
         createdAt: DateTime.parse(json["created_at"]),
-        updatedAt: DateTime.parse(json["updated_at"]),
+        updatedAt: json["updated_at"] == null
+            ? null
+            : DateTime.parse(json["updated_at"]),
         file: FileClass.fromMap(json["file"]),
         preview: Preview.fromMap(json["preview"]),
         sample: Sample.fromMap(json["sample"]),
@@ -85,7 +89,7 @@ class Post {
   Map<String, dynamic> toMap() => {
         "id": id,
         "created_at": createdAt.toIso8601String(),
-        "updated_at": updatedAt.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
         "file": file.toMap(),
         "preview": preview.toMap(),
         "sample": sample.toMap(),
@@ -99,13 +103,13 @@ class Post {
         "sources": List<dynamic>.from(sources.map((x) => x)),
         "pools": List<dynamic>.from(pools.map((x) => x)),
         "relationships": relationships.toMap(),
-        "approver_id": approverId == null ? null : approverId,
+        "approver_id": approverId,
         "uploader_id": uploaderId,
         "description": description,
         "comment_count": commentCount,
         "is_favorited": isFavorited,
         "has_notes": hasNotes,
-        "duration": duration == null ? null : duration,
+        "duration": duration,
       };
 }
 
