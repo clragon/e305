@@ -17,7 +17,7 @@ jobs:
       with:
         channel: 'beta' 
         
-    - run: flutter build ios
+    - run: flutter build ios --no-codesign
     
     - run: |
         cd build/ios/iphoneos
