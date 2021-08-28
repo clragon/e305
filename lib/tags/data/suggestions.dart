@@ -20,32 +20,56 @@ List<CountedTag> getRecommendedTags(List<SlimPost> posts, {int? threshold}) {
 }
 
 Future<Map<Post, double>> ratePosts(List<SlimPost> favs, List<Post> posts,
-    {bool sort = true, Map<String, double>? weights}) async {
+    {Map<String, double>? weights}) async {
   List<CountedTag> counts = countTagsBySlims(favs);
   List<ScoredTag> scores = createScoreTable(counts, weigths: weights);
-  List<MapEntry<Post, double>> unsorted = [];
+  List<MapEntry<Post, List<ScoredTag>>> uncapped = [];
 
-  List<int> tagCounts = posts
-      .map((e) => e.tags.values.fold<int>(
-          0, (previousValue, element) => previousValue + element.length))
-      .toList();
-  tagCounts.sort();
+  for (Post post in posts) {
+    List<ScoredTag> scored = scorePost(scores, post);
+    uncapped.add(MapEntry(post, scored));
+  }
 
   int? median;
+  List<int> tagCounts = uncapped.map((e) => e.value.length).toList();
+  tagCounts.sort((a, b) => b.compareTo(a));
   if (tagCounts.isNotEmpty) {
     median = tagCounts[(tagCounts.length * 0.75).floor()];
   }
 
-  for (Post post in posts) {
-    double value = scorePost(scores, post, cap: median);
-    unsorted.add(MapEntry(post, value));
-  }
-  if (sort) {
-    unsorted.sort((a, b) => b.value.compareTo(a.value));
+  List<MapEntry<Post, double>> unsorted = [];
+  List<MapEntry<Post, List<ScoredTag>>> capped = [];
+
+  if (median != null) {
+    for (MapEntry<Post, List<ScoredTag>> element in uncapped) {
+      capped.add(MapEntry(element.key, element.value.take(median).toList()));
+    }
+  } else {
+    capped = uncapped;
   }
 
+  for (MapEntry<Post, List<ScoredTag>> element in capped) {
+    unsorted.add(
+      MapEntry(
+        element.key,
+        element.value.fold(
+          0,
+          (previousValue, element) =>
+              previousValue + (element.score * element.weigth),
+        ),
+      ),
+    );
+  }
+
+  Map<Post, List<ScoredTag>> tagged = {};
+  tagged.addEntries(capped);
   Map<Post, double> scored = {};
   scored.addEntries(unsorted);
+
+  for (Post post in posts) {
+    post.recommendationValue = scored[post];
+    post.recommendedTags = tagged[post];
+  }
 
   return scored;
 }

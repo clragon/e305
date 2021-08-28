@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'detail/description.dart';
 import 'detail/file.dart';
+import 'detail/recommendation.dart';
 
 class PostDetail extends StatefulWidget {
   final SearchCallback onSearch;
@@ -124,6 +125,12 @@ class _PostDetailState extends State<PostDetail> {
                       Divider(),
                       InteractionDisplay(post: widget.post),
                       Divider(),
+                      RecommendationDisplay(
+                        post: widget.post,
+                        controller: widget.controller,
+                        onSearch: widget.onSearch,
+                        expanded: expanded,
+                      ),
                       DescriptionDisplay(
                         post: widget.post,
                         expanded: expanded,
@@ -139,7 +146,6 @@ class _PostDetailState extends State<PostDetail> {
                         post: widget.post,
                         expanded: expanded,
                         onSearch: widget.onSearch,
-                        postController: widget.controller,
                       ),
                       Divider(),
                       FileDisplay(post: widget.post, expanded: expanded),

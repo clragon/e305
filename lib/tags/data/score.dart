@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:e305/client/models/post.dart';
 import 'package:e305/tags/data/post.dart';
 
@@ -61,13 +62,13 @@ List<ScoredTag> createScoreTable(List<CountedTag> counts,
   for (CountedTag tag in counts) {
     double score = (tag.count - bottom) / range;
     score = curve(score);
-    score = score * ((weigths ?? defaultWeights)[tag.category] ?? 1);
+    double weight = ((weigths ?? defaultWeights)[tag.category] ?? 1);
     scores.add(ScoredTag(
       tag: tag.tag,
       category: tag.category,
       count: tag.count,
       score: score,
-      weigth: 1,
+      weigth: weight,
     ));
   }
 
@@ -77,51 +78,46 @@ List<ScoredTag> createScoreTable(List<CountedTag> counts,
   return scores;
 }
 
-double scoreItem<T>(List<ScoredTag> scores, T item,
-    List<String> Function(T element, String category) getCategory,
-    {int? cap}) {
-  List<double> values = [];
+List<ScoredTag> scoreItem<T>(List<ScoredTag> scores, T item,
+    List<String> Function(T element, String category) getCategory) {
+  List<ScoredTag> applied = [];
   for (String category in categories.keys) {
     for (String tag in getCategory(item, category)) {
-      try {
-        ScoredTag scored = scores.firstWhere(
-          (element) => element.tag == tag,
-        );
-        values.add((scored.score * scored.weigth));
-      } on StateError {
-        continue;
+      ScoredTag? scored = scores.singleWhereOrNull(
+        (element) => element.tag == tag,
+      );
+      if (scored != null) {
+        applied.add(scored);
       }
     }
   }
 
-  values.sort((a, b) => b.compareTo(a));
-  if (cap != null) {
-    values = values.take(cap).toList();
-  }
+  applied.sort((a, b) => (b.score * b.weigth).compareTo((a.score * a.weigth)));
 
-  double value =
-      values.fold(0, (previousValue, element) => previousValue + element);
-
-  return value;
+  return applied;
 }
 
 ScoredPost scoreSlim(List<ScoredTag> scores, SlimPost post, {int? cap}) {
-  double value = scoreItem<SlimPost>(
+  List<ScoredTag> scored = scoreItem<SlimPost>(
     scores,
     post,
     (element, category) => element.tags[category]!,
-    cap: cap,
+  );
+
+  double score = scored.fold(
+    0,
+    (previousValue, element) =>
+        previousValue + (element.score * element.weigth),
   );
 
   return ScoredPost(
     id: post.id,
     tags: post.tags,
-    score: value,
+    score: score,
   );
 }
 
-double scorePost(List<ScoredTag> scores, Post post, {int? cap}) {
+List<ScoredTag> scorePost(List<ScoredTag> scores, Post post, {int? cap}) {
   return scoreItem<Post>(
-      scores, post, (element, category) => element.tags[category]!,
-      cap: cap);
+      scores, post, (element, category) => element.tags[category]!);
 }

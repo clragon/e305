@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:e305/client/models/post.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:flutter/material.dart';
@@ -54,24 +52,57 @@ class PostTileOverlay extends StatelessWidget {
 class PostScoreOverly extends StatelessWidget {
   final Post post;
   final PostController controller;
+  final bool exact;
 
-  const PostScoreOverly({required this.post, required this.controller});
+  const PostScoreOverly(
+      {required this.post, required this.controller, this.exact = true});
 
   @override
   Widget build(BuildContext context) {
-    if (post.recommendationValue == null) {
+    if (post.recommendationValue == null ||
+        !(controller is RecommendationController)) {
       return SizedBox.shrink();
     }
 
-    double maxScore = 0;
-    for (Post post in controller.itemList!) {
-      maxScore = max(post.recommendationValue!, maxScore);
+    double maxScore = (controller as RecommendationController).maxScore();
+    double relativeScore = 1 / maxScore * post.recommendationValue!;
+
+    if (exact) {
+      return ScoreMeterOverlay(
+          score: post.recommendationValue!, relativeScore: relativeScore);
     }
 
-    // 1 / maxScore *
+    if (relativeScore > 0.75) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.black26,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(4),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8),
+          child: Icon(
+            FontAwesomeIcons.solidStar,
+            size: 20,
+            color: Color.fromARGB(255, 255, 215, 0),
+          ),
+        ),
+      );
+    } else {
+      return SizedBox.shrink();
+    }
+  }
+}
 
-    String displayScore = (post.recommendationValue!).toStringAsFixed(2);
+class ScoreMeterOverlay extends StatelessWidget {
+  final double score;
+  final double relativeScore;
 
+  const ScoreMeterOverlay({required this.score, required this.relativeScore});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.black26,
@@ -82,12 +113,12 @@ class PostScoreOverly extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8),
             child: SizedBox(
               height: 20,
               width: 20,
               child: Text(
-                displayScore,
+                score.toStringAsFixed(2),
               ),
             ),
           ),
@@ -108,9 +139,9 @@ class PostScoreOverly extends StatelessWidget {
               width: 4,
               child: FractionallySizedBox(
                 alignment: Alignment.bottomCenter,
-                heightFactor: ((1 / maxScore) * post.recommendationValue!),
+                heightFactor: relativeScore,
                 child: Container(
-                  color: Theme.of(context).accentColor,
+                  color: Color.fromARGB(255, 255, 215, 0),
                   width: 4,
                 ),
               ),

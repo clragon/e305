@@ -1,42 +1,18 @@
-import 'package:collection/collection.dart';
 import 'package:e305/client/models/post.dart';
-import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/search.dart';
-import 'package:e305/tags/data/count.dart';
-import 'package:e305/tags/data/score.dart';
 import 'package:flutter/material.dart';
 
-class TagBody extends StatefulWidget {
+class TagBody extends StatelessWidget {
   final Post post;
   final SearchCallback? onSearch;
-  final PostController? controller;
 
-  const TagBody({required this.post, this.onSearch, this.controller});
-
-  @override
-  _TagBodyState createState() => _TagBodyState();
-}
-
-class _TagBodyState extends State<TagBody> {
-  List<ScoredTag>? scores;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.controller != null &&
-        widget.controller is RecommendationController &&
-        (widget.controller as RecommendationController).favs.value != null) {
-      List<CountedTag> counts = countTagsBySlims(
-          (widget.controller as RecommendationController).favs.value!);
-      scores = createScoreTable(counts);
-    }
-  }
+  const TagBody({required this.post, this.onSearch});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: (widget.post.tags.entries
+      children: (post.tags.entries
           .where((category) => category.value.isNotEmpty)
           .map<Widget>(
             (category) => Row(
@@ -58,42 +34,20 @@ class _TagBodyState extends State<TagBody> {
                         ),
                       ),
                       Wrap(
-                        children: category.value.map(
-                          (tag) {
-                            double? score = scores
-                                ?.singleWhereOrNull(
-                                    (element) => element.tag == tag)
-                                ?.score;
-
-                            return Card(
-                              child: InkWell(
-                                onTap: () => widget.onSearch?.call(tag),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 4, vertical: 2),
-                                      child: Text(tag),
-                                    ),
-                                    if (score != null) ...[
-                                      Container(
-                                        color: Theme.of(context).dividerColor,
-                                        width: 2,
-                                        height: 14,
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 4, vertical: 2),
-                                        child: Text(score.toStringAsFixed(4)),
-                                      ),
-                                    ],
-                                  ],
+                        children: category.value
+                            .map(
+                              (tag) => Card(
+                                child: InkWell(
+                                  onTap: () => onSearch?.call(tag),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 4, vertical: 2),
+                                    child: Text(tag),
+                                  ),
                                 ),
                               ),
-                            );
-                          },
-                        ).toList(),
+                            )
+                            .toList(),
                       ),
                     ],
                   ),

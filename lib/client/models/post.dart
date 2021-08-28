@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:e305/tags/data/score.dart';
+
 class Post {
   Post({
     required this.id,
@@ -52,6 +54,7 @@ class Post {
   double? duration;
 
   double? recommendationValue;
+  List<ScoredTag>? recommendedTags;
 
   factory Post.fromJson(String str) => Post.fromMap(json.decode(str));
 

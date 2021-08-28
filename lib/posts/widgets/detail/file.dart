@@ -58,9 +58,10 @@ class FileDisplay extends StatelessWidget {
         ),
         expanded: Column(
           children: [
-            infoDisplay(FontAwesomeIcons.fingerprint, 'id', post.id.toString()),
+            infoDisplay(FontAwesomeIcons.fingerprint, 'id', '#${post.id}'),
             infoDisplay(
                 FontAwesomeIcons.shieldAlt, 'rating', ratingMap[post.rating]!),
+            infoDisplay(FontAwesomeIcons.archive, 'type', '.${post.file.ext}'),
             infoDisplay(FontAwesomeIcons.cropAlt, 'dimensions',
                 '${post.file.width}x${post.file.height}'),
             infoDisplay(

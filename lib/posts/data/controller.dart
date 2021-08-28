@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:e305/client/data/client.dart';
 import 'package:e305/client/models/post.dart';
 import 'package:e305/interface/data/paging.dart';
@@ -35,16 +37,23 @@ class RecommendationController extends PostController {
   Future<List<Post>> provide(int page) async {
     List<Post> posts = await client.posts(search.value, page);
     if (favs.value != null) {
-      Map<Post, double> scores =
-          await ratePosts(favs.value!, posts, sort: sort);
-      List<Post> scored = scores.entries.map((e) {
-        e.key.recommendationValue = e.value;
-        return e.key;
-      }).toList();
-      return scored;
-    } else {
-      return posts;
+      await ratePosts(favs.value!, posts);
+      posts.sort(
+          (a, b) => b.recommendationValue!.compareTo(a.recommendationValue!));
     }
+    return posts;
+  }
+}
+
+extension scores on RecommendationController {
+  double maxScore() {
+    double maxScore = 0;
+    if (itemList != null) {
+      for (Post post in itemList!) {
+        maxScore = max(post.recommendationValue!, maxScore);
+      }
+    }
+    return maxScore;
   }
 }
 

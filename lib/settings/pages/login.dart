@@ -102,49 +102,53 @@ class _LoginPageState extends State<LoginPage> {
                 child: Builder(
                   builder: (context) => Row(
                     mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      SizedBox(
-                        width: 70,
-                        height: 30,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).accentColor,
-                            ),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                            Theme.of(context).accentColor,
                           ),
-                          child: Text(
-                            'LOGIN',
-                            style: Theme.of(context).accentTextTheme.button,
-                          ),
-                          onPressed: () async {
-                            FormState form = Form.of(context)!..save();
-                            if (form.validate()) {
-                              showDialog(
-                                context: context,
-                                builder: (context) => LoginDialog(
-                                  username: username!,
-                                  apiKey: apiKey!,
-                                  onResult: (value) {
-                                    if (value) {
-                                      widget.onSuccess?.call();
-                                    } else {
-                                      setState(() {
-                                        authFailed = true;
-                                      });
-                                      form.validate();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        duration: Duration(seconds: 3),
-                                        content: Text('Failed to login. '
-                                            'Check your network connection and login details'),
-                                      ));
-                                    }
-                                  },
-                                ),
-                              );
-                            }
-                          },
                         ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'LOGIN',
+                                style: Theme.of(context).accentTextTheme.button,
+                              ),
+                            ),
+                          ],
+                        ),
+                        onPressed: () async {
+                          FormState form = Form.of(context)!..save();
+                          if (form.validate()) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => LoginDialog(
+                                username: username!,
+                                apiKey: apiKey!,
+                                onResult: (value) {
+                                  if (value) {
+                                    widget.onSuccess?.call();
+                                  } else {
+                                    setState(() {
+                                      authFailed = true;
+                                    });
+                                    form.validate();
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      duration: Duration(seconds: 3),
+                                      content: Text('Failed to login. '
+                                          'Check your network connection and login details'),
+                                    ));
+                                  }
+                                },
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
