@@ -23,7 +23,7 @@ jobs:
         cd build/ios/iphoneos
         mkdir Payload
         mv Runner.app Payload/Runner.app
-        zip -9 -r e1547.zip Payload
+        zip -9 -r e305.zip Payload
         mv e305.zip ../../../e305.ipa
     
     # Upload generated apk to the artifacts.
