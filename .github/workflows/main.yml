@@ -1,11 +1,10 @@
 name: Flutter CI
 
-# This workflow is triggered on pushes to the repository.
 
 on:
-  push:
-    branches:
-    - master
+  release:
+    types: [ published ]
+
     
 jobs:
   ios-build:
@@ -31,6 +30,16 @@ jobs:
       with:
         name: release-ios
         path: e305.ipa
+        
+    - name: Upload the release assets — iOS file
+      uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: e305.ipa
+        asset_name: e305.ipa
+        asset_content_type: application/octet-stream
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
   android-build:
     # This job will run on ubuntu virtual machine
@@ -58,3 +67,13 @@ jobs:
       with:
         name: release-apk
         path: build/app/outputs/apk/release/app-release.apk
+      
+    - name: Upload the release assets — iOS file
+      uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: build/app/outputs/apk/release/app-release.apk
+        asset_name: e305.apk
+        asset_content_type: application/java-archive
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
