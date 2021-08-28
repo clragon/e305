@@ -8,7 +8,7 @@ on:
     - master
     
 jobs:
-  macos-build:
+  ios-build:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1 
