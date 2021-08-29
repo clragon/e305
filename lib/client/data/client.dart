@@ -35,6 +35,7 @@ class Client {
 
   Future<bool> initialize() async {
     Future<bool> init() async {
+      _avatar = null;
       Credentials? credentials = await settings.credentials.value;
       dio = Dio(
         BaseOptions(
@@ -60,7 +61,6 @@ class Client {
         }
         return true;
       } else {
-        _avatar = null;
         return false;
       }
     }

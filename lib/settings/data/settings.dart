@@ -32,8 +32,9 @@ class Persistence {
     });
     theme = createStringSetting<AppTheme>('theme',
         initial: themeMap.keys.first, values: AppTheme.values);
-    safe = createSetting<bool>('followsSplit', initial: true);
+    safe = createSetting<bool>('safe', initial: true);
     expanded = createSetting<bool>('expandDetails', initial: false);
+    blacklist = createSetting<List<String>>('blacklist', initial: []);
   }
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
@@ -50,6 +51,8 @@ class Persistence {
       SharedPreferences prefs = await _prefs;
       T? value;
       if (getSetting == null) {
+        // this will not work with T? (String?, bool?, int?...)
+        // if type is nullable, custom read and write have to be specificed
         switch (T) {
           case String:
             value = prefs.getString(key) as T?;
@@ -75,6 +78,8 @@ class Persistence {
       SharedPreferences prefs = await _prefs;
       T value = await setting.value;
       if (setSetting == null) {
+        // this will not work with T? (String?, bool?, int?...)
+        // if type is nullable, custom read and write have to be specificed
         switch (T) {
           case String:
             prefs.setString(key, value as String);

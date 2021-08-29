@@ -16,22 +16,23 @@ class _ProfileDetailState extends State<ProfileDetail> {
         backgroundColor: Colors.transparent,
       ),
       body: Center(
-          child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Icon(
-              FontAwesomeIcons.tools,
-              size: 20,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Icon(
+                FontAwesomeIcons.tools,
+                size: 20,
+              ),
             ),
-          ),
-          Text(
-            'Uhh... this is awkward.\nWe arent done with this screen yet!',
-            textAlign: TextAlign.center,
-          ),
-        ],
-      )),
+            Text(
+              'Uhh... this is awkward.\nWe arent done with this screen yet!',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

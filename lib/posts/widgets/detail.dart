@@ -4,11 +4,6 @@ import 'package:e305/comments/widgets/body.dart';
 import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/data/image.dart';
-import 'package:e305/posts/widgets/detail/artists.dart';
-import 'package:e305/posts/widgets/detail/image.dart';
-import 'package:e305/posts/widgets/detail/interactions.dart';
-import 'package:e305/posts/widgets/detail/relations.dart';
-import 'package:e305/posts/widgets/detail/tags.dart';
 import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:expandable/expandable.dart';
@@ -17,9 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'detail/artists.dart';
 import 'detail/description.dart';
 import 'detail/file.dart';
+import 'detail/image.dart';
+import 'detail/interactions.dart';
 import 'detail/recommendation.dart';
+import 'detail/relations.dart';
+import 'detail/tags.dart';
 
 class PostDetail extends StatefulWidget {
   final SearchCallback onSearch;

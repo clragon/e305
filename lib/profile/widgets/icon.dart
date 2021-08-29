@@ -17,7 +17,8 @@ class _ProfileButtonState extends State<ProfileButton> {
   String? avatar;
 
   Future<void> updateAvatar() async {
-    client.avatar.then((value) => setState(() => avatar = value));
+    avatar = await client.avatar;
+    setState(() {});
   }
 
   @override
@@ -49,13 +50,15 @@ class _ProfileButtonState extends State<ProfileButton> {
                 size: 16,
               ),
             ),
-      onPressed: () {
-        Navigator.of(context, rootNavigator: true).push(
-          MaterialPageRoute(
-            builder: (context) => ProfileDetail(),
-          ),
-        );
-      },
+      onPressed: avatar != null
+          ? () {
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => ProfileDetail(),
+                ),
+              );
+            }
+          : null,
     );
   }
 }

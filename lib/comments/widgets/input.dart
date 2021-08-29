@@ -3,6 +3,7 @@ import 'package:e305/interface/widgets/animation.dart';
 import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CommentInput extends StatefulWidget {
   const CommentInput({Key? key}) : super(key: key);
@@ -39,7 +40,30 @@ class _CommentInputState extends State<CommentInput> {
       builder: (context) => Column(
         children: [
           InkWell(
-            onTap: () {},
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Icon(
+                          FontAwesomeIcons.tools,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                      Text(
+                        'Uhh... this is awkward. This isn\'t implemented yet!',
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
             child: Row(
               children: [
                 IgnorePointer(child: ProfileButton()),

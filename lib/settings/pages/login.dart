@@ -1,5 +1,6 @@
 import 'package:e305/client/data/client.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginPage extends StatefulWidget {
   final Function? onSuccess;
@@ -30,13 +31,23 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Padding(
                 padding: EdgeInsets.all(16),
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.3,
-                  ),
-                  child: Image(
-                    image: AssetImage(
-                      'assets/e6.png',
+                child: GestureDetector(
+                  onTap: () async {
+                    if (username != null) {
+                      launch(
+                          'https://${await client.host}/users/$username/api_key');
+                    } else {
+                      launch('https://${await client.host}');
+                    }
+                  },
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.3,
+                    ),
+                    child: Image(
+                      image: AssetImage(
+                        'assets/e6.png',
+                      ),
                     ),
                   ),
                 ),
@@ -49,10 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'Username',
                   ),
                   autofillHints: [AutofillHints.username],
-                  onSaved: (value) {
-                    authFailed = false;
-                    username = value;
-                  },
+                  onChanged: (value) => username = value,
                   validator: (value) {
                     if (authFailed) {
                       return 'Failed to login. Please check username.';
@@ -73,10 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                     helperText: 'e.g. $apiKeyExample',
                   ),
                   autofillHints: [AutofillHints.password],
-                  onSaved: (value) {
-                    authFailed = false;
-                    apiKey = value;
-                  },
+                  onChanged: (value) => apiKey = value,
                   validator: (value) {
                     if (authFailed) {
                       return 'Failed to login. Please check API key.\n'
@@ -122,6 +127,9 @@ class _LoginPageState extends State<LoginPage> {
                           ],
                         ),
                         onPressed: () async {
+                          setState(() {
+                            authFailed = false;
+                          });
                           FormState form = Form.of(context)!..save();
                           if (form.validate()) {
                             showDialog(

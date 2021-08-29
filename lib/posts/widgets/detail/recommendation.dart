@@ -43,8 +43,8 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
   @override
   Widget build(BuildContext context) {
     if (scores == null ||
-        widget.post.recommendationValue != null ||
-        widget.post.recommendedTags != null) {
+        widget.post.recommendationValue == null ||
+        widget.post.recommendedTags == null) {
       return SizedBox.shrink();
     }
 
