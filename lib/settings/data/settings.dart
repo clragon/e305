@@ -13,6 +13,7 @@ class Persistence {
   late ValueNotifier<Future<AppTheme>> theme;
   late ValueNotifier<Future<bool>> safe;
   late ValueNotifier<Future<bool>> expanded;
+  late ValueNotifier<Future<List<String>>> blacklist;
 
   Persistence() {
     credentials = createSetting<Credentials?>('credentials', initial: null,
