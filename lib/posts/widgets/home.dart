@@ -8,11 +8,11 @@ import 'package:e305/posts/widgets/detail.dart';
 import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/posts/widgets/tile.dart';
 import 'package:e305/profile/widgets/icon.dart';
+import 'package:e305/recommendations/data/updater.dart';
+import 'package:e305/recommendations/widgets/recommendations.dart';
 import 'package:e305/settings/data/settings.dart';
-import 'package:e305/tags/data/controller.dart';
 import 'package:e305/tags/data/post.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -26,8 +26,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  RecommendationStatus recommendationStatus = RecommendationStatus.loading;
-
   RecommendationController controller =
       RecommendationController(search: 'score:>=20', sort: true);
   PageController pageController = PageController();
@@ -55,34 +53,27 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> initializeFavs() async {
-    setState(() {
-      recommendationStatus = RecommendationStatus.loading;
-    });
-    List<SlimPost>? favs = await favoriteDatabase.getFavorites();
-    setState(() {
-      if (favs == null) {
-        recommendationStatus = RecommendationStatus.anonymous;
-      } else if (favs.length < 200) {
-        recommendationStatus = RecommendationStatus.insufficient;
-      } else {
-        recommendationStatus = RecommendationStatus.functional;
-      }
+    controller.favs.value = null;
+    List<SlimPost>? favs = await recommendations.getFavorites();
+    if (favs != null && favs.length > recommendations.required) {
       controller.favs.value = favs;
       controller.search.value = 'order:random';
-    });
+    } else {
+      controller.search.value = 'score:>=20';
+    }
   }
 
   @override
   void initState() {
     super.initState();
     initializeFavs();
-    favoriteDatabase.addListener(initializeFavs);
+    recommendations.database.addListener(initializeFavs);
     settings.credentials.addListener(updateLogin);
   }
 
   @override
   void dispose() {
-    favoriteDatabase.removeListener(initializeFavs);
+    recommendations.removeListener(initializeFavs);
     settings.credentials.removeListener(updateLogin);
     super.dispose();
   }
@@ -163,17 +154,7 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Recommended'),
-                    FutureBuilder<bool>(
-                      future: hasLogin,
-                      builder: (context, snapshot) {
-                        return SafeCrossFade(
-                          showChild: true,
-                          builder: (context) => RecommendationInfo(
-                            status: recommendationStatus,
-                          ),
-                        );
-                      },
-                    ),
+                    RecommendationInfo(),
                   ],
                 ),
               ),
@@ -195,96 +176,6 @@ class _HomePageState extends State<HomePage> {
               curve: Curves.easeOut, duration: defaultAnimationDuration);
         },
         child: body(),
-      ),
-    );
-  }
-}
-
-enum RecommendationStatus { loading, anonymous, insufficient, functional }
-
-class RecommendationInfo extends StatelessWidget {
-  final RecommendationStatus status;
-
-  const RecommendationInfo({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    String title;
-    String desc;
-    String hint;
-
-    switch (status) {
-      case RecommendationStatus.loading:
-        hint = 'Fetching recommendations';
-        title = 'We are loading recommendations for you';
-        desc = 'An explanation will be displayed here shortly!';
-        break;
-      case RecommendationStatus.anonymous:
-        hint = 'Using Trending';
-        title = 'Recommendations with Trending';
-        desc =
-            'For the favorite scoring algorithm to be able to recommend posts to you, '
-            'you must be logged in and have to have at least 200 favorite posts. '
-            'Until then, we display trending posts here. '
-            '\nPlease log in to use this functionality!';
-        break;
-      case RecommendationStatus.insufficient:
-        hint = 'Using Trending';
-        title = 'Recommendations with Trending';
-        desc =
-            'For the favorite scoring algorithm to be able to recommend posts to you, '
-            'you must have to have at least 200 favorite posts. '
-            'Until then, we display trending posts here. '
-            '\nGo favorite something!';
-        break;
-      case RecommendationStatus.functional:
-        hint = 'Using Favorites';
-        title = 'Recommendations with Favorites';
-        desc =
-            'Your recommendations are based on your most recent up to 1200 favorites. '
-            'Random posts from the site are fetched and sorted by correlation score. '
-            '\nRefresh to get new posts. ';
-        break;
-    }
-
-    return InkWell(
-      onTap: () {
-        if (status != RecommendationStatus.loading) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(title),
-              content: Text(desc),
-              actions: [
-                TextButton(
-                  onPressed: Navigator.of(context).maybePop,
-                  child: Text('OK'),
-                ),
-              ],
-            ),
-          );
-        }
-      },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            child: Text(
-              hint,
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2)
-                .copyWith(right: 0),
-            child: status == RecommendationStatus.loading
-                ? PulseLoadingIndicator(size: 14)
-                : Icon(
-                    FontAwesomeIcons.infoCircle,
-                    size: 16,
-                  ),
-          ),
-        ],
       ),
     );
   }

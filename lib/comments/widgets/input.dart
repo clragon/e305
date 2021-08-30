@@ -54,9 +54,11 @@ class _CommentInputState extends State<CommentInput> {
                           color: Colors.black,
                         ),
                       ),
-                      Text(
-                        'Uhh... this is awkward. This isn\'t implemented yet!',
-                        textAlign: TextAlign.center,
+                      Flexible(
+                        child: Text(
+                          'Uhh... this is awkward. This isn\'t implemented yet!',
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ],
                   ),

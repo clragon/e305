@@ -4,7 +4,7 @@ import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/detail.dart';
 import 'package:e305/posts/widgets/tile.dart';
-import 'package:e305/tags/data/controller.dart';
+import 'package:e305/recommendations/data/updater.dart';
 import 'package:e305/tags/data/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -43,8 +43,8 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> initializeFavs() async {
     if (controller is RecommendationController) {
       (controller as RecommendationController).favs.value = null;
-      List<SlimPost>? favs = await favoriteDatabase.getFavorites();
-      if (favs != null && favs.length > 200) {
+      List<SlimPost>? favs = await recommendations.getFavorites();
+      if (favs != null && favs.length > recommendations.required) {
         (controller as RecommendationController).favs.value = favs;
       }
     }
@@ -72,13 +72,13 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     initializeFavs();
-    favoriteDatabase.addListener(initializeFavs);
+    recommendations.database.addListener(initializeFavs);
     controller.search.addListener(ensureIsFirst);
   }
 
   @override
   void dispose() {
-    favoriteDatabase.removeListener(initializeFavs);
+    recommendations.database.removeListener(initializeFavs);
     controller.search.removeListener(ensureIsFirst);
     super.dispose();
   }

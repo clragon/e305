@@ -4,10 +4,11 @@ import 'package:e305/client/data/client.dart';
 import 'package:e305/interface/data/theme.dart';
 import 'package:e305/interface/widgets/animation.dart';
 import 'package:e305/interface/widgets/loading.dart';
+import 'package:e305/recommendations/data/updater.dart';
 import 'package:e305/settings/data/info.dart';
 import 'package:e305/settings/data/settings.dart';
+import 'package:e305/settings/pages/blacklist.dart';
 import 'package:e305/settings/pages/login.dart';
-import 'package:e305/tags/data/controller.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -86,12 +87,12 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     Widget bodyWidgetBuilder(BuildContext context) {
-      return Container(
+      return Padding(
         padding: EdgeInsets.all(10.0),
         child: ListView(
           physics: BouncingScrollPhysics(),
           children: [
-            settingsHeader('General'),
+            settingsHeader('Host'),
             SafeCrossFade(
               showChild: safe != null,
               builder: (context) => SwitchListTile(
@@ -123,7 +124,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Center(child: SizedCircularProgressIndicator(size: 32)),
             ),
             Divider(),
-            settingsHeader('Personalization'),
+            settingsHeader('Display'),
             ListTile(
               title: Text('Theme'),
               subtitle: theme != null ? Text(describeEnum(theme!)) : null,
@@ -156,46 +157,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   Center(child: SizedCircularProgressIndicator(size: 32)),
             ),
             Divider(),
-            settingsHeader('Listing'),
-            ListTile(
-              title: Text('Blacklist'),
-              leading: Icon(FontAwesomeIcons.ban),
-              onTap: () => {},
-            ),
-            Divider(),
-            settingsHeader('Account'),
+            settingsHeader('User'),
             FutureBuilder(
               future: hasLogin,
               builder: (context, AsyncSnapshot<bool?> snapshot) => CrossFade(
                 showChild: snapshot.connectionState == ConnectionState.done,
                 child: SafeCrossFade(
                   showChild: snapshot.data != null && snapshot.data!,
-                  builder: (context) => Column(
-                    children: [
-                      ListTile(
-                        title: Text('Logout'),
-                        subtitle: Text(username ?? ''),
-                        leading: Icon(FontAwesomeIcons.signOutAlt),
-                        onTap: () => onSignOut(context),
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          FontAwesomeIcons.database,
-                          size: 20,
-                        ),
-                        title: Text('Reset database'),
-                        subtitle: Text('recreate favorite tag database'),
-                        onTap: () async {
-                          await favoriteDatabase.refreshFavorites();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Reset database!'),
-                              duration: Duration(milliseconds: 500),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                  builder: (context) => ListTile(
+                    title: Text('Logout'),
+                    subtitle: Text(username ?? ''),
+                    leading: Icon(FontAwesomeIcons.signOutAlt),
+                    onTap: () => onSignOut(context),
                   ),
                   secondChild: ListTile(
                     title: Text('Login'),
@@ -208,6 +181,85 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                     ),
+                  ),
+                ),
+                secondChild:
+                    Center(child: SizedCircularProgressIndicator(size: 32)),
+              ),
+            ),
+            ListTile(
+              title: Text('Blacklist'),
+              subtitle: Text('Tags you dont want to see'),
+              leading: Icon(FontAwesomeIcons.ban),
+              onTap: () => Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => BlacklistSettings(),
+                ),
+              ),
+            ),
+            FutureBuilder(
+              future: hasLogin,
+              builder: (context, AsyncSnapshot<bool?> snapshot) => CrossFade(
+                showChild: snapshot.connectionState == ConnectionState.done,
+                child: SafeCrossFade(
+                  showChild: snapshot.data != null && snapshot.data!,
+                  builder: (context) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Divider(),
+                      settingsHeader('Recommendations'),
+                      ListTile(
+                        leading: Icon(
+                          FontAwesomeIcons.balanceScaleLeft,
+                          size: 20,
+                        ),
+                        title: Text('Weights'),
+                        subtitle: Text('adjust tag category weights'),
+                        onTap: () async {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(
+                                      FontAwesomeIcons.tools,
+                                      size: 20,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      'Uhh... this is awkward. This isn\'t implemented yet!',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(
+                          FontAwesomeIcons.syncAlt,
+                          size: 20,
+                        ),
+                        title: Text('Reset database'),
+                        subtitle: Text('recreate favorite tag database'),
+                        onTap: () async {
+                          await recommendations.recreate();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Reset database!'),
+                              duration: Duration(milliseconds: 500),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
                 secondChild:

@@ -2,9 +2,9 @@ import 'dart:math';
 
 import 'package:e305/client/data/client.dart';
 import 'package:e305/client/models/post.dart';
-import 'package:e305/interface/data/paging.dart';
+import 'package:e305/interface/data/controller.dart';
+import 'package:e305/recommendations/data/suggestions.dart';
 import 'package:e305/tags/data/post.dart';
-import 'package:e305/tags/data/suggestions.dart';
 import 'package:flutter/material.dart';
 
 class PostController extends DataController<Post>
@@ -38,8 +38,11 @@ class RecommendationController extends PostController {
     List<Post> posts = await client.posts(search.value, page);
     if (favs.value != null) {
       await ratePosts(favs.value!, posts);
-      posts.sort(
-          (a, b) => b.recommendationValue!.compareTo(a.recommendationValue!));
+      if (sort) {
+        posts.sort(
+          (a, b) => b.recommendationValue!.compareTo(a.recommendationValue!),
+        );
+      }
     }
     return posts;
   }

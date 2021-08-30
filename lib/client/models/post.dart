@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:e305/tags/data/score.dart';
+import 'package:e305/recommendations/data/score.dart';
 
 class Post {
   Post({

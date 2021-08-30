@@ -1,5 +1,6 @@
 import 'package:e305/client/models/comment.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timeago/timeago.dart';
 
 class CommentTile extends StatelessWidget {
@@ -12,7 +13,7 @@ class CommentTile extends StatelessWidget {
     Widget picture(Comment comment) {
       return Padding(
         padding: EdgeInsets.only(right: 8, top: 4),
-        child: Icon(Icons.person),
+        child: Icon(FontAwesomeIcons.user),
       );
     }
 
@@ -32,21 +33,23 @@ class CommentTile extends StatelessWidget {
               ),
             ),
           ),
-          Text(
-            () {
-              String time = ' • ${format(comment.createdAt)}';
-              if (comment.createdAt.isAtSameMomentAs(comment.updatedAt)) {
-                time += ' (edited)';
-              }
-              return time;
-            }(),
-            style: TextStyle(
-              color: Theme.of(context)
-                  .textTheme
-                  .bodyText2!
-                  .color!
-                  .withOpacity(0.35),
-              fontSize: 12,
+          Flexible(
+            child: Text(
+              () {
+                String time = ' • ${format(comment.createdAt)}';
+                if (comment.createdAt.isAtSameMomentAs(comment.updatedAt)) {
+                  time += ' (edited)';
+                }
+                return time;
+              }(),
+              style: TextStyle(
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyText2!
+                    .color!
+                    .withOpacity(0.35),
+                fontSize: 12,
+              ),
             ),
           ),
         ],

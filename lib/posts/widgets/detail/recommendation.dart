@@ -1,8 +1,8 @@
 import 'package:e305/client/models/post.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/search.dart';
+import 'package:e305/recommendations/data/score.dart';
 import 'package:e305/tags/data/count.dart';
-import 'package:e305/tags/data/score.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 

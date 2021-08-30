@@ -4,7 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:e305/client/models/post.dart';
 import 'package:e305/tags/data/post.dart';
 
-import 'count.dart';
+import '../../tags/data/count.dart';
 
 class ScoredPost {
   final int id;
@@ -38,8 +38,11 @@ Map<String, double> defaultWeights = {
   'general': 0.5,
   'species': 1,
   'character': 5,
-  'artist': 6,
+  'copyright': 3,
   'meta': 0.5,
+  'lore': 1,
+  'artist': 6,
+  'invalid': 0,
 };
 
 List<ScoredTag> createScoreTable(List<CountedTag> counts,

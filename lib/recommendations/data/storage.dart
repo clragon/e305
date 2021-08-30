@@ -41,27 +41,14 @@ class TagDataBase {
     return TagDataBase.fromJson(File(path).readAsStringSync())..path = path;
   }
 
-  static Future<TagDataBase> create({
+  factory TagDataBase.create({
     String name = '',
-    required PostProvider provide,
+    required List<SlimPost> tags,
     String? path,
     int limit = 1200,
-  }) async {
-    List<SlimPost> slims = [];
-    for (int i = 1; true; i++) {
-      List<SlimPost> posts = (await provide(i)).toSlims();
-      if (posts.isEmpty) {
-        break;
-      }
-      slims.addAll(posts);
-      if (slims.length >= limit) {
-        break;
-      }
-      await Future.delayed(Duration(milliseconds: 500));
-    }
-    return TagDataBase(
-        creation: DateTime.now(), name: name, posts: slims, path: path);
-  }
+  }) =>
+      TagDataBase(
+          creation: DateTime.now(), name: name, posts: tags, path: path);
 
   void write() {
     if (path != null) {

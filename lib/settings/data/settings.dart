@@ -1,7 +1,9 @@
 import 'dart:async' show Future;
+import 'dart:convert';
 
 import 'package:e305/client/data/client.dart';
 import 'package:e305/interface/data/theme.dart';
+import 'package:e305/recommendations/data/score.dart';
 import 'package:flutter/foundation.dart' show ValueNotifier;
 import 'package:shared_preferences/shared_preferences.dart'
     show SharedPreferences;
@@ -14,6 +16,8 @@ class Persistence {
   late ValueNotifier<Future<bool>> safe;
   late ValueNotifier<Future<bool>> expanded;
   late ValueNotifier<Future<List<String>>> blacklist;
+  late ValueNotifier<Future<Map<String, double>>> databaseWeights;
+  late ValueNotifier<Future<int>> databaseSize;
 
   Persistence() {
     credentials = createSetting<Credentials?>('credentials', initial: null,
@@ -36,6 +40,16 @@ class Persistence {
     safe = createSetting<bool>('safe', initial: true);
     expanded = createSetting<bool>('expandDetails', initial: false);
     blacklist = createSetting<List<String>>('blacklist', initial: []);
+    databaseWeights = createSetting<Map<String, double>>('databaseWeights',
+        initial: defaultWeights, getSetting: (prefs, key) async {
+      String? raw = prefs.getString(key);
+      if (raw != null) {
+        return json.decode(raw);
+      }
+    }, setSetting: (prefs, key, value) async {
+      await prefs.setString(key, json.encode(value));
+    });
+    databaseSize = createSetting<int>('databaseSize', initial: 1200);
   }
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();

@@ -1,8 +1,7 @@
 import 'package:e305/client/models/post.dart';
+import 'package:e305/recommendations/data/score.dart';
+import 'package:e305/tags/data/count.dart';
 import 'package:e305/tags/data/post.dart';
-import 'package:e305/tags/data/score.dart';
-
-import 'count.dart';
 
 List<CountedTag> getRecommendedTags(List<SlimPost> posts, {int? threshold}) {
   int limit = threshold ?? 5;
