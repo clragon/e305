@@ -90,6 +90,9 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
                         padding: EdgeInsets.all(8),
                         child: Text(
                           widget.post.recommendationValue!.toStringAsFixed(2),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSecondary,
+                          ),
                         ),
                       ),
                     ),

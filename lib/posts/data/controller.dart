@@ -8,7 +8,11 @@ import 'package:e305/tags/data/post.dart';
 import 'package:flutter/material.dart';
 
 class PostController extends DataController<Post>
-    with SearchableDataMixin, HostableDataMixin, RefreshableDataMixin {
+    with
+        SearchableDataMixin,
+        HostableDataMixin,
+        RefreshableDataMixin,
+        DeniableDataMixin {
   final ValueNotifier<String> search;
 
   PostController({String? search}) : this.search = ValueNotifier(search ?? '');

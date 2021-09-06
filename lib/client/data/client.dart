@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:e305/client/models/comment.dart';
 import 'package:e305/client/models/pool.dart';
 import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/blacklist.dart';
 import 'package:e305/settings/data/info.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -21,8 +22,13 @@ class Client {
 
   Future<bool> safe = settings.safe.value;
   Future<Credentials?> credentials = settings.credentials.value;
+  Future<List<String>> blacklist = settings.blacklist.value;
+  Future<bool> blacklisting = settings.blacklisting.value;
 
   Client() {
+    settings.blacklisting
+        .addListener(() => blacklisting = settings.blacklisting.value);
+    settings.blacklist.addListener(() => blacklist = settings.blacklist.value);
     settings.credentials
         .addListener(() => credentials = settings.credentials.value);
     settings.credentials.addListener(initialize);
@@ -105,15 +111,17 @@ class Client {
       if (await credentials == null) {
         return null;
       }
-      int postID =
+      int postId =
           (await client.user((await credentials)!.username))['avatar_id'];
-      Post post = await client.post(postID);
+      Post post = await client.post(postId);
       _avatar = post.sample.url;
     }
     return _avatar;
   }
 
   Future<List<Post>?> postsFromJson(List json) async {
+    List<String> blacklist = await this.blacklist;
+    bool blacklisting = await this.blacklisting;
     List<Post> posts = [];
     bool hasPosts = false;
     for (Map raw in json) {
@@ -125,6 +133,9 @@ class Client {
       if (['webm', 'mp4', 'swf'].contains(post.file.ext)) {
         continue;
       }
+      if (blacklisting) {
+        post.isBlacklisted = isBlacklisted(blacklist, post);
+      }
       posts.add(post);
     }
     if (hasPosts && posts.isEmpty) {
@@ -133,10 +144,8 @@ class Client {
     return posts;
   }
 
-  Future<List<Post>> posts(String tags, int page,
-      {int? limit, int attempt = 0}) async {
+  Future<List<Post>> posts(String tags, int page, {int? limit}) async {
     await initialized;
-
     Map body = await dio.get(
       'posts.json',
       queryParameters: {
@@ -147,9 +156,7 @@ class Client {
     ).then((response) => response.data);
 
     List<Post>? posts = await postsFromJson(body['posts']);
-    if (posts == null && attempt < 3) {
-      return client.posts(tags, page + 1, attempt: attempt + 1);
-    }
+    posts?.removeWhere((post) => post.isBlacklisted ?? false);
     return posts ?? [];
   }
 

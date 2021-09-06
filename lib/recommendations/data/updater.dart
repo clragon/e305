@@ -11,9 +11,9 @@ import 'package:path_provider/path_provider.dart';
 final Recommendations recommendations = Recommendations();
 
 class Recommendations extends DatabaseUpdater with HostableUpdater {
-  final int required = 1;
+  final int required = 200;
 
-  Recommendations() : super(name: 'favorites', limit: 100);
+  Recommendations() : super(name: 'favorites', limit: 1200);
 
   @override
   Future<String> get path async {

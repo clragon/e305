@@ -53,6 +53,7 @@ class Post {
   bool hasNotes;
   double? duration;
 
+  bool? isBlacklisted;
   double? recommendationValue;
   List<ScoredTag>? recommendedTags;
 

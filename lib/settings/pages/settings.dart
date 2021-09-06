@@ -4,11 +4,14 @@ import 'package:e305/client/data/client.dart';
 import 'package:e305/interface/data/theme.dart';
 import 'package:e305/interface/widgets/animation.dart';
 import 'package:e305/interface/widgets/loading.dart';
+import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/recommendations/data/updater.dart';
+import 'package:e305/recommendations/widgets/recommendations.dart';
 import 'package:e305/settings/data/info.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/settings/pages/blacklist.dart';
 import 'package:e305/settings/pages/login.dart';
+import 'package:e305/tags/data/post.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -24,9 +27,13 @@ class _SettingsPageState extends State<SettingsPage> {
   AppTheme? theme;
   String? username;
   bool? expanded;
+  bool? blacklisting;
+  String? homeTags;
 
   Future<String> host = client.host;
   Future<bool> hasLogin = client.hasLogin;
+
+  Map<ValueNotifier<Future>, void Function()> linked = {};
 
   void linkSetting<T>(ValueNotifier<Future<T>> setting,
       Future<void> Function(T value) assignment) async {
@@ -38,8 +45,27 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     }
 
+    linked.addEntries([MapEntry(setting, setValue)]);
     setting.addListener(setValue);
     await setValue();
+  }
+
+  RecommendationStatus status = RecommendationStatus.loading;
+
+  Future<void> updateStatus() async {
+    setState(() {
+      status = RecommendationStatus.loading;
+    });
+    List<SlimPost>? favs = await recommendations.getFavorites();
+    setState(() {
+      if (favs == null) {
+        status = RecommendationStatus.anonymous;
+      } else if (favs.length < recommendations.required) {
+        status = RecommendationStatus.insufficient;
+      } else {
+        status = RecommendationStatus.functional;
+      }
+    });
   }
 
   @override
@@ -57,9 +83,22 @@ class _SettingsPageState extends State<SettingsPage> {
         host = client.host;
       },
       settings.expanded: (value) async => expanded = value,
+      settings.blacklisting: (value) async => blacklisting = value,
+      settings.homeTags: (value) async => homeTags = value,
     };
 
     links.forEach(linkSetting);
+
+    recommendations.database.addListener(updateStatus);
+    updateStatus();
+  }
+
+  @override
+  void dispose() {
+    linked.forEach((key, value) {
+      key.removeListener(value);
+    });
+    super.dispose();
   }
 
   Future<void> onSignOut(BuildContext context) async {
@@ -96,7 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
             SafeCrossFade(
               showChild: safe != null,
               builder: (context) => SwitchListTile(
-                title: Text('Explicit Content'),
+                title: Text('Explicit content'),
                 subtitle: FutureBuilder(
                   future: host,
                   builder: (context, AsyncSnapshot<String?> snapshot) {
@@ -139,7 +178,7 @@ class _SettingsPageState extends State<SettingsPage> {
             SafeCrossFade(
               showChild: expanded != null,
               builder: (context) => SwitchListTile(
-                title: Text('Expand Details'),
+                title: Text('Expand details'),
                 subtitle: CrossFade(
                   showChild: expanded!,
                   child: Text('expanded post details'),
@@ -150,7 +189,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     : FontAwesomeIcons.compress),
                 value: expanded!,
                 onChanged: (value) async {
-                  settings.expanded.value = Future.value(!expanded!);
+                  settings.expanded.value = Future.value(value);
                 },
               ),
               secondChild:
@@ -169,6 +208,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     subtitle: Text(username ?? ''),
                     leading: Icon(FontAwesomeIcons.signOutAlt),
                     onTap: () => onSignOut(context),
+                    trailing: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: IgnorePointer(
+                        child: ProfileButton(),
+                      ),
+                    ),
                   ),
                   secondChild: ListTile(
                     title: Text('Login'),
@@ -187,15 +232,59 @@ class _SettingsPageState extends State<SettingsPage> {
                     Center(child: SizedCircularProgressIndicator(size: 32)),
               ),
             ),
-            ListTile(
-              title: Text('Blacklist'),
-              subtitle: Text('Tags you dont want to see'),
-              leading: Icon(FontAwesomeIcons.ban),
-              onTap: () => Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(
-                  builder: (context) => BlacklistSettings(),
+            Row(
+              children: [
+                Expanded(
+                  child: ListTile(
+                    title: Text('Blacklist'),
+                    subtitle: Text('tags you dont want to see'),
+                    leading: Icon(FontAwesomeIcons.ban),
+                    onTap: () =>
+                        Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => BlacklistSettings(),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                InkWell(
+                  onTap: () => settings.blacklisting.value =
+                      Future.value(!blacklisting!),
+                  child: SizedBox(
+                    height: 64,
+                    child: Row(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Container(
+                            color: Theme.of(context).dividerColor,
+                            width: 2,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(right: 20),
+                          child: SafeCrossFade(
+                            showChild: blacklisting != null,
+                            builder: (context) => Switch(
+                              value: blacklisting!,
+                              onChanged: (value) async {
+                                settings.blacklisting.value =
+                                    Future.value(value);
+                              },
+                            ),
+                            secondChild: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(4),
+                                child: SizedCircularProgressIndicator(size: 32),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
             FutureBuilder(
               future: hasLogin,
@@ -208,6 +297,30 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Divider(),
                       settingsHeader('Recommendations'),
+                      SafeCrossFade(
+                        showChild: homeTags != null,
+                        builder: (context) => ListTile(
+                          leading: Icon(
+                            FontAwesomeIcons.hashtag,
+                            size: 20,
+                          ),
+                          title: Text('Home tags'),
+                          subtitle: Text(homeTags!),
+                          onTap: () async {
+                            showDialog(
+                              context: context,
+                              builder: (context) => TagChangeDialog(
+                                title: 'Home tags',
+                                onSubmit: (value) => settings.homeTags.value =
+                                    Future.value(value),
+                                controller:
+                                    TextEditingController(text: homeTags),
+                                hint: 'tags',
+                              ),
+                            );
+                          },
+                        ),
+                      ),
                       ListTile(
                         leading: Icon(
                           FontAwesomeIcons.balanceScaleLeft,
@@ -248,16 +361,63 @@ class _SettingsPageState extends State<SettingsPage> {
                           size: 20,
                         ),
                         title: Text('Reset database'),
-                        subtitle: Text('recreate favorite tag database'),
-                        onTap: () async {
-                          await recommendations.recreate();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Reset database!'),
-                              duration: Duration(milliseconds: 500),
-                            ),
-                          );
-                        },
+                        subtitle: () {
+                          switch (status) {
+                            case RecommendationStatus.loading:
+                              return Row(
+                                children: [
+                                  Text('database is being created'),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 4),
+                                    child: PulseLoadingIndicator(size: 14),
+                                  ),
+                                ],
+                              );
+                            case RecommendationStatus.anonymous:
+                              return Text('you are not logged in');
+                            case RecommendationStatus.insufficient:
+                              return Text(
+                                  'you dont have enough favorites.\nclick here after you favorited some posts!');
+                            case RecommendationStatus.functional:
+                              return Text('recreate favorite tag database');
+                          }
+                        }(),
+                        onTap: status != RecommendationStatus.loading
+                            ? () async {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Reset database'),
+                                    content: Text(
+                                        'Are you sure you want to recreate your favorite database?'
+                                        '\nThis should be executed when you have favorited alot of new things.'
+                                        '\nThis action might take a while.'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed:
+                                            Navigator.of(context).maybePop,
+                                        child: Text('CANCEL'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          await recommendations.recreate();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text('Reset database!'),
+                                              duration:
+                                                  Duration(milliseconds: 500),
+                                            ),
+                                          );
+                                        },
+                                        child: Text('OK'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            : null,
                       ),
                     ],
                   ),
@@ -404,6 +564,55 @@ class _VersionDialogState extends State<VersionDialog> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class TagChangeDialog extends StatefulWidget {
+  final void Function(String value) onSubmit;
+  final TextEditingController controller;
+  final String title;
+  final String hint;
+
+  const TagChangeDialog({
+    required this.title,
+    required this.hint,
+    required this.onSubmit,
+    required this.controller,
+  });
+
+  @override
+  _TagChangeDialogState createState() => _TagChangeDialogState();
+}
+
+class _TagChangeDialogState extends State<TagChangeDialog> {
+  void submit() {
+    widget.onSubmit(widget.controller.text.trim());
+    Navigator.of(context).maybePop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: TextField(
+        autofocus: true,
+        controller: widget.controller,
+        onSubmitted: (_) => submit(),
+        decoration: InputDecoration(
+          hintText: widget.hint,
+        ),
+      ),
+      actions: [
+        TextButton(
+          child: Text('CANCEL'),
+          onPressed: Navigator.of(context).maybePop,
+        ),
+        TextButton(
+          child: Text('OK'),
+          onPressed: submit,
+        ),
+      ],
     );
   }
 }

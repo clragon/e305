@@ -13,7 +13,10 @@ class CommentTile extends StatelessWidget {
     Widget picture(Comment comment) {
       return Padding(
         padding: EdgeInsets.only(right: 8, top: 4),
-        child: Icon(FontAwesomeIcons.user),
+        child: Icon(
+          FontAwesomeIcons.user,
+          size: 20,
+        ),
       );
     }
 

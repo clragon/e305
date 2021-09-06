@@ -52,12 +52,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> updateTags() async {
+    controller.search.value = await settings.homeTags.value;
+  }
+
   Future<void> initializeFavs() async {
     controller.favs.value = null;
     List<SlimPost>? favs = await recommendations.getFavorites();
     if (favs != null && favs.length > recommendations.required) {
       controller.favs.value = favs;
-      controller.search.value = 'order:random';
+      await updateTags();
     } else {
       controller.search.value = 'score:>=20';
     }
@@ -69,12 +73,14 @@ class _HomePageState extends State<HomePage> {
     initializeFavs();
     recommendations.database.addListener(initializeFavs);
     settings.credentials.addListener(updateLogin);
+    settings.homeTags.addListener(updateTags);
   }
 
   @override
   void dispose() {
     recommendations.removeListener(initializeFavs);
     settings.credentials.removeListener(updateLogin);
+    settings.homeTags.removeListener(updateTags);
     super.dispose();
   }
 
@@ -170,8 +176,8 @@ class _HomePageState extends State<HomePage> {
       ),
       body: SmartRefresher(
         controller: controller.refreshController,
-        onRefresh: () {
-          controller.refresh(background: true);
+        onRefresh: () async {
+          await controller.refresh(background: true);
           pageController.animateToPage(0,
               curve: Curves.easeOut, duration: defaultAnimationDuration);
         },

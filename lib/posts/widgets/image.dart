@@ -90,6 +90,11 @@ class PostImageOverlay extends StatelessWidget {
         child: Text('video is not supported'),
       );
     }
+    if (post.isBlacklisted ?? false) {
+      return Center(
+        child: Text('post is blacklisted'),
+      );
+    }
     return builder(context);
   }
 }

@@ -16,8 +16,10 @@ class Persistence {
   late ValueNotifier<Future<bool>> safe;
   late ValueNotifier<Future<bool>> expanded;
   late ValueNotifier<Future<List<String>>> blacklist;
+  late ValueNotifier<Future<bool>> blacklisting;
   late ValueNotifier<Future<Map<String, double>>> databaseWeights;
   late ValueNotifier<Future<int>> databaseSize;
+  late ValueNotifier<Future<String>> homeTags;
 
   Persistence() {
     credentials = createSetting<Credentials?>('credentials', initial: null,
@@ -40,6 +42,7 @@ class Persistence {
     safe = createSetting<bool>('safe', initial: true);
     expanded = createSetting<bool>('expandDetails', initial: false);
     blacklist = createSetting<List<String>>('blacklist', initial: []);
+    blacklisting = createSetting('blacklisting', initial: true);
     databaseWeights = createSetting<Map<String, double>>('databaseWeights',
         initial: defaultWeights, getSetting: (prefs, key) async {
       String? raw = prefs.getString(key);
@@ -50,6 +53,7 @@ class Persistence {
       await prefs.setString(key, json.encode(value));
     });
     databaseSize = createSetting<int>('databaseSize', initial: 1200);
+    homeTags = createSetting<String>('homeTags', initial: 'order:random');
   }
 
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();

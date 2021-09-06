@@ -106,6 +106,12 @@ mixin HostableDataMixin<T> on DataController<T> {
       super.getRefreshListeners()..add(settings.safe);
 }
 
+mixin DeniableDataMixin<T> on DataController<T> {
+  @override
+  List<ValueNotifier> getRefreshListeners() => super.getRefreshListeners()
+    ..addAll([settings.blacklist, settings.blacklisting]);
+}
+
 mixin RefreshableDataMixin<T> on DataController<T> {
   final RefreshController refreshController = RefreshController();
 
