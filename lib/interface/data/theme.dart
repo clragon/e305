@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,7 +29,7 @@ ThemeData prepareTheme(ThemeData theme) => theme.copyWith(
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.resolveWith(
           (states) => states.contains(MaterialState.selected)
-              ? theme.accentColor
+              ? theme.colorScheme.secondary
               : null,
         ),
         trackColor: MaterialStateProperty.resolveWith(
@@ -104,3 +106,8 @@ Map<AppTheme, ThemeData> themeMap = {
     ),
   ),
 };
+
+class DesktopDragScrollBehaviour extends ScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => PointerDeviceKind.values.toSet();
+}

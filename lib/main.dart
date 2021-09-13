@@ -29,10 +29,10 @@ class App extends StatelessWidget {
         child: ScrollConfiguration(
           behavior: DefaultScrollBehaviour(),
           child: MaterialApp(
-            debugShowCheckedModeBanner: false,
             title: 'e305',
             theme: value,
             home: NavigationPage(),
+            scrollBehavior: DesktopDragScrollBehaviour(),
           ),
         ),
       ),

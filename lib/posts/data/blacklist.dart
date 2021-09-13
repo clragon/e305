@@ -24,7 +24,9 @@ bool isBlacklisted(List<String> blacklist, Post post) {
       bool denied = deny.every((tag) => checkTags(tags, tag));
       bool allowed = allow.any((tag) => checkTags(tags, tag));
 
-      return denied && !allowed;
+      if (denied && !allowed) {
+        return true;
+      }
     }
   }
   return false;

@@ -30,6 +30,8 @@ class _SettingsPageState extends State<SettingsPage> {
   bool? blacklisting;
   String? homeTags;
 
+  Map<String, double>? databaseWeights;
+
   Future<String> host = client.host;
   Future<bool> hasLogin = client.hasLogin;
 
@@ -85,6 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
       settings.expanded: (value) async => expanded = value,
       settings.blacklisting: (value) async => blacklisting = value,
       settings.homeTags: (value) async => homeTags = value,
+      settings.databaseWeights: (value) async => databaseWeights = value,
     };
 
     links.forEach(linkSetting);
@@ -116,7 +119,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Text(
         title,
         style: TextStyle(
-          color: Theme.of(context).accentColor,
+          color: Theme.of(context).colorScheme.secondary,
           fontSize: 16,
         ),
       ),
