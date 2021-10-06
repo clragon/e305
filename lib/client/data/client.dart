@@ -20,32 +20,22 @@ class Client {
 
   late Future<bool> initialized;
 
-  Future<bool> safe = settings.safe.value;
-  Future<Credentials?> credentials = settings.credentials.value;
-  Future<List<String>> blacklist = settings.blacklist.value;
-  Future<bool> blacklisting = settings.blacklisting.value;
-
   Client() {
-    settings.blacklisting
-        .addListener(() => blacklisting = settings.blacklisting.value);
-    settings.blacklist.addListener(() => blacklist = settings.blacklist.value);
-    settings.credentials
-        .addListener(() => credentials = settings.credentials.value);
     settings.credentials.addListener(initialize);
     settings.safe.addListener(initialize);
     initialize();
   }
 
-  Future<bool> get isSafe async => await settings.safe.value;
-  Future<String> get host async => await isSafe ? 'e926.net' : 'e621.net';
+  bool get isSafe => settings.safe.value;
+  String get host => isSafe ? 'e926.net' : 'e621.net';
 
   Future<bool> initialize() async {
     Future<bool> init() async {
       _avatar = null;
-      Credentials? credentials = await settings.credentials.value;
+      Credentials? credentials = settings.credentials.value;
       dio = Dio(
         BaseOptions(
-          baseUrl: 'https://${await host}/',
+          baseUrl: 'https://$host/',
           sendTimeout: 30000,
           connectTimeout: 30000,
           headers: {
@@ -88,7 +78,7 @@ class Client {
   Future<bool> saveLogin(String username, String password) async {
     if (await validateCall(() => tryLogin(username, password))) {
       settings.credentials.value =
-          Future.value(Credentials(username: username, password: password));
+          Credentials(username: username, password: password);
       return true;
     } else {
       return false;
@@ -97,22 +87,22 @@ class Client {
 
   Future<bool> get hasLogin async {
     await initialized;
-    return (await credentials != null);
+    return settings.credentials.value != null;
   }
 
   Future<void> logout() async {
-    settings.credentials.value = Future.value(null);
+    settings.credentials.value = null;
   }
 
   String? _avatar;
 
   Future<String?> get avatar async {
     if (_avatar == null) {
-      if (await credentials == null) {
+      if (settings.credentials.value == null) {
         return null;
       }
-      int postId =
-          (await client.user((await credentials)!.username))['avatar_id'];
+      int postId = (await client
+          .user(settings.credentials.value!.username))['avatar_id'];
       Post post = await client.post(postId);
       _avatar = post.sample.url;
     }
@@ -120,8 +110,8 @@ class Client {
   }
 
   Future<List<Post>?> postsFromJson(List json) async {
-    List<String> blacklist = await this.blacklist;
-    bool blacklisting = await this.blacklisting;
+    List<String> blacklist = settings.blacklist.value;
+    bool blacklisting = settings.blacklisting.value;
     List<Post> posts = [];
     bool hasPosts = false;
     for (Map raw in json) {
@@ -163,7 +153,7 @@ class Client {
   Future<Post> post(int postID, {bool unsafe = false}) async {
     await initialized;
     Map body = await dio
-        .get('https://${(await client.host)}/posts/${postID.toString()}.json',
+        .get('https://${client.host}/posts/${postID.toString()}.json',
             options: Options())
         .then((response) => response.data);
 

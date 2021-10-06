@@ -37,19 +37,6 @@ class PostDetail extends StatefulWidget {
 class _PostDetailState extends State<PostDetail> {
   ScrollController scrollController = ScrollController();
 
-  bool? expanded;
-
-  Future<void> updateExpanded() async {
-    expanded = await settings.expanded.value;
-    setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    updateExpanded();
-  }
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -76,7 +63,7 @@ class _PostDetailState extends State<PostDetail> {
                 itemBuilder: (context) => [
                   PopupMenuItem(
                     value: () async => launch(
-                        'https://${await client.host}/posts/${widget.post.id}'),
+                        'https://${client.host}/posts/${widget.post.id}'),
                     child: Row(
                       children: [
                         Icon(
@@ -113,45 +100,50 @@ class _PostDetailState extends State<PostDetail> {
                   padding: EdgeInsets.only(bottom: 8),
                   child: ImageDisplay(post: widget.post, hero: widget.hero),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      ArtistDisplay(
-                        post: widget.post,
-                        onSearch: widget.onSearch,
+                ValueListenableBuilder<bool>(
+                  valueListenable: settings.expanded,
+                  builder: (context, expanded, child) {
+                    return Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          ArtistDisplay(
+                            post: widget.post,
+                            onSearch: widget.onSearch,
+                          ),
+                          Divider(),
+                          InteractionDisplay(post: widget.post),
+                          Divider(),
+                          RecommendationDisplay(
+                            post: widget.post,
+                            controller: widget.controller,
+                            onSearch: widget.onSearch,
+                            expanded: expanded,
+                          ),
+                          DescriptionDisplay(
+                            post: widget.post,
+                            expanded: expanded,
+                          ),
+                          // no divider here
+                          RelationDisplay(
+                            post: widget.post,
+                            expanded: expanded,
+                            onSearch: widget.onSearch,
+                          ),
+                          // no divider here
+                          TagDisplay(
+                            post: widget.post,
+                            expanded: expanded,
+                            onSearch: widget.onSearch,
+                          ),
+                          Divider(),
+                          FileDisplay(post: widget.post, expanded: expanded),
+                          Divider(),
+                        ],
                       ),
-                      Divider(),
-                      InteractionDisplay(post: widget.post),
-                      Divider(),
-                      RecommendationDisplay(
-                        post: widget.post,
-                        controller: widget.controller,
-                        onSearch: widget.onSearch,
-                        expanded: expanded,
-                      ),
-                      DescriptionDisplay(
-                        post: widget.post,
-                        expanded: expanded,
-                      ),
-                      // no divider here
-                      RelationDisplay(
-                        post: widget.post,
-                        expanded: expanded,
-                        onSearch: widget.onSearch,
-                      ),
-                      // no divider here
-                      TagDisplay(
-                        post: widget.post,
-                        expanded: expanded,
-                        onSearch: widget.onSearch,
-                      ),
-                      Divider(),
-                      FileDisplay(post: widget.post, expanded: expanded),
-                      Divider(),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ],
             ),

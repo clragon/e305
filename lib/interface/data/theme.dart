@@ -58,7 +58,6 @@ ThemeData prepareTheme(ThemeData theme) => theme.copyWith(
         ),
         color: theme.canvasColor,
         foregroundColor: theme.iconTheme.color,
-        backwardsCompatibility: false,
         elevation: 0,
       ),
       snackBarTheme: SnackBarThemeData(

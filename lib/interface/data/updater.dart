@@ -10,13 +10,14 @@ abstract class DataUpdater<T> extends ChangeNotifier {
   final ValueNotifier<int> progress = ValueNotifier(0);
   final Mutex updateLock = Mutex();
 
-  Duration? get stale;
+  Duration? get stale => null;
 
   Future? get finish => completer?.future;
   Completer? completer;
 
   bool error = false;
-  bool restart = false;
+  bool restarting = false;
+  bool canceling = false;
 
   DataUpdater() {
     getRefreshListeners().forEach((element) => element.addListener(refresh));
@@ -33,31 +34,17 @@ abstract class DataUpdater<T> extends ChangeNotifier {
     if (completer?.isCompleted ?? true) {
       update();
     } else {
-      restart = true;
+      restarting = true;
     }
     return finish;
   }
 
   @mustCallSuper
-  List<ValueNotifier> getRefreshListeners() => [];
-
-  Future<T> read();
-
-  Future<void> write(T? data);
-
-  Future<T?> run(T data, StepCallback step, bool force);
-
-  @mustCallSuper
-  bool step({int? progress, bool force = false}) {
-    if (restart) {
-      updateLock.release();
-      update(force: force);
-      return false;
-    } else {
-      this.progress.value = progress ?? this.progress.value + 1;
-      notifyListeners();
-      return true;
+  Future<void> cancel() async {
+    if (!(completer?.isCompleted ?? true)) {
+      canceling = true;
     }
+    return finish;
   }
 
   @mustCallSuper
@@ -73,6 +60,31 @@ abstract class DataUpdater<T> extends ChangeNotifier {
     notifyListeners();
   }
 
+  @mustCallSuper
+  List<ValueNotifier> getRefreshListeners() => [];
+
+  Future<T> read();
+
+  Future<void> write(T? data);
+
+  Future<T?> run(T data, StepCallback step, bool force);
+
+  @mustCallSuper
+  bool step({int? progress, bool force = false}) {
+    if (restarting) {
+      updateLock.release();
+      update(force: force);
+      return false;
+    }
+    if (canceling) {
+      updateLock.release();
+      return false;
+    }
+    this.progress.value = progress ?? this.progress.value + 1;
+    notifyListeners();
+    return true;
+  }
+
   Future<void> update({bool force = false}) async {
     if (completer?.isCompleted ?? true) {
       completer = Completer();
@@ -82,7 +94,8 @@ abstract class DataUpdater<T> extends ChangeNotifier {
     }
     await updateLock.acquire();
     progress.value = 0;
-    restart = false;
+    restarting = false;
+    canceling = false;
     error = false;
 
     notifyListeners();
@@ -92,8 +105,10 @@ abstract class DataUpdater<T> extends ChangeNotifier {
     Future<void> _update() async {
       T data = await read();
       T? result = await run(data, step, force);
-      await write(result);
-      complete();
+      if (!restarting && !error) {
+        await write(result);
+        complete();
+      }
     }
 
     _update();

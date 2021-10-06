@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> updateTags() async {
-    controller.search.value = await settings.homeTags.value;
+    controller.search.value = settings.homeTags.value;
   }
 
   Future<void> initializeFavs() async {

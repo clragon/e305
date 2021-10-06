@@ -154,7 +154,10 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
                           padding: EdgeInsets.all(4),
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Theme.of(context).accentColor.withOpacity(0.6),
+                              Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.6),
                             ),
                             value: 1 /
                                 widget.controller.itemList!.length *

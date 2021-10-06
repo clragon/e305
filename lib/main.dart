@@ -6,31 +6,24 @@ import 'package:e305/settings/data/settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-ValueNotifier<ThemeData> theme = ValueNotifier(themeMap[AppTheme.dark]!);
-
-Future<void> updateTheme() async {
-  theme.value = themeMap[await settings.theme.value]!;
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  settings.theme.addListener(updateTheme);
-  await updateTheme();
-  // ErrorWidget.builder = (FlutterErrorDetails details) => DefaultErrorWidget();
+  await settings.initialized;
+  ErrorWidget.builder = (details) => DefaultErrorWidget(details);
   runApp(App());
 }
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: theme,
-      builder: (context, ThemeData value, child) => ExcludeSemantics(
+    return ValueListenableBuilder<AppTheme>(
+      valueListenable: settings.theme,
+      builder: (context, value, child) => ExcludeSemantics(
         child: ScrollConfiguration(
           behavior: DefaultScrollBehaviour(),
           child: MaterialApp(
             title: 'e305',
-            theme: value,
+            theme: themeMap[value],
             home: NavigationPage(),
             scrollBehavior: DesktopDragScrollBehaviour(),
           ),
@@ -41,7 +34,9 @@ class App extends StatelessWidget {
 }
 
 class DefaultErrorWidget extends StatelessWidget {
-  const DefaultErrorWidget();
+  final FlutterErrorDetails details;
+
+  const DefaultErrorWidget(this.details);
 
   @override
   Widget build(BuildContext context) {

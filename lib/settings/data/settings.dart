@@ -11,19 +11,25 @@ import 'package:shared_preferences/shared_preferences.dart'
 final Persistence settings = Persistence();
 
 class Persistence {
-  late ValueNotifier<Future<Credentials?>> credentials;
-  late ValueNotifier<Future<AppTheme>> theme;
-  late ValueNotifier<Future<bool>> safe;
-  late ValueNotifier<Future<bool>> expanded;
-  late ValueNotifier<Future<List<String>>> blacklist;
-  late ValueNotifier<Future<bool>> blacklisting;
-  late ValueNotifier<Future<Map<String, double>>> databaseWeights;
-  late ValueNotifier<Future<int>> databaseSize;
-  late ValueNotifier<Future<String>> homeTags;
+  late final SharedPreferences prefs;
 
-  Persistence() {
+  late ValueNotifier<Credentials?> credentials;
+  late ValueNotifier<AppTheme> theme;
+  late ValueNotifier<bool> safe;
+  late ValueNotifier<bool> expanded;
+  late ValueNotifier<List<String>> blacklist;
+  late ValueNotifier<bool> blacklisting;
+  late ValueNotifier<Map<String, double>> databaseWeights;
+  late ValueNotifier<int> databaseSize;
+  late ValueNotifier<String> homeTags;
+
+  late Future<void> initialized = initialize();
+
+  Future<void> initialize() async {
+    prefs = await SharedPreferences.getInstance();
+
     credentials = createSetting<Credentials?>('credentials', initial: null,
-        getSetting: (prefs, key) async {
+        getSetting: (prefs, key) {
       String? value = prefs.getString(key);
       if (value != null) {
         return Credentials.fromJson(value);
@@ -44,7 +50,7 @@ class Persistence {
     blacklist = createSetting<List<String>>('blacklist', initial: []);
     blacklisting = createSetting('blacklisting', initial: true);
     databaseWeights = createSetting<Map<String, double>>('databaseWeights',
-        initial: defaultWeights, getSetting: (prefs, key) async {
+        initial: defaultWeights, getSetting: (prefs, key) {
       String? raw = prefs.getString(key);
       if (raw != null) {
         return json.decode(raw);
@@ -56,18 +62,15 @@ class Persistence {
     homeTags = createSetting<String>('homeTags', initial: 'order:random');
   }
 
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
   Type _typeify<T>() => T;
 
-  ValueNotifier<Future<T>> createSetting<T>(
+  ValueNotifier<T> createSetting<T>(
     String key, {
     required T initial,
-    Future<T?> Function(SharedPreferences prefs, String key)? getSetting,
+    T? Function(SharedPreferences prefs, String key)? getSetting,
     Function(SharedPreferences prefs, String key, T value)? setSetting,
   }) {
-    ValueNotifier<Future<T>> setting = ValueNotifier<Future<T>>(() async {
-      SharedPreferences prefs = await _prefs;
+    ValueNotifier<T> setting = ValueNotifier<T>(() {
       T? value;
       if (getSetting == null) {
         // this will not work with T? (String?, bool?, int?...)
@@ -88,14 +91,13 @@ class Persistence {
             }
         }
       } else {
-        value = await getSetting(prefs, key);
+        value = getSetting(prefs, key);
       }
       return value ?? initial;
     }());
 
-    setting.addListener(() async {
-      SharedPreferences prefs = await _prefs;
-      T value = await setting.value;
+    setting.addListener(() {
+      T value = setting.value;
       if (setSetting == null) {
         // this will not work with T? (String?, bool?, int?...)
         // if type is nullable, custom read and write have to be specificed
@@ -122,7 +124,7 @@ class Persistence {
     return setting;
   }
 
-  ValueNotifier<Future<T>> createStringSetting<T>(
+  ValueNotifier<T> createStringSetting<T>(
     String key, {
     required T initial,
     required List<T> values,
@@ -130,7 +132,7 @@ class Persistence {
       createSetting(
         key,
         initial: initial,
-        getSetting: (prefs, key) async {
+        getSetting: (prefs, key) {
           String? value = prefs.getString(key);
           try {
             return values.singleWhere(

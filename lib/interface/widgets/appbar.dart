@@ -123,7 +123,7 @@ class TransparentAppBar extends StatelessWidget with AppBarSizeMixin {
               begin: null,
               end: transparent
                   ? Colors.transparent
-                  : Theme.of(context).appBarTheme.color,
+                  : Theme.of(context).appBarTheme.backgroundColor,
             ),
             duration: defaultAnimationDuration,
             builder: (context, Color? value, child) => AppBar(

@@ -6,6 +6,7 @@ import 'package:e305/recommendations/data/storage.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/tags/data/post.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 final Recommendations recommendations = Recommendations();
@@ -13,11 +14,24 @@ final Recommendations recommendations = Recommendations();
 class Recommendations extends DatabaseUpdater with HostableUpdater {
   final int required = 200;
 
-  Recommendations() : super(name: 'favorites', limit: 1200);
+  Future<void> updateCredentials() async {
+    delete();
+    return refresh();
+  }
+
+  Recommendations() : super(name: 'favorites', limit: 1200) {
+    settings.credentials.addListener(updateCredentials);
+  }
+
+  @override
+  void dispose() {
+    settings.credentials.removeListener(updateCredentials);
+    super.dispose();
+  }
 
   @override
   Future<String> get path async {
-    bool safe = await client.safe;
+    bool safe = client.isSafe;
     return [
       (await getApplicationSupportDirectory()).path,
       'favs_${safe ? 'e9' : 'e6'}.json'
@@ -25,8 +39,13 @@ class Recommendations extends DatabaseUpdater with HostableUpdater {
   }
 
   @override
-  PostProvider get provide =>
-      (page) async => client.favorites(page, limit: 200);
+  PostProvider get provide => (page) async {
+        try {
+          return await client.favorites(page, limit: 200);
+        } on DioError {
+          return [];
+        }
+      };
 
   @override
   List<ValueNotifier> getRefreshListeners() =>
@@ -63,9 +82,13 @@ abstract class DatabaseUpdater extends DataUpdater<TagDataBase?> {
   }
 
   Future<TagDataBase?> recreate() async {
+    delete();
+    return getDatabase();
+  }
+
+  void delete() {
     database.value?.delete();
     database.value = null;
-    return getDatabase();
   }
 
   Future<TagDataBase?> read() async {
@@ -78,7 +101,7 @@ abstract class DatabaseUpdater extends DataUpdater<TagDataBase?> {
 
     TagDataBase? database = this.database.value;
     if (database != null && outdated(database)) {
-      database.delete();
+      delete();
       return null;
     }
 
@@ -123,6 +146,9 @@ abstract class DatabaseUpdater extends DataUpdater<TagDataBase?> {
           }
           await Future.delayed(Duration(milliseconds: 500));
         } catch (_) {
+          if (kDebugMode) {
+            rethrow;
+          }
           fail();
           return null;
         }

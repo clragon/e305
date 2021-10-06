@@ -23,34 +23,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool? safe;
-  AppTheme? theme;
-  String? username;
-  bool? expanded;
-  bool? blacklisting;
-  String? homeTags;
-
-  Map<String, double>? databaseWeights;
-
-  Future<String> host = client.host;
-  Future<bool> hasLogin = client.hasLogin;
+  late Future<bool> hasLogin;
 
   Map<ValueNotifier<Future>, void Function()> linked = {};
-
-  void linkSetting<T>(ValueNotifier<Future<T>> setting,
-      Future<void> Function(T value) assignment) async {
-    Future<void> setValue() async {
-      var value = await setting.value;
-      await assignment(value);
-      if (mounted) {
-        setState(() {});
-      }
-    }
-
-    linked.addEntries([MapEntry(setting, setValue)]);
-    setting.addListener(setValue);
-    await setValue();
-  }
 
   RecommendationStatus status = RecommendationStatus.loading;
 
@@ -70,42 +45,62 @@ class _SettingsPageState extends State<SettingsPage> {
     });
   }
 
+  Future<void> resetDatabase() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Reset database'),
+        content: Text(
+            'Are you sure you want to recreate your favorite database?'
+            '\nThis should be executed when you have favorited alot of new things.'
+            '\nThis action might take a while.'),
+        actions: [
+          TextButton(
+            onPressed: Navigator.of(context).maybePop,
+            child: Text('CANCEL'),
+          ),
+          TextButton(
+            child: Text('OK'),
+            onPressed: () async {
+              Navigator.of(context).maybePop();
+              await recommendations.recreate();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Reset database!'),
+                  duration: Duration(milliseconds: 500),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> updateHasLogin() async {
+    setState(() {
+      hasLogin = client.hasLogin;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-
-    Map<ValueNotifier<Future>, Future<void> Function(dynamic value)> links = {
-      settings.credentials: (value) async {
-        username = value?.username;
-        hasLogin = client.hasLogin;
-      },
-      settings.theme: (value) async => theme = value,
-      settings.safe: (value) async {
-        safe = value;
-        host = client.host;
-      },
-      settings.expanded: (value) async => expanded = value,
-      settings.blacklisting: (value) async => blacklisting = value,
-      settings.homeTags: (value) async => homeTags = value,
-      settings.databaseWeights: (value) async => databaseWeights = value,
-    };
-
-    links.forEach(linkSetting);
-
     recommendations.database.addListener(updateStatus);
+    settings.credentials.addListener(updateHasLogin);
     updateStatus();
+    updateHasLogin();
   }
 
   @override
   void dispose() {
-    linked.forEach((key, value) {
-      key.removeListener(value);
-    });
+    recommendations.database.removeListener(updateStatus);
+    settings.credentials.removeListener(updateHasLogin);
     super.dispose();
   }
 
-  Future<void> onSignOut(BuildContext context) async {
-    String? name = username;
+  Future<void> onLogOut(BuildContext context) async {
+    String? name = settings.credentials.value?.username;
     await client.logout();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       duration: Duration(seconds: 1),
@@ -135,82 +130,69 @@ class _SettingsPageState extends State<SettingsPage> {
           physics: BouncingScrollPhysics(),
           children: [
             settingsHeader('Host'),
-            SafeCrossFade(
-              showChild: safe != null,
-              builder: (context) => SwitchListTile(
+            ValueListenableBuilder<bool>(
+              valueListenable: settings.safe,
+              builder: (context, safe, child) => SwitchListTile(
                 title: Text('Explicit content'),
-                subtitle: FutureBuilder(
-                  future: host,
-                  builder: (context, AsyncSnapshot<String?> snapshot) {
-                    return CrossFade(
-                      showChild:
-                          snapshot.connectionState == ConnectionState.done,
-                      child: SafeCrossFade(
-                        showChild: snapshot.hasData,
-                        builder: (BuildContext context) => Text(snapshot.data!),
-                      ),
-                      secondChild: Center(
-                          child: SizedCircularProgressIndicator(size: 32)),
-                    );
-                  },
-                ),
-                secondary: Icon(safe!
+                subtitle: Text(client.host),
+                secondary: Icon(safe
                     ? FontAwesomeIcons.shieldAlt
                     : FontAwesomeIcons.exclamationTriangle),
-                value: !safe!,
-                onChanged: (value) async {
-                  settings.safe.value = Future.value(!safe!);
-                },
+                value: !safe,
+                onChanged: (value) => settings.safe.value = value,
               ),
-              secondChild:
-                  Center(child: SizedCircularProgressIndicator(size: 32)),
             ),
             Divider(),
             settingsHeader('Display'),
-            ListTile(
-              title: Text('Theme'),
-              subtitle: theme != null ? Text(describeEnum(theme!)) : null,
-              leading: Icon(FontAwesomeIcons.solidLightbulb),
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => ThemeDialog(),
+            ValueListenableBuilder<AppTheme>(
+              valueListenable: settings.theme,
+              builder: (context, theme, child) {
+                return ListTile(
+                  title: Text('Theme'),
+                  subtitle: Text(describeEnum(theme)),
+                  leading: Icon(FontAwesomeIcons.solidLightbulb),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ThemeDialog(),
+                    );
+                  },
                 );
               },
             ),
-            SafeCrossFade(
-              showChild: expanded != null,
-              builder: (context) => SwitchListTile(
-                title: Text('Expand details'),
-                subtitle: CrossFade(
-                  showChild: expanded!,
-                  child: Text('expanded post details'),
-                  secondChild: Text('collapsed post details'),
-                ),
-                secondary: Icon(expanded!
-                    ? FontAwesomeIcons.expand
-                    : FontAwesomeIcons.compress),
-                value: expanded!,
-                onChanged: (value) async {
-                  settings.expanded.value = Future.value(value);
-                },
-              ),
-              secondChild:
-                  Center(child: SizedCircularProgressIndicator(size: 32)),
+            ValueListenableBuilder<bool>(
+              valueListenable: settings.expanded,
+              builder: (context, expanded, child) {
+                return SwitchListTile(
+                  title: Text('Expand details'),
+                  subtitle: CrossFade(
+                    showChild: expanded,
+                    child: Text('expanded post details'),
+                    secondChild: Text('collapsed post details'),
+                  ),
+                  secondary: Icon(expanded
+                      ? FontAwesomeIcons.expand
+                      : FontAwesomeIcons.compress),
+                  value: expanded,
+                  onChanged: (value) => settings.expanded.value = value,
+                );
+              },
             ),
             Divider(),
             settingsHeader('User'),
-            FutureBuilder(
+            FutureBuilder<bool?>(
               future: hasLogin,
-              builder: (context, AsyncSnapshot<bool?> snapshot) => CrossFade(
+              builder: (context, snapshot) => CrossFade(
                 showChild: snapshot.connectionState == ConnectionState.done,
                 child: SafeCrossFade(
-                  showChild: snapshot.data != null && snapshot.data!,
+                  showChild: snapshot.hasData && snapshot.data!,
                   builder: (context) => ListTile(
                     title: Text('Logout'),
-                    subtitle: Text(username ?? ''),
+                    subtitle: settings.credentials.value?.username != null
+                        ? Text(settings.credentials.value!.username)
+                        : null,
                     leading: Icon(FontAwesomeIcons.signOutAlt),
-                    onTap: () => onSignOut(context),
+                    onTap: () => onLogOut(context),
                     trailing: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8),
                       child: IgnorePointer(
@@ -231,8 +213,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                 ),
-                secondChild:
-                    Center(child: SizedCircularProgressIndicator(size: 32)),
+                secondChild: Center(
+                  child: SizedCircularProgressIndicator(size: 32),
+                ),
               ),
             ),
             Row(
@@ -250,90 +233,81 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                 ),
-                InkWell(
-                  onTap: () => settings.blacklisting.value =
-                      Future.value(!blacklisting!),
-                  child: SizedBox(
-                    height: 64,
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 12),
-                          child: Container(
-                            color: Theme.of(context).dividerColor,
-                            width: 2,
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(right: 20),
-                          child: SafeCrossFade(
-                            showChild: blacklisting != null,
-                            builder: (context) => Switch(
-                              value: blacklisting!,
-                              onChanged: (value) async {
-                                settings.blacklisting.value =
-                                    Future.value(value);
-                              },
-                            ),
-                            secondChild: Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(4),
-                                child: SizedCircularProgressIndicator(size: 32),
-                              ),
+                ValueListenableBuilder<bool>(
+                  valueListenable: settings.blacklisting,
+                  builder: (context, blacklisting, child) => InkWell(
+                    onTap: () => settings.blacklisting.value = !blacklisting,
+                    child: SizedBox(
+                      height: 64,
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(vertical: 12),
+                            child: Container(
+                              color: Theme.of(context).dividerColor,
+                              width: 2,
                             ),
                           ),
-                        ),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.only(right: 20),
+                            child: Switch(
+                              value: blacklisting,
+                              onChanged: (value) =>
+                                  settings.blacklisting.value = value,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ],
             ),
-            FutureBuilder(
+            FutureBuilder<bool>(
               future: hasLogin,
-              builder: (context, AsyncSnapshot<bool?> snapshot) => CrossFade(
+              builder: (context, snapshot) => CrossFade(
                 showChild: snapshot.connectionState == ConnectionState.done,
                 child: SafeCrossFade(
-                  showChild: snapshot.data != null && snapshot.data!,
+                  showChild: snapshot.hasData && snapshot.data!,
                   builder: (context) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Divider(),
                       settingsHeader('Recommendations'),
-                      SafeCrossFade(
-                        showChild: homeTags != null,
-                        builder: (context) => ListTile(
+                      ValueListenableBuilder<String>(
+                        valueListenable: settings.homeTags,
+                        builder: (context, homeTags, child) => ListTile(
                           leading: Icon(
                             FontAwesomeIcons.hashtag,
                             size: 20,
                           ),
                           title: Text('Home tags'),
-                          subtitle: Text(homeTags!),
-                          onTap: () async {
-                            showDialog(
-                              context: context,
-                              builder: (context) => TagChangeDialog(
-                                title: 'Home tags',
-                                onSubmit: (value) => settings.homeTags.value =
-                                    Future.value(value),
-                                controller:
-                                    TextEditingController(text: homeTags),
-                                hint: 'tags',
-                              ),
-                            );
-                          },
+                          subtitle: Text(homeTags),
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => TagChangeDialog(
+                              title: 'Home tags',
+                              onSubmit: (value) =>
+                                  settings.homeTags.value = value,
+                              controller: TextEditingController(text: homeTags),
+                              hint: 'tags',
+                            ),
+                          ),
                         ),
                       ),
-                      ListTile(
-                        leading: Icon(
-                          FontAwesomeIcons.balanceScaleLeft,
-                          size: 20,
-                        ),
-                        title: Text('Weights'),
-                        subtitle: Text('adjust tag category weights'),
-                        onTap: () async {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                      ValueListenableBuilder(
+                        valueListenable: settings.databaseWeights,
+                        builder: (context, databaseWeights, child) => ListTile(
+                          leading: Icon(
+                            FontAwesomeIcons.balanceScaleLeft,
+                            size: 20,
+                          ),
+                          title: Text('Weights'),
+                          subtitle: Text('adjust tag category weights'),
+                          onTap: () =>
+                              ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              duration: Duration(seconds: 2),
                               content: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -353,10 +327,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                 ],
                               ),
-                              duration: Duration(seconds: 2),
                             ),
-                          );
-                        },
+                          ),
+                        ),
                       ),
                       ListTile(
                         leading: Icon(
@@ -364,69 +337,26 @@ class _SettingsPageState extends State<SettingsPage> {
                           size: 20,
                         ),
                         title: Text('Reset database'),
-                        subtitle: () {
-                          switch (status) {
-                            case RecommendationStatus.loading:
-                              return Row(
-                                children: [
-                                  Text('database is being created'),
-                                  Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 4),
-                                    child: PulseLoadingIndicator(size: 14),
-                                  ),
-                                ],
-                              );
-                            case RecommendationStatus.anonymous:
-                              return Text('you are not logged in');
-                            case RecommendationStatus.insufficient:
-                              return Text(
-                                  'you dont have enough favorites.\nclick here after you favorited some posts!');
-                            case RecommendationStatus.functional:
-                              return Text('recreate favorite tag database');
-                          }
-                        }(),
+                        subtitle: RecommendationDatabaseText(status: status),
                         onTap: status != RecommendationStatus.loading
-                            ? () async {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text('Reset database'),
-                                    content: Text(
-                                        'Are you sure you want to recreate your favorite database?'
-                                        '\nThis should be executed when you have favorited alot of new things.'
-                                        '\nThis action might take a while.'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed:
-                                            Navigator.of(context).maybePop,
-                                        child: Text('CANCEL'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          await recommendations.recreate();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text('Reset database!'),
-                                              duration:
-                                                  Duration(milliseconds: 500),
-                                            ),
-                                          );
-                                        },
-                                        child: Text('OK'),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
+                            ? resetDatabase
                             : null,
                       ),
                     ],
                   ),
                 ),
-                secondChild:
-                    Center(child: SizedCircularProgressIndicator(size: 32)),
+                secondChild: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Divider(),
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: SizedCircularProgressIndicator(size: 32),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Divider(),
@@ -456,8 +386,6 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 class ThemeDialog extends StatelessWidget {
-  const ThemeDialog({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     Widget themeTile(AppTheme theme) {
@@ -475,7 +403,7 @@ class ThemeDialog extends StatelessWidget {
           ),
         ),
         onTap: () {
-          settings.theme.value = Future.value(theme);
+          settings.theme.value = theme;
           Navigator.of(context).maybePop();
         },
       );
@@ -568,6 +496,35 @@ class _VersionDialogState extends State<VersionDialog> {
         ],
       ),
     );
+  }
+}
+
+class RecommendationDatabaseText extends StatelessWidget {
+  final RecommendationStatus status;
+
+  const RecommendationDatabaseText({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    switch (status) {
+      case RecommendationStatus.loading:
+        return Row(
+          children: [
+            Text('database is being created'),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              child: PulseLoadingIndicator(size: 14),
+            ),
+          ],
+        );
+      case RecommendationStatus.anonymous:
+        return Text('you are not logged in');
+      case RecommendationStatus.insufficient:
+        return Text(
+            'you dont have enough favorites.\nclick here after you favorited some posts!');
+      case RecommendationStatus.functional:
+        return Text('recreate favorite tag database');
+    }
   }
 }
 

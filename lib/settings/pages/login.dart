@@ -34,10 +34,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: GestureDetector(
                   onTap: () async {
                     if (username != null) {
-                      launch(
-                          'https://${await client.host}/users/$username/api_key');
+                      launch('https://${client.host}/users/$username/api_key');
                     } else {
-                      launch('https://${await client.host}');
+                      launch('https://${client.host}');
                     }
                   },
                   child: ConstrainedBox(
@@ -112,7 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                       ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context).accentColor,
+                            Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                         child: Row(
@@ -121,7 +120,10 @@ class _LoginPageState extends State<LoginPage> {
                             Flexible(
                               child: Text(
                                 'LOGIN',
-                                style: Theme.of(context).accentTextTheme.button,
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
+                                ),
                               ),
                             ),
                           ],
