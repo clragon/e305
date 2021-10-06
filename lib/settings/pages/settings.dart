@@ -139,7 +139,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ? FontAwesomeIcons.shieldAlt
                     : FontAwesomeIcons.exclamationTriangle),
                 value: !safe,
-                onChanged: (value) => settings.safe.value = value,
+                onChanged: (value) => settings.safe.value = !value,
               ),
             ),
             Divider(),
