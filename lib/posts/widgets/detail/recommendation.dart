@@ -10,12 +10,14 @@ import 'expand.dart';
 
 class RecommendationDisplay extends StatefulWidget {
   final Post post;
-  final bool? expanded;
   final SearchCallback? onSearch;
   final PostController? controller;
 
-  const RecommendationDisplay(
-      {required this.post, this.onSearch, this.controller, this.expanded});
+  const RecommendationDisplay({
+    required this.post,
+    this.onSearch,
+    this.controller,
+  });
 
   @override
   _RecommendationDisplayState createState() => _RecommendationDisplayState();
@@ -54,8 +56,7 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
 
     return Column(
       children: [
-        ExpandableParent(
-          expanded: widget.expanded,
+        ExpandableDefaultParent(
           builder: (context, controller) => ExpandablePanel(
             key: ObjectKey(controller),
             controller: controller,

@@ -10,9 +10,8 @@ import 'expand.dart';
 
 class FileDisplay extends StatelessWidget {
   final Post post;
-  final bool? expanded;
 
-  const FileDisplay({required this.post, this.expanded});
+  const FileDisplay({required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +42,7 @@ class FileDisplay extends StatelessWidget {
       );
     }
 
-    return ExpandableParent(
-      expanded: expanded,
+    return ExpandableDefaultParent(
       builder: (context, controller) => ExpandablePanel(
         key: ObjectKey(controller),
         controller: controller,

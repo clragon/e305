@@ -8,19 +8,16 @@ import 'expand.dart';
 
 class TagDisplay extends StatelessWidget {
   final Post post;
-  final bool? expanded;
   final SearchCallback onSearch;
 
   const TagDisplay({
     required this.post,
-    this.expanded,
     required this.onSearch,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ExpandableParent(
-      expanded: expanded,
+    return ExpandableDefaultParent(
       builder: (context, controller) => ExpandablePanel(
         key: ObjectKey(controller),
         controller: controller,

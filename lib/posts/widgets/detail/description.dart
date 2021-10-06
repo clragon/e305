@@ -6,17 +6,15 @@ import 'expand.dart';
 
 class DescriptionDisplay extends StatelessWidget {
   final Post post;
-  final bool? expanded;
 
-  const DescriptionDisplay({required this.post, this.expanded});
+  const DescriptionDisplay({required this.post});
 
   @override
   Widget build(BuildContext context) {
     if (post.description.isNotEmpty) {
       return Column(
         children: [
-          ExpandableParent(
-            expanded: expanded,
+          ExpandableDefaultParent(
             builder: (context, controller) => ExpandablePanel(
               key: ObjectKey(controller),
               controller: controller,

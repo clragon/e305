@@ -5,7 +5,6 @@ import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/data/image.dart';
 import 'package:e305/posts/widgets/search.dart';
-import 'package:e305/settings/data/settings.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -100,50 +99,41 @@ class _PostDetailState extends State<PostDetail> {
                   padding: EdgeInsets.only(bottom: 8),
                   child: ImageDisplay(post: widget.post, hero: widget.hero),
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: settings.expanded,
-                  builder: (context, expanded, child) {
-                    return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          ArtistDisplay(
-                            post: widget.post,
-                            onSearch: widget.onSearch,
-                          ),
-                          Divider(),
-                          InteractionDisplay(post: widget.post),
-                          Divider(),
-                          RecommendationDisplay(
-                            post: widget.post,
-                            controller: widget.controller,
-                            onSearch: widget.onSearch,
-                            expanded: expanded,
-                          ),
-                          DescriptionDisplay(
-                            post: widget.post,
-                            expanded: expanded,
-                          ),
-                          // no divider here
-                          RelationDisplay(
-                            post: widget.post,
-                            expanded: expanded,
-                            onSearch: widget.onSearch,
-                          ),
-                          // no divider here
-                          TagDisplay(
-                            post: widget.post,
-                            expanded: expanded,
-                            onSearch: widget.onSearch,
-                          ),
-                          Divider(),
-                          FileDisplay(post: widget.post, expanded: expanded),
-                          Divider(),
-                        ],
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      ArtistDisplay(
+                        post: widget.post,
+                        onSearch: widget.onSearch,
                       ),
-                    );
-                  },
+                      Divider(),
+                      InteractionDisplay(post: widget.post),
+                      Divider(),
+                      RecommendationDisplay(
+                        post: widget.post,
+                        controller: widget.controller,
+                        onSearch: widget.onSearch,
+                      ),
+                      DescriptionDisplay(
+                        post: widget.post,
+                      ),
+                      // no divider here
+                      RelationDisplay(
+                        post: widget.post,
+                        onSearch: widget.onSearch,
+                      ),
+                      // no divider here
+                      TagDisplay(
+                        post: widget.post,
+                        onSearch: widget.onSearch,
+                      ),
+                      Divider(),
+                      FileDisplay(post: widget.post),
+                      Divider(),
+                    ],
+                  ),
                 ),
               ],
             ),

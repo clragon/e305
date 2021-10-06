@@ -13,11 +13,9 @@ import 'expand.dart';
 
 class RelationDisplay extends StatelessWidget {
   final Post post;
-  final bool? expanded;
   final SearchCallback onSearch;
 
-  const RelationDisplay(
-      {required this.post, this.expanded, required this.onSearch});
+  const RelationDisplay({required this.post, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -89,8 +87,7 @@ class RelationDisplay extends StatelessWidget {
     if (children.isNotEmpty) {
       return Column(
         children: [
-          ExpandableParent(
-            expanded: expanded,
+          ExpandableDefaultParent(
             builder: (context, controller) => ExpandablePanel(
               key: ObjectKey(controller),
               controller: controller,
