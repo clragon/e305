@@ -12,7 +12,10 @@ Testing ground for new features for [e1547](https://github.com/clragon/e1547).
 ## Download  
   
 Apk and IPA files are automatically generated   
-and are available as [Artifacts](https://github.com/clragon/e305/actions/workflows/push.yaml).
+and are available as Artifacts.
+
+- [release-apk](https://nightly.link/clragon/e305/workflows/push.yaml/master/release-apk.zip)
+- [release-ios](https://nightly.link/clragon/e305/workflows/push.yaml/master/release-ios.zip)
 
 ## Installation
 
