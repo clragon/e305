@@ -55,6 +55,15 @@ jobs:
     - uses: subosito/flutter-action@v1
       with:
         channel: 'beta' 
+        
+   # Config release keys
+    - env:
+        KEYSTORE: ${{ secrets.KEYSTORE }}
+        KEYCONFIG: ${{ secrets.KEYCONFIG }}
+      run: | 
+        mkdir -p android/app/keys
+        echo "$KEYSTORE" | base64 -d > android/app/keys/key.pkcs
+        echo "$KEYCONFIG" | base64 -d > android/app/keys/key.properties
     
     # Get flutter dependencies.
     - run: flutter pub get
