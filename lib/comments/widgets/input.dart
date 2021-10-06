@@ -56,7 +56,7 @@ class _CommentInputState extends State<CommentInput> {
                       ),
                       Flexible(
                         child: Text(
-                          'Uhh... this is awkward. This isn\'t implemented yet!',
+                          'Work in progress!',
                           textAlign: TextAlign.center,
                         ),
                       ),

@@ -321,7 +321,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                   Flexible(
                                     child: Text(
-                                      'Uhh... this is awkward. This isn\'t implemented yet!',
+                                      'Work in progress!',
                                       textAlign: TextAlign.center,
                                     ),
                                   ),

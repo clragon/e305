@@ -27,7 +27,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
               ),
             ),
             Text(
-              'Uhh... this is awkward.\nWe arent done with this screen yet!',
+              'Work in progress!',
               textAlign: TextAlign.center,
             ),
           ],
