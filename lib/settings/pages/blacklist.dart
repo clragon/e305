@@ -27,6 +27,7 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
             onPressed: () async {
               if (isEditing) {
                 List<String> updated = controller.text.split('\n');
+                updated = updated.map((e) => e.trim()).toList();
                 updated.removeWhere((element) => element.isEmpty);
                 settings.blacklist.value = updated;
               } else {
@@ -43,63 +44,65 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
           ),
           body: Padding(
             padding: EdgeInsets.all(8),
-            child: SafeCrossFade(
-              showChild: isEditing,
-              builder: (context) => SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 8),
-                            child: TextField(
-                              controller: controller,
-                              keyboardType: TextInputType.multiline,
-                              autofocus: true,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Add tags to your blacklist...',
-                              ),
-                              maxLines: null,
-                            ),
+            child: AnimatedSize(
+              duration: defaultAnimationDuration,
+              child: isEditing
+                  ? SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  child: TextField(
+                                    controller: controller,
+                                    keyboardType: TextInputType.multiline,
+                                    autofocus: true,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                      hintText: 'Add tags to your blacklist...',
+                                    ),
+                                    maxLines: null,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                        )
-                      ],
+                        ],
+                      ),
+                    )
+                  : CrossFade(
+                      showChild: blacklist.isNotEmpty,
+                      child: ListView.separated(
+                        physics: BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) => ListTile(
+                          title: Wrap(
+                            children: blacklist[index]
+                                .split(' ')
+                                .map(
+                                  (e) => Card(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 4),
+                                      child: Text(e),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                        separatorBuilder: (context, index) => Divider(),
+                        itemCount: blacklist.length,
+                      ),
+                      secondChild: Center(
+                        child: Text('your blacklist is empty'),
+                      ),
                     ),
-                  ],
-                ),
-              ),
-              secondChild: CrossFade(
-                showChild: blacklist.isNotEmpty,
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) => ListTile(
-                    title: Wrap(
-                      children: blacklist[index]
-                          .split(' ')
-                          .map(
-                            (e) => Card(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 4, vertical: 2),
-                                child: Text(e),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                  separatorBuilder: (context, index) => Divider(),
-                  itemCount: blacklist.length,
-                ),
-                secondChild: Center(
-                  child: Text('your blacklist is empty'),
-                ),
-              ),
             ),
           ),
         );
