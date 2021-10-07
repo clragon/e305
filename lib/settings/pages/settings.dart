@@ -5,6 +5,7 @@ import 'package:e305/interface/data/theme.dart';
 import 'package:e305/interface/widgets/animation.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/profile/widgets/icon.dart';
+import 'package:e305/profile/widgets/profile.dart';
 import 'package:e305/recommendations/data/updater.dart';
 import 'package:e305/recommendations/widgets/recommendations.dart';
 import 'package:e305/settings/data/info.dart';
@@ -16,6 +17,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
+import 'divider_tile.dart';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -179,89 +182,74 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             Divider(),
-            settingsHeader('User'),
+            settingsHeader('Account'),
             FutureBuilder<bool?>(
               future: hasLogin,
               builder: (context, snapshot) => CrossFade(
                 showChild: snapshot.connectionState == ConnectionState.done,
-                child: SafeCrossFade(
-                  showChild: snapshot.hasData && snapshot.data!,
-                  builder: (context) => ListTile(
-                    title: Text('Logout'),
-                    subtitle: settings.credentials.value?.username != null
-                        ? Text(settings.credentials.value!.username)
-                        : null,
-                    leading: Icon(FontAwesomeIcons.signOutAlt),
-                    onTap: () => onLogOut(context),
-                    trailing: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: IgnorePointer(
-                        child: ProfileButton(),
-                      ),
-                    ),
-                  ),
-                  secondChild: ListTile(
-                    title: Text('Login'),
-                    leading: Icon(FontAwesomeIcons.userPlus),
-                    onTap: () =>
-                        Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => LoginPage(
-                          onSuccess: Navigator.of(context).maybePop,
+                child: AnimatedSwitcher(
+                  duration: defaultAnimationDuration,
+                  child: snapshot.hasData && snapshot.data!
+                      ? DividerListTile(
+                          title: Text(settings.credentials.value!.username),
+                          leading: IgnorePointer(
+                            child: ProfileButton(),
+                          ),
+                          subtitle: Text('user'),
+                          contentPadding: EdgeInsets.only(left: 8, right: 16),
+                          separated: Padding(
+                            padding: EdgeInsets.only(left: 16),
+                            child: IgnorePointer(
+                              child: IconButton(
+                                icon: Icon(FontAwesomeIcons.signOutAlt),
+                                onPressed: () => onLogOut(context),
+                              ),
+                            ),
+                          ),
+                          onTap: () =>
+                              Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => ProfileDetail(),
+                            ),
+                          ),
+                          onTapSeparated: () => onLogOut(context),
+                        )
+                      : ListTile(
+                          title: Text('Login'),
+                          leading: Icon(FontAwesomeIcons.userPlus),
+                          onTap: () =>
+                              Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(
+                                onSuccess: Navigator.of(context).maybePop,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                 ),
                 secondChild: Center(
                   child: SizedCircularProgressIndicator(size: 32),
                 ),
               ),
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: ListTile(
-                    title: Text('Blacklist'),
-                    subtitle: Text('tags you dont want to see'),
-                    leading: Icon(FontAwesomeIcons.ban),
-                    onTap: () =>
-                        Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => BlacklistSettings(),
-                      ),
-                    ),
+            ValueListenableBuilder<bool>(
+              valueListenable: settings.blacklisting,
+              builder: (context, blacklisting, child) => DividerListTile(
+                title: Text('Blacklist'),
+                subtitle: Text('tags you dont want to see'),
+                leading: Icon(FontAwesomeIcons.ban),
+                onTap: () => Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (context) => BlacklistSettings(),
                   ),
                 ),
-                ValueListenableBuilder<bool>(
-                  valueListenable: settings.blacklisting,
-                  builder: (context, blacklisting, child) => InkWell(
-                    onTap: () => settings.blacklisting.value = !blacklisting,
-                    child: SizedBox(
-                      height: 64,
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(vertical: 12),
-                            child: Container(
-                              color: Theme.of(context).dividerColor,
-                              width: 2,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(right: 20),
-                            child: Switch(
-                              value: blacklisting,
-                              onChanged: (value) =>
-                                  settings.blacklisting.value = value,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                separated: Switch(
+                  value: blacklisting,
+                  onChanged: (value) => settings.blacklisting.value = value,
                 ),
-              ],
+                onTapSeparated: () =>
+                    settings.blacklisting.value = !blacklisting,
+              ),
             ),
             FutureBuilder<bool>(
               future: hasLogin,
@@ -274,27 +262,29 @@ class _SettingsPageState extends State<SettingsPage> {
                     children: [
                       Divider(),
                       settingsHeader('Recommendations'),
-                      ValueListenableBuilder<String>(
-                        valueListenable: settings.homeTags,
-                        builder: (context, homeTags, child) => ListTile(
-                          leading: Icon(
-                            FontAwesomeIcons.hashtag,
-                            size: 20,
-                          ),
-                          title: Text('Home tags'),
-                          subtitle: Text(homeTags),
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (context) => TagChangeDialog(
-                              title: 'Home tags',
-                              onSubmit: (value) =>
-                                  settings.homeTags.value = value,
-                              controller: TextEditingController(text: homeTags),
-                              hint: 'tags',
+                      if (status == RecommendationStatus.functional)
+                        ValueListenableBuilder<String>(
+                          valueListenable: settings.homeTags,
+                          builder: (context, homeTags, child) => ListTile(
+                            leading: Icon(
+                              FontAwesomeIcons.hashtag,
+                              size: 20,
+                            ),
+                            title: Text('Home tags'),
+                            subtitle: Text(homeTags),
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => TagChangeDialog(
+                                title: 'Home tags',
+                                onSubmit: (value) =>
+                                    settings.homeTags.value = value,
+                                controller:
+                                    TextEditingController(text: homeTags),
+                                hint: 'tags',
+                              ),
                             ),
                           ),
                         ),
-                      ),
                       ValueListenableBuilder(
                         valueListenable: settings.databaseWeights,
                         builder: (context, databaseWeights, child) => ListTile(
