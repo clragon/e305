@@ -11,21 +11,30 @@ import 'package:path_provider/path_provider.dart';
 
 final Recommendations recommendations = Recommendations();
 
-class Recommendations extends DatabaseUpdater with HostableUpdater {
+class Recommendations extends DatabaseUpdater {
   final int required = 200;
+
+  Duration? get stale => Duration(days: 14);
 
   Future<void> updateCredentials() async {
     delete();
     return refresh();
   }
 
+  Future<void> updateHost() async {
+    database.value = null;
+    return refresh();
+  }
+
   Recommendations() : super(name: 'favorites', limit: 1200) {
     settings.credentials.addListener(updateCredentials);
+    settings.safe.addListener(updateHost);
   }
 
   @override
   void dispose() {
     settings.credentials.removeListener(updateCredentials);
+    settings.safe.removeListener(updateHost);
     super.dispose();
   }
 
