@@ -8,15 +8,28 @@ jobs:
   ios-build:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v1 
+    - name: setup actions
+      uses: actions/checkout@v1 
 
-    - uses: subosito/flutter-action@v1
+    - name: setup flutter
+      uses: subosito/flutter-action@v1
       with:
         channel: 'stable' 
+        
+    - name: configure release version
+      id: git_vars
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "##[set-output name=sha_short;]$(git rev-parse --short HEAD)"
+        
+    - name: get dependencies
+      run: flutter pub get
 
-    - run: flutter build ios --no-codesign
+    - name: build release
+      run: flutter build ios --no-codesign --dart-define=branch=${{ steps.git_vars.outputs.branch }} --dart-define=commit=${{ steps.git_vars.outputs.commit }}
 
-    - run: |
+    - name: package release
+      run: |
         cd build/ios/iphoneos
         mkdir Payload
         mv Runner.app Payload/Runner.app
@@ -24,7 +37,8 @@ jobs:
         mv e305.zip ../../../e305.ipa
     
     # Upload generated apk to the artifacts.
-    - uses: actions/upload-artifact@v1
+    - name: upload release
+      uses: actions/upload-artifact@v1
       with:
         name: release-ios
         path: e305.ipa
@@ -34,33 +48,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: actions/checkout@v1
+    - name: setup actions
+      uses: actions/checkout@v1
 
-    - uses: actions/setup-java@v1
+    - name: setup java
+      uses: actions/setup-java@v1
       with:
         java-version: '12.x'
 
-    - uses: subosito/flutter-action@v1
+    - name: setup flutter
+      uses: subosito/flutter-action@v1
       with:
-        channel: 'beta' 
+        channel: 'stable' 
 
-    # Config release keys
-    - env:
+    - name: configure release keys
+      env:
         KEYSTORE: ${{ secrets.KEYSTORE }}
         KEYCONFIG: ${{ secrets.KEYCONFIG }}
       run: | 
         mkdir -p android/app/keys
         echo "$KEYSTORE" | base64 -d > android/app/keys/key.pkcs
         echo "$KEYCONFIG" | base64 -d > android/app/keys/key.properties
-    
-    # Get flutter dependencies.
-    - run: flutter pub get
 
-    # Build apk.
-    - run: flutter build apk
+    - name: configure release version
+      id: git_vars
+      run: |
+        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        echo "##[set-output name=sha_short;]$(git rev-parse --short HEAD)"
 
-    # Upload generated apk to the artifacts.
-    - uses: actions/upload-artifact@v1
+    - name: get dependencies
+      run: flutter pub get
+
+    - name: build release
+      run: flutter build apk --dart-define=branch=${{ steps.git_vars.outputs.branch }} --dart-define=commit=${{ steps.git_vars.outputs.commit }}
+
+    - name: upload release
+      uses: actions/upload-artifact@v1
       with:
         name: release-apk
         path: build/app/outputs/apk/release/app-release.apk
