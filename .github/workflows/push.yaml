@@ -26,7 +26,7 @@ jobs:
       run: flutter pub get
 
     - name: build release
-      run: flutter build ios --no-codesign --dart-define=branch=${{ GITHUB_BRANCH }} --dart-define=commit=${{ GITHUB_SHA_SHORT }}
+      run: flutter build ios --no-codesign --dart-define=branch=$GITHUB_BRANCH --dart-define=commit=$GITHUB_SHA_SHORT
 
     - name: package release
       run: |
@@ -73,14 +73,14 @@ jobs:
     - name: configure release version
       id: git_vars
       run: |
-        echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        echo "##[set-output name=sha_short;]$(git rev-parse --short HEAD)"
+        echo "GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+        echo "GITHUB_SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
     - name: get dependencies
       run: flutter pub get
 
     - name: build release
-      run: flutter build apk --dart-define=branch=${{ steps.git_vars.outputs.branch }} --dart-define=commit=${{ steps.git_vars.outputs.commit }}
+      run: flutter build apk --dart-define=branch=$GITHUB_BRANCH --dart-define=commit=$GITHUB_SHA_SHORT
 
     - name: upload release
       uses: actions/upload-artifact@v1
