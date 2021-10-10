@@ -23,8 +23,8 @@ class _VersionDialogState extends State<VersionDialog> {
             padding: EdgeInsets.all(16),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                maxHeight: 120,
-                maxWidth: 120,
+                maxHeight: 132,
+                maxWidth: 132,
               ),
               child: Image(
                 image: AssetImage(
@@ -35,7 +35,7 @@ class _VersionDialogState extends State<VersionDialog> {
           ),
           Text(
             appName,
-            style: Theme.of(context).textTheme.headline5,
+            style: Theme.of(context).textTheme.headline4,
           ),
           FutureBuilder(
             future: PackageInfo.fromPlatform(),
@@ -47,14 +47,23 @@ class _VersionDialogState extends State<VersionDialog> {
                       snapshot.hasData,
                   builder: (context) => Column(
                     children: [
-                      Text('v${snapshot.data!.version}'),
+                      Text(
+                        'v${snapshot.data!.version}',
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
                       if (branch.isNotEmpty && commit.isNotEmpty)
-                        Text('from $branch on $commit'),
+                        Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Text('$branch on #$commit'),
+                        ),
                     ],
                   ),
                 ),
               );
             },
+          ),
+          SizedBox(
+            height: 32,
           ),
           Text(
             about,
@@ -68,7 +77,7 @@ class _VersionDialogState extends State<VersionDialog> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8),
             child: Text(
               'by $developer',
               textAlign: TextAlign.center,
