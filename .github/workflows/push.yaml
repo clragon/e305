@@ -1,6 +1,4 @@
-name: Flutter CI
-
-# This workflow is triggered on pushes to the repository.
+name: Build on Push
 
 on: push
 
@@ -15,9 +13,8 @@ jobs:
       uses: subosito/flutter-action@v1
       with:
         channel: 'stable' 
-        
+
     - name: configure release version
-      id: git_vars
       run: |
         echo "GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
         echo "GITHUB_SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
@@ -35,8 +32,7 @@ jobs:
         mv Runner.app Payload/Runner.app
         zip -9 -r e305.zip Payload
         mv e305.zip ../../../e305.ipa
-    
-    # Upload generated apk to the artifacts.
+
     - name: upload release
       uses: actions/upload-artifact@v1
       with:
@@ -44,7 +40,6 @@ jobs:
         path: e305.ipa
 
   android-build:
-    # This job will run on ubuntu virtual machine
     runs-on: ubuntu-latest
     steps:
 
@@ -71,7 +66,6 @@ jobs:
         echo "$KEYCONFIG" | base64 -d > android/app/keys/key.properties
 
     - name: configure release version
-      id: git_vars
       run: |
         echo "GITHUB_BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
         echo "GITHUB_SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
