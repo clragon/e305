@@ -8,15 +8,16 @@ import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/profile/widgets/profile.dart';
 import 'package:e305/recommendations/data/updater.dart';
 import 'package:e305/recommendations/widgets/recommendations.dart';
-import 'package:e305/settings/data/info.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/settings/pages/blacklist.dart';
 import 'package:e305/settings/pages/login.dart';
+import 'package:e305/settings/pages/recommendations.dart';
+import 'package:e305/settings/pages/theme.dart';
+import 'package:e305/settings/pages/version.dart';
 import 'package:e305/tags/data/post.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'divider_tile.dart';
 
@@ -371,198 +372,6 @@ class _SettingsPageState extends State<SettingsPage> {
         title: Text('Settings'),
       ),
       body: Builder(builder: bodyWidgetBuilder),
-    );
-  }
-}
-
-class ThemeDialog extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    Widget themeTile(AppTheme theme) {
-      return ListTile(
-        title: Text(describeEnum(theme)),
-        trailing: Container(
-          height: 26,
-          width: 26,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: themeMap[theme]?.cardColor,
-            border: Border.all(
-              color: Theme.of(context).iconTheme.color!,
-            ),
-          ),
-        ),
-        onTap: () {
-          settings.theme.value = theme;
-          Navigator.of(context).maybePop();
-        },
-      );
-    }
-
-    return SimpleDialog(
-      title: Text('Theme'),
-      children: [
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: themeMap.keys.map(themeTile).toList(),
-        )
-      ],
-    );
-  }
-}
-
-class VersionDialog extends StatefulWidget {
-  const VersionDialog();
-
-  @override
-  _VersionDialogState createState() => _VersionDialogState();
-}
-
-class _VersionDialogState extends State<VersionDialog> {
-  final Future<PackageInfo> packageInfo = PackageInfo.fromPlatform();
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: 120,
-                maxWidth: 120,
-              ),
-              child: Image(
-                image: AssetImage(
-                  'assets/icon.png',
-                ),
-              ),
-            ),
-          ),
-          Text(
-            appName,
-            style: Theme.of(context).textTheme.headline5,
-          ),
-          FutureBuilder(
-            future: PackageInfo.fromPlatform(),
-            builder: (context, AsyncSnapshot<PackageInfo> snapshot) {
-              return Padding(
-                padding: EdgeInsets.all(8),
-                child: SafeCrossFade(
-                  showChild: snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData,
-                  builder: (context) => Text('v${snapshot.data!.version}'),
-                ),
-              );
-            },
-          ),
-          Text(
-            about,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .color!
-                  .withOpacity(0.35),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'by $developer',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .color!
-                    .withOpacity(0.35),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class RecommendationDatabaseText extends StatelessWidget {
-  final RecommendationStatus status;
-
-  const RecommendationDatabaseText({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    switch (status) {
-      case RecommendationStatus.loading:
-        return Row(
-          children: [
-            Text('database is being created'),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4),
-              child: PulseLoadingIndicator(size: 14),
-            ),
-          ],
-        );
-      case RecommendationStatus.anonymous:
-        return Text('you are not logged in');
-      case RecommendationStatus.insufficient:
-        return Text(
-            'you dont have enough favorites.\nclick here after you favorited some posts!');
-      case RecommendationStatus.functional:
-        return Text('recreate favorite tag database');
-    }
-  }
-}
-
-class TagChangeDialog extends StatefulWidget {
-  final void Function(String value) onSubmit;
-  final TextEditingController controller;
-  final String title;
-  final String hint;
-
-  const TagChangeDialog({
-    required this.title,
-    required this.hint,
-    required this.onSubmit,
-    required this.controller,
-  });
-
-  @override
-  _TagChangeDialogState createState() => _TagChangeDialogState();
-}
-
-class _TagChangeDialogState extends State<TagChangeDialog> {
-  void submit() {
-    widget.onSubmit(widget.controller.text.trim());
-    Navigator.of(context).maybePop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.title),
-      content: TextField(
-        autofocus: true,
-        controller: widget.controller,
-        onSubmitted: (_) => submit(),
-        decoration: InputDecoration(
-          hintText: widget.hint,
-        ),
-      ),
-      actions: [
-        TextButton(
-          child: Text('CANCEL'),
-          onPressed: Navigator.of(context).maybePop,
-        ),
-        TextButton(
-          child: Text('OK'),
-          onPressed: submit,
-        ),
-      ],
     );
   }
 }
