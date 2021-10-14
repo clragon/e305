@@ -49,12 +49,12 @@ class PostTileOverlay extends StatelessWidget {
   }
 }
 
-class PostScoreOverly extends StatelessWidget {
+class PostScoreOverlay extends StatelessWidget {
   final Post post;
   final PostController controller;
   final bool exact;
 
-  const PostScoreOverly(
+  const PostScoreOverlay(
       {required this.post, required this.controller, this.exact = true});
 
   @override

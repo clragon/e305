@@ -76,6 +76,30 @@ class _PostDetailState extends State<PostDetail> {
                       ],
                     ),
                   ),
+                  if (widget.controller is RecommendationController)
+                    PopupMenuItem(
+                      value: () async => showDialog(
+                        context: context,
+                        builder: (context) => RecommendationScoreDialog(
+                          post: widget.post,
+                          controller:
+                              widget.controller as RecommendationController,
+                          onSearch: widget.onSearch,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            FontAwesomeIcons.star,
+                            size: 20,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 16),
+                            child: Text('Recommendation'),
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ],
@@ -111,11 +135,6 @@ class _PostDetailState extends State<PostDetail> {
                       Divider(),
                       InteractionDisplay(post: widget.post),
                       Divider(),
-                      RecommendationDisplay(
-                        post: widget.post,
-                        controller: widget.controller,
-                        onSearch: widget.onSearch,
-                      ),
                       DescriptionDisplay(
                         post: widget.post,
                       ),

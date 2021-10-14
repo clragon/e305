@@ -54,15 +54,6 @@ class PostTile extends StatelessWidget {
               right: 0,
               child: PostTileOverlay(post: post),
             ),
-            if (controller != null)
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: PostScoreOverly(
-                  post: post,
-                  controller: controller!,
-                ),
-              ),
             Material(
               type: MaterialType.transparency,
               child: InkWell(
@@ -120,14 +111,6 @@ class PostPageTile extends StatelessWidget {
                     top: 0,
                     right: 0,
                     child: PostTileOverlay(post: post),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: PostScoreOverly(
-                      post: post,
-                      controller: controller,
-                    ),
                   ),
                   Positioned.fill(
                     child: Material(
