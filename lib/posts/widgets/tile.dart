@@ -73,59 +73,102 @@ class PostPageTile extends StatelessWidget {
   final VoidCallback onTap;
   final PostController controller;
 
-  const PostPageTile(
-      {required this.post,
-      required this.onTap,
-      this.hero,
-      required this.controller});
+  const PostPageTile({
+    required this.controller,
+    required this.post,
+    required this.onTap,
+    this.hero,
+  });
+
+  final double distance = 0.25;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(left: 20, right: 20, bottom: 32, top: 12),
-            child: Card(
-              clipBehavior: Clip.antiAlias,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Hero(
-                      tag: hero ?? UniqueKey(),
-                      transitionOnUserGestures: true,
-                      child: CachedNetworkImage(
-                        imageUrl: post.sample.url!,
-                        fit: BoxFit.cover,
-                        progressIndicatorBuilder: (context, url, progress) =>
-                            Center(child: PulseLoadingIndicator(size: 80)),
-                        errorWidget: (context, url, error) => Center(
-                          child: Icon(
-                            FontAwesomeIcons.exclamationTriangle,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool fitting = ((post.sample.width / post.sample.height) -
+                    (constraints.biggest.width / constraints.biggest.height))
+                .abs() <
+            distance;
+
+        Widget image() {
+          return Hero(
+            tag: hero ?? UniqueKey(),
+            transitionOnUserGestures: true,
+            child: CachedNetworkImage(
+              imageUrl: post.sample.url!,
+              fit: BoxFit.cover,
+              progressIndicatorBuilder: (context, url, progress) =>
+                  Center(child: PulseLoadingIndicator(size: 80)),
+              errorWidget: (context, url, error) => Center(
+                child: Icon(
+                  FontAwesomeIcons.exclamationTriangle,
+                ),
+              ),
+            ),
+          );
+        }
+
+        Widget background({required Widget child}) {
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: CachedNetworkImage(
+                  imageUrl: post.sample.url!,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned.fill(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  child: Container(color: Colors.black54),
+                ),
+              ),
+              Center(
+                child: child,
+              )
+            ],
+          );
+        }
+
+        return Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding:
+                    EdgeInsets.only(left: 20, right: 20, bottom: 32, top: 12),
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: fitting
+                            ? image()
+                            : background(
+                                child: image(),
+                              ),
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: PostTileOverlay(post: post),
+                      ),
+                      Positioned.fill(
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: InkWell(
+                            onTap: onTap,
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: PostTileOverlay(post: post),
-                  ),
-                  Positioned.fill(
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: InkWell(
-                        onTap: onTap,
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

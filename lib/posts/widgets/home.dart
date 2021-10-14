@@ -136,6 +136,7 @@ class _HomePageState extends State<HomePage> {
                 index: index,
                 posts: controller.itemList!,
                 size: ImageSize.sample,
+                reach: 5,
               ),
             );
           },
