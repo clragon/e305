@@ -133,7 +133,7 @@ class _SettingsPageState extends State<SettingsPage> {
         child: ListView(
           physics: BouncingScrollPhysics(),
           children: [
-            settingsHeader('Host'),
+            settingsHeader('Account'),
             ValueListenableBuilder<bool>(
               valueListenable: settings.safe,
               builder: (context, safe, child) => SwitchListTile(
@@ -146,44 +146,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 onChanged: (value) => settings.safe.value = !value,
               ),
             ),
-            Divider(),
-            settingsHeader('Display'),
-            ValueListenableBuilder<AppTheme>(
-              valueListenable: settings.theme,
-              builder: (context, theme, child) {
-                return ListTile(
-                  title: Text('Theme'),
-                  subtitle: Text(describeEnum(theme)),
-                  leading: Icon(FontAwesomeIcons.solidLightbulb),
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => ThemeDialog(),
-                    );
-                  },
-                );
-              },
-            ),
-            ValueListenableBuilder<bool>(
-              valueListenable: settings.expanded,
-              builder: (context, expanded, child) {
-                return SwitchListTile(
-                  title: Text('Expand details'),
-                  subtitle: CrossFade(
-                    showChild: expanded,
-                    child: Text('expanded post details'),
-                    secondChild: Text('collapsed post details'),
-                  ),
-                  secondary: Icon(expanded
-                      ? FontAwesomeIcons.expand
-                      : FontAwesomeIcons.compress),
-                  value: expanded,
-                  onChanged: (value) => settings.expanded.value = value,
-                );
-              },
-            ),
-            Divider(),
-            settingsHeader('Account'),
             FutureBuilder<bool?>(
               future: hasLogin,
               builder: (context, snapshot) => CrossFade(
@@ -228,8 +190,9 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                 ),
-                secondChild: Center(
-                  child: SizedCircularProgressIndicator(size: 32),
+                secondChild: ListTile(
+                  leading: PulseLoadingIndicator(size: 32),
+                  title: Text('User'),
                 ),
               ),
             ),
@@ -251,6 +214,42 @@ class _SettingsPageState extends State<SettingsPage> {
                 onTapSeparated: () =>
                     settings.blacklisting.value = !blacklisting,
               ),
+            ),
+            Divider(),
+            settingsHeader('Display'),
+            ValueListenableBuilder<AppTheme>(
+              valueListenable: settings.theme,
+              builder: (context, theme, child) {
+                return ListTile(
+                  title: Text('Theme'),
+                  subtitle: Text(describeEnum(theme)),
+                  leading: Icon(FontAwesomeIcons.solidLightbulb),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ThemeDialog(),
+                    );
+                  },
+                );
+              },
+            ),
+            ValueListenableBuilder<bool>(
+              valueListenable: settings.expanded,
+              builder: (context, expanded, child) {
+                return SwitchListTile(
+                  title: Text('Expand details'),
+                  subtitle: CrossFade(
+                    showChild: expanded,
+                    child: Text('expanded post details'),
+                    secondChild: Text('collapsed post details'),
+                  ),
+                  secondary: Icon(expanded
+                      ? FontAwesomeIcons.expand
+                      : FontAwesomeIcons.compress),
+                  value: expanded,
+                  onChanged: (value) => settings.expanded.value = value,
+                );
+              },
             ),
             FutureBuilder<bool>(
               future: hasLogin,
@@ -340,11 +339,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Divider(),
-                    Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(8),
-                        child: SizedCircularProgressIndicator(size: 32),
-                      ),
+                    ListTile(
+                      leading: PulseLoadingIndicator(size: 32),
+                      title: Text('Recommendations'),
                     ),
                   ],
                 ),
