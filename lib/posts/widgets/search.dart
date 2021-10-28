@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 
 typedef SearchCallback = void Function(String search);
 
@@ -97,6 +96,15 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  StaggeredTile? tileBuilder(int index) {
+    if (index < (controller.itemList?.length ?? 0)) {
+      Sample sample = controller.itemList![index].sample;
+      double heightRatio = sample.height / sample.width;
+      return StaggeredTile.count(1, heightRatio);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,46 +112,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: appBar(),
       body: LayoutBuilder(
         builder: (context, constraints) {
-          Widget gridBuilder(
-            BuildContext context,
-            IndexedWidgetBuilder itemBuilder,
-            int itemCount,
-            WidgetBuilder? appendixBuilder,
-          ) {
-            StaggeredTile? tileBuilder(int index) {
-              if (index < (controller.itemList?.length ?? 0)) {
-                Sample sample = controller.itemList![index].sample;
-                double heightRatio = sample.height / sample.width;
-                return StaggeredTile.count(1, heightRatio);
-              }
-              return null;
-            }
-
-            int crossAxiscount =
-                notZero(constraints.maxWidth / tileSize).round();
-
-            return MultiSliver(
-              children: [
-                SliverStaggeredGrid(
-                  key: Key(crossAxiscount.toString()),
-                  gridDelegate:
-                      SliverStaggeredGridDelegateWithFixedCrossAxisCount(
-                    staggeredTileBuilder: tileBuilder,
-                    crossAxisCount: crossAxiscount,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    itemBuilder,
-                    childCount: itemCount,
-                  ),
-                  addAutomaticKeepAlives: false,
-                ),
-                if (appendixBuilder != null)
-                  SliverToBoxAdapter(
-                    child: appendixBuilder(context),
-                  ),
-              ],
-            );
-          }
+          int crossAxisCount = notZero(constraints.maxWidth / tileSize).round();
 
           return SmartRefresher(
             primary: false,
@@ -153,45 +122,41 @@ class _SearchPageState extends State<SearchPage> {
             header: ClassicHeader(
               refreshingIcon: OrbitLoadingIndicator(size: 40),
             ),
-            child: CustomScrollView(
+            child: PagedStaggeredGridView<int, Post>(
+              key: Key(['posts', crossAxisCount].join('_')),
               physics: BouncingScrollPhysics(),
-              slivers: [
-                SliverPadding(
-                  padding:
-                      EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                  sliver: PagedSliverBuilder<int, Post>(
-                    pagingController: controller,
-                    builderDelegate: PagedChildBuilderDelegate<Post>(
-                      itemBuilder: (context, item, index) => PostTile(
-                        post: item,
+              addAutomaticKeepAlives: false,
+              pagingController: controller,
+              gridDelegateBuilder: (childCount) =>
+                  SliverStaggeredGridDelegateWithFixedCrossAxisCount(
+                staggeredTileBuilder: tileBuilder,
+                crossAxisCount: crossAxisCount,
+              ),
+              builderDelegate: PagedChildBuilderDelegate<Post>(
+                itemBuilder: (context, item, index) => PostTile(
+                  post: item,
+                  hero: '${hero}_${item.id}',
+                  controller: controller,
+                  onPressed: () =>
+                      Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => PostDetail(
+                        post: controller.itemList![index],
                         hero: '${hero}_${item.id}',
+                        onSearch: widget.onSearch ?? defaultOnSearch,
                         controller: controller,
-                        onPressed: () =>
-                            Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute(
-                            builder: (context) => PostDetail(
-                              post: controller.itemList![index],
-                              hero: '${hero}_${item.id}',
-                              onSearch: widget.onSearch ?? defaultOnSearch,
-                              controller: controller,
-                            ),
-                          ),
-                        ),
-                      ),
-                      firstPageProgressIndicatorBuilder: (context) => Center(
-                        child: OrbitLoadingIndicator(size: 100),
-                      ),
-                      newPageProgressIndicatorBuilder: (context) => Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Center(child: PulseLoadingIndicator(size: 60)),
                       ),
                     ),
-                    completedListingBuilder: gridBuilder,
-                    loadingListingBuilder: gridBuilder,
-                    errorListingBuilder: gridBuilder,
                   ),
                 ),
-              ],
+                firstPageProgressIndicatorBuilder: (context) => Center(
+                  child: OrbitLoadingIndicator(size: 100),
+                ),
+                newPageProgressIndicatorBuilder: (context) => Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: PulseLoadingIndicator(size: 60)),
+                ),
+              ),
             ),
           );
         },
