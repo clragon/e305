@@ -85,7 +85,7 @@ jobs:
       run: flutter pub get
 
     - name: build release
-      run: flutter build ios --no-codesign --dart-define=branch=$GITHUB_BRANCH --dart-define=commit=$GITHUB_SHA_SHORT
+      run: flutter build apk --dart-define=branch=$GITHUB_BRANCH --dart-define=commit=$GITHUB_SHA_SHORT
 
     - name: upload release to artifacts
       uses: actions/upload-artifact@v1
