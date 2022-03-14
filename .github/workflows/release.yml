@@ -45,10 +45,7 @@ jobs:
     - name: upload release
       uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: e305.ipa
-        asset_name: e305.ipa
-        asset_content_type: application/octet-stream
+        files: e305.ipa
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -89,19 +86,20 @@ jobs:
 
     - name: build release
       run: flutter build apk --dart-define=branch=$GITHUB_BRANCH --dart-define=commit=$GITHUB_SHA_SHORT
+      
+    - name: package release
+      run: |
+        mv build/app/outputs/flutter-apk/app-release.apk e305.apk
 
     - name: upload release to artifacts
       uses: actions/upload-artifact@v3
       with:
         name: release-apk
-        path: build/app/outputs/apk/release/app-release.apk
+        path: e305.apk
 
     - name: upload release
       uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: build/app/outputs/apk/release/app-release.apk
-        asset_name: e305.apk
-        asset_content_type: application/java-archive
+        files: e305.apk
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
