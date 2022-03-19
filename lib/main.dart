@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:e305/interface/data/theme.dart';
 import 'package:e305/interface/widgets/navigation.dart';
 import 'package:e305/settings/data/settings.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {

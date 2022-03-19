@@ -300,9 +300,9 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: develop
-      resolved-ref: "268945f249caf808173afbf6a567fb615ab24992"
-      url: "git://github.com/EdsonBueno/infinite_scroll_pagination"
+      ref: HEAD
+      resolved-ref: "3da855e1edece1cb17cdc282b22c428fecc70647"
+      url: "https://github.com/clragon/infinite_scroll_pagination.git"
     source: git
     version: "4.0.0"
   intl:
