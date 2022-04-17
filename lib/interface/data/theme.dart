@@ -68,39 +68,25 @@ ThemeData prepareTheme(ThemeData theme) => theme.copyWith(
 Map<AppTheme, ThemeData> themeMap = {
   AppTheme.dark: prepareTheme(
     ThemeData.from(
-      colorScheme: ColorScheme(
-        primary: Colors.lightBlue,
-        primaryVariant: Colors.blue,
-        secondary: Colors.lightBlueAccent,
-        secondaryVariant: Colors.blueAccent,
-        surface: Colors.grey[850]!,
-        background: Colors.grey[900]!,
-        error: Colors.red,
-        onSurface: Colors.white,
-        onBackground: Colors.white,
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
-        onError: Colors.black,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Color(0xFF152f56),
+        primary: Color(0xFFfdba31),
+        secondary: Color(0xFFfdba31),
+        surface: Color(0xFF152f56),
+        background: Color(0xFF020f23),
         brightness: Brightness.dark,
       ),
     ),
   ),
   AppTheme.light: prepareTheme(
     ThemeData.from(
-      colorScheme: ColorScheme(
-        primary: Colors.lightBlue,
-        primaryVariant: Colors.blue,
-        secondary: Colors.lightBlueAccent,
-        secondaryVariant: Colors.blueAccent,
-        surface: Colors.white,
-        background: Colors.grey[50]!,
-        error: Colors.red,
-        onSurface: Colors.black,
-        onBackground: Colors.black,
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
-        onError: Colors.black,
-        brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: Color(0xFF1d3963),
+        primary: Color(0xFFfdba31),
+        secondary: Color(0xFFfdba31),
+        surface: Color(0xFF243c61),
+        background: Color(0xFF1d3963),
+        brightness: Brightness.dark,
       ),
     ),
   ),

@@ -75,7 +75,7 @@ class _CommentAppenderState extends State<CommentAppender> {
               newPageProgressIndicatorBuilder: (context) => loadingIndicator(),
               noItemsFoundIndicatorBuilder: (context) => Center(
                   child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.all(30),
                 child: Text(
                   'no comments',
                   style: Theme.of(context)
