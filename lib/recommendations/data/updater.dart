@@ -5,7 +5,6 @@ import 'package:e305/interface/data/updater.dart';
 import 'package:e305/recommendations/data/storage.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/tags/data/post.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 

@@ -7,7 +7,6 @@ import 'package:e305/posts/widgets/tile.dart';
 import 'package:e305/recommendations/data/updater.dart';
 import 'package:e305/tags/data/post.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 

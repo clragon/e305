@@ -55,6 +55,7 @@ class Persistence {
       if (raw != null) {
         return json.decode(raw);
       }
+      return null;
     }, setSetting: (prefs, key, value) async {
       await prefs.setString(key, json.encode(value));
     });

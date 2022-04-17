@@ -3,7 +3,6 @@ import 'package:e305/client/data/client.dart';
 import 'package:e305/profile/widgets/profile.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileButton extends StatefulWidget {

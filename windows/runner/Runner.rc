@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.clynamic.e305" "\0"
+            VALUE "CompanyName", "net.clynamic.e305" "\0"
             VALUE "FileDescription", "e305: e6 mobile app" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "e305" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2021 com.clynamic.e305. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2021 net.clynamic.e305. All rights reserved." "\0"
             VALUE "OriginalFilename", "e305.exe" "\0"
             VALUE "ProductName", "e305" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
