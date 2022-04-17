@@ -218,7 +218,7 @@ class Client {
   }
 
   Future<List> autocomplete(String search, {int? category}) async {
-    var body;
+    dynamic body;
     if (category == null) {
       body = await dio.get('tags/autocomplete.json', queryParameters: {
         'search[name_matches]': search,
@@ -294,8 +294,7 @@ class Client {
     String filter = 'id:${ids.join(',')}';
 
     List<Post> posts = await client.posts(filter, 1);
-    Map<int, Post> table =
-        Map.fromIterable(posts, key: (e) => e.id, value: (e) => e);
+    Map<int, Post> table = {for (final e in posts) e.id: e};
     posts = ids.fold<List<Post>>(
       [],
       (previousValue, element) => table[element] != null

@@ -54,7 +54,7 @@ class _PostDetailState extends State<PostDetail> {
             title: gesture(context),
             actions: [
               PopupMenuButton<VoidCallback>(
-                icon: Icon(
+                icon: const Icon(
                   Icons.more_vert,
                 ),
                 onSelected: (value) => value(),
@@ -63,7 +63,7 @@ class _PostDetailState extends State<PostDetail> {
                     value: () async => launch(
                         'https://${client.host}/posts/${widget.post.id}'),
                     child: Row(
-                      children: [
+                      children: const [
                         Icon(
                           FontAwesomeIcons.externalLinkAlt,
                           size: 20,
@@ -87,7 +87,7 @@ class _PostDetailState extends State<PostDetail> {
                         ),
                       ),
                       child: Row(
-                        children: [
+                        children: const [
                           Icon(
                             FontAwesomeIcons.star,
                             size: 20,
@@ -119,11 +119,11 @@ class _PostDetailState extends State<PostDetail> {
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: ImageDisplay(post: widget.post, hero: widget.hero),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -131,9 +131,9 @@ class _PostDetailState extends State<PostDetail> {
                         post: widget.post,
                         onSearch: widget.onSearch,
                       ),
-                      Divider(),
+                      const Divider(),
                       InteractionDisplay(post: widget.post),
-                      Divider(),
+                      const Divider(),
                       DescriptionDisplay(
                         post: widget.post,
                       ),
@@ -147,9 +147,9 @@ class _PostDetailState extends State<PostDetail> {
                         post: widget.post,
                         onSearch: widget.onSearch,
                       ),
-                      Divider(),
+                      const Divider(),
                       FileDisplay(post: widget.post),
-                      Divider(),
+                      const Divider(),
                     ],
                   ),
                 ),

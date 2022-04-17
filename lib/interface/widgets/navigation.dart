@@ -32,13 +32,14 @@ class _NavigationPageState extends State<NavigationPage> {
   Future<bool> onTryPop([BuildContext? context]) async {
     if (context != null && ModalRoute.of(context)!.isCurrent && !willExit) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Press back again to exit'),
           duration: Duration(seconds: 2),
         ),
       );
       willExit = true;
-      exitResetTimer = Timer(Duration(seconds: 2), () => willExit = false);
+      exitResetTimer =
+          Timer(const Duration(seconds: 2), () => willExit = false);
       return false;
     }
     return true;
@@ -61,43 +62,43 @@ class _NavigationPageState extends State<NavigationPage> {
         HomePage(onSearch: onSearch),
         SearchPage(controller: postController),
         FavoritesPage(onSearch: onSearch),
-        PoolPage(),
-        SettingsPage(),
+        const PoolPage(),
+        const SettingsPage(),
       ],
       backgroundColor: Theme.of(context).canvasColor,
       items: [
         PersistentBottomNavBarItem(
-          icon: Icon(FontAwesomeIcons.home),
+          icon: const Icon(FontAwesomeIcons.home),
           title: "Recommended",
           activeColorPrimary: Colors.orange,
           inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(FontAwesomeIcons.search),
+          icon: const Icon(FontAwesomeIcons.search),
           title: "Search",
           activeColorPrimary: Colors.green,
           inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(FontAwesomeIcons.solidHeart),
+          icon: const Icon(FontAwesomeIcons.solidHeart),
           title: "Favorites",
           activeColorPrimary: Colors.pink,
           inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(FontAwesomeIcons.layerGroup),
+          icon: const Icon(FontAwesomeIcons.layerGroup),
           title: "Pools",
           activeColorPrimary: Colors.blue,
           inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
         ),
         PersistentBottomNavBarItem(
-          icon: Icon(FontAwesomeIcons.cog),
+          icon: const Icon(FontAwesomeIcons.cog),
           title: "Settings",
           activeColorPrimary: Colors.blueGrey,
           inactiveColorPrimary: Theme.of(context).colorScheme.onBackground,
         ),
       ],
-      screenTransitionAnimation: ScreenTransitionAnimation(
+      screenTransitionAnimation: const ScreenTransitionAnimation(
         animateTabTransition: true,
         curve: Curves.ease,
         duration: Duration(milliseconds: 200),

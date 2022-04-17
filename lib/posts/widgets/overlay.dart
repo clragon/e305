@@ -11,7 +11,7 @@ class PostTileOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.black26,
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(4),
@@ -20,7 +20,7 @@ class PostTileOverlay extends StatelessWidget {
       child: Column(
         children: [
           if (post.file.ext == 'webm')
-            Padding(
+            const Padding(
               padding: EdgeInsets.all(8),
               child: Icon(
                 FontAwesomeIcons.playCircle,
@@ -28,7 +28,7 @@ class PostTileOverlay extends StatelessWidget {
               ),
             ),
           if (post.pools.isNotEmpty)
-            Padding(
+            const Padding(
               padding: EdgeInsets.all(8),
               child: Icon(
                 FontAwesomeIcons.layerGroup,
@@ -36,7 +36,7 @@ class PostTileOverlay extends StatelessWidget {
               ),
             ),
           if (post.isFavorited)
-            Padding(
+            const Padding(
               padding: EdgeInsets.all(8),
               child: Icon(
                 FontAwesomeIcons.solidHeart,
@@ -60,8 +60,8 @@ class PostScoreOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (post.recommendationValue == null ||
-        !(controller is RecommendationController)) {
-      return SizedBox.shrink();
+        controller is! RecommendationController) {
+      return const SizedBox.shrink();
     }
 
     double maxScore = (controller as RecommendationController).maxScore();
@@ -74,13 +74,13 @@ class PostScoreOverlay extends StatelessWidget {
 
     if (relativeScore > 0.75) {
       return Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.black26,
           borderRadius: BorderRadius.only(
             topLeft: Radius.circular(4),
           ),
         ),
-        child: Padding(
+        child: const Padding(
           padding: EdgeInsets.all(8),
           child: Icon(
             FontAwesomeIcons.solidStar,
@@ -90,7 +90,7 @@ class PostScoreOverlay extends StatelessWidget {
         ),
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }
@@ -104,7 +104,7 @@ class ScoreMeterOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.black26,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(4),
@@ -113,7 +113,7 @@ class ScoreMeterOverlay extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: SizedBox(
               height: 20,
               width: 20,
@@ -141,7 +141,7 @@ class ScoreMeterOverlay extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 heightFactor: relativeScore,
                 child: Container(
-                  color: Color.fromARGB(255, 255, 215, 0),
+                  color: const Color.fromARGB(255, 255, 215, 0),
                   width: 4,
                 ),
               ),

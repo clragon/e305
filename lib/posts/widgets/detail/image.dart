@@ -41,13 +41,13 @@ class ImageDisplay extends StatelessWidget {
                         imageUrl: post.sample.url!,
                         fit: BoxFit.cover,
                         progressIndicatorBuilder: (context, url, progress) =>
-                            Center(
+                            const Center(
                           child: PulseLoadingIndicator(
                             size: 60,
                           ),
                         ),
                         errorWidget: (context, url, error) =>
-                            Center(child: Icon(Icons.error_outline)),
+                            const Center(child: Icon(Icons.error_outline)),
                       ),
                     ),
                   ),

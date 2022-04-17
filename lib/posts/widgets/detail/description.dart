@@ -18,9 +18,9 @@ class DescriptionDisplay extends StatelessWidget {
             builder: (context, controller) => ExpandablePanel(
               key: ObjectKey(controller),
               controller: controller,
-              collapsed: SizedBox.shrink(),
+              collapsed: const SizedBox.shrink(),
               header: Padding(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: Text(
                   'Description',
                   style: Theme.of(context).textTheme.headline6,
@@ -29,7 +29,7 @@ class DescriptionDisplay extends StatelessWidget {
               expanded: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: Row(
                       children: [
                         Expanded(
@@ -42,11 +42,11 @@ class DescriptionDisplay extends StatelessWidget {
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
         ],
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }

@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 
 class PoolController extends DataController<Pool>
     with SearchableDataMixin, HostableDataMixin, RefreshableDataMixin {
+  @override
   final ValueNotifier<String> search;
 
-  PoolController({String? search}) : this.search = ValueNotifier(search ?? '');
+  PoolController({String? search}) : search = ValueNotifier(search ?? '');
 
   @override
   Future<List<Pool>> provide(int page) => client.pools(

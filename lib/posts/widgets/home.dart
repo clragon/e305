@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     Widget body() {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 24),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: LayoutBuilder(
           builder: (context, constraints) {
             updatePageController(constraints.maxWidth);
@@ -111,16 +111,16 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                firstPageProgressIndicatorBuilder: (context) => Center(
+                firstPageProgressIndicatorBuilder: (context) => const Center(
                   child: OrbitLoadingIndicator(size: 100),
                 ),
-                newPageProgressIndicatorBuilder: (context) => Padding(
+                newPageProgressIndicatorBuilder: (context) => const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: PulseLoadingIndicator(size: 60)),
                 ),
                 noItemsFoundIndicatorBuilder: (context) => Center(
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Text(
                       'no posts',
                       style: Theme.of(context)
@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight + 8),
+        preferredSize: const Size.fromHeight(kToolbarHeight + 8),
         child: LayoutBuilder(
           builder: (context, constraints) => AppBar(
             title: GestureDetector(
@@ -159,14 +159,14 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     Text('Recommended'),
                     RecommendationInfo(),
                   ],
                 ),
               ),
             ),
-            actions: [
+            actions: const [
               Padding(
                 padding: EdgeInsets.only(right: 8),
                 child: ProfileButton(),

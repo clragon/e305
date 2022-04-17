@@ -81,13 +81,13 @@ class Post {
         sources: List<String>.from(json["sources"].map((x) => x)),
         pools: List<int>.from(json["pools"].map((x) => x)),
         relationships: Relationships.fromMap(json["relationships"]),
-        approverId: json["approver_id"] == null ? null : json["approver_id"],
+        approverId: json["approver_id"],
         uploaderId: json["uploader_id"],
         description: json["description"],
         commentCount: json["comment_count"],
         isFavorited: json["is_favorited"],
         hasNotes: json["has_notes"],
-        duration: json["duration"] == null ? null : json["duration"].toDouble(),
+        duration: json["duration"]?.toDouble(),
       );
 
   Map<String, dynamic> toMap() => {
@@ -248,14 +248,14 @@ class Relationships {
   String toJson() => json.encode(toMap());
 
   factory Relationships.fromMap(Map<String, dynamic> json) => Relationships(
-        parentId: json["parent_id"] == null ? null : json["parent_id"],
+        parentId: json["parent_id"],
         hasChildren: json["has_children"],
         hasActiveChildren: json["has_active_children"],
         children: List<int>.from(json["children"].map((x) => x)),
       );
 
   Map<String, dynamic> toMap() => {
-        "parent_id": parentId == null ? null : parentId,
+        "parent_id": parentId,
         "has_children": hasChildren,
         "has_active_children": hasActiveChildren,
         "children": List<dynamic>.from(children.map((x) => x)),
@@ -315,7 +315,7 @@ class Original {
         type: json["type"],
         height: json["height"],
         width: json["width"],
-        urls: List<String>.from(json["urls"].map((x) => x == null ? null : x)),
+        urls: List<String>.from(json["urls"].map((x) => x)),
       );
 
   Map<String, dynamic> toMap() => {
@@ -361,9 +361,7 @@ class EnumValues<T> {
   EnumValues(this.map);
 
   Map<T, String>? get reverse {
-    if (reverseMap == null) {
-      reverseMap = map.map((k, v) => new MapEntry(v, k));
-    }
+    reverseMap ??= map.map((k, v) => MapEntry(v, k));
     return reverseMap;
   }
 }

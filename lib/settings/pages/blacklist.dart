@@ -20,7 +20,7 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
       builder: (context, blacklist, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('Blacklist'),
+            title: const Text('Blacklist'),
           ),
           floatingActionButton: FloatingActionButton(
             child: Icon(isEditing ? Icons.check : Icons.edit),
@@ -43,12 +43,12 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
             },
           ),
           body: Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: AnimatedSize(
               duration: defaultAnimationDuration,
               child: isEditing
                   ? SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -57,12 +57,13 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
                             children: [
                               Expanded(
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 8),
                                   child: TextField(
                                     controller: controller,
                                     keyboardType: TextInputType.multiline,
                                     autofocus: true,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       border: InputBorder.none,
                                       hintText: 'Add tags to your blacklist...',
                                     ),
@@ -78,7 +79,7 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
                   : CrossFade(
                       showChild: blacklist.isNotEmpty,
                       child: ListView.separated(
-                        physics: BouncingScrollPhysics(),
+                        physics: const BouncingScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) => ListTile(
                           title: Wrap(
@@ -87,7 +88,7 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
                                 .map(
                                   (e) => Card(
                                     child: Padding(
-                                      padding: EdgeInsets.symmetric(
+                                      padding: const EdgeInsets.symmetric(
                                           horizontal: 6, vertical: 4),
                                       child: Text(e),
                                     ),
@@ -96,10 +97,10 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
                                 .toList(),
                           ),
                         ),
-                        separatorBuilder: (context, index) => Divider(),
+                        separatorBuilder: (context, index) => const Divider(),
                         itemCount: blacklist.length,
                       ),
-                      secondChild: Center(
+                      secondChild: const Center(
                         child: Text('your blacklist is empty'),
                       ),
                     ),

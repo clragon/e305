@@ -12,7 +12,7 @@ class RecommendationDatabaseText extends StatelessWidget {
     switch (status) {
       case RecommendationStatus.loading:
         return Row(
-          children: [
+          children: const [
             Text('database is being created'),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 4),
@@ -21,12 +21,12 @@ class RecommendationDatabaseText extends StatelessWidget {
           ],
         );
       case RecommendationStatus.anonymous:
-        return Text('you are not logged in');
+        return const Text('you are not logged in');
       case RecommendationStatus.insufficient:
-        return Text(
+        return const Text(
             'you dont have enough favorites.\nclick here after you favorited some posts!');
       case RecommendationStatus.functional:
-        return Text('recreate favorite tag database');
+        return const Text('recreate favorite tag database');
     }
   }
 }
@@ -68,11 +68,11 @@ class _TagChangeDialogState extends State<TagChangeDialog> {
       ),
       actions: [
         TextButton(
-          child: Text('CANCEL'),
+          child: const Text('CANCEL'),
           onPressed: Navigator.of(context).maybePop,
         ),
         TextButton(
-          child: Text('OK'),
+          child: const Text('OK'),
           onPressed: submit,
         ),
       ],

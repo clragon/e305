@@ -24,7 +24,7 @@ class ArtistDisplay extends StatelessWidget {
       style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 16),
       child: Row(
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(8),
             child: Icon(
               FontAwesomeIcons.user,
@@ -41,7 +41,7 @@ class ArtistDisplay extends StatelessWidget {
                     artists!.join(', '),
                   ),
                 )
-              : Text(
+              : const Text(
                   'no artist',
                   style: TextStyle(fontStyle: FontStyle.italic),
                 ),

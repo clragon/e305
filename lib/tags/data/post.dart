@@ -30,6 +30,6 @@ class SlimPost {
       };
 }
 
-extension slims on List<Post> {
-  List<SlimPost> toSlims() => this.map((e) => SlimPost.fromPost(e)).toList();
+extension Slims on List<Post> {
+  List<SlimPost> toSlims() => map((e) => SlimPost.fromPost(e)).toList();
 }

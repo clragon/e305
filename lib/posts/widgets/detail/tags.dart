@@ -21,9 +21,9 @@ class TagDisplay extends StatelessWidget {
       builder: (context, controller) => ExpandablePanel(
         key: ObjectKey(controller),
         controller: controller,
-        collapsed: SizedBox.shrink(),
+        collapsed: const SizedBox.shrink(),
         header: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: Text(
             'Tags',
             style: Theme.of(context).textTheme.headline6,

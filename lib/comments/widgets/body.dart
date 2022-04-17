@@ -32,7 +32,7 @@ class _CommentAppenderState extends State<CommentAppender> {
   @override
   Widget build(BuildContext context) {
     Widget loadingIndicator() {
-      return Padding(
+      return const Padding(
         padding: EdgeInsets.all(16),
         child: Center(child: PulseLoadingIndicator(size: 60)),
       );
@@ -40,31 +40,31 @@ class _CommentAppenderState extends State<CommentAppender> {
 
     return CustomScrollView(
       controller: widget.scrollController,
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       slivers: [
         SliverToBoxAdapter(
           child: widget.child,
         ),
         SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           sliver: SliverToBoxAdapter(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: Text(
                     'Comments',
                     style: Theme.of(context).textTheme.headline6,
                   ),
                 ),
-                CommentInput(),
+                const CommentInput(),
               ],
             ),
           ),
         ),
         SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
           sliver: PagedSliverList(
             pagingController: controller,
             builderDelegate: PagedChildBuilderDelegate(
@@ -75,7 +75,7 @@ class _CommentAppenderState extends State<CommentAppender> {
               newPageProgressIndicatorBuilder: (context) => loadingIndicator(),
               noItemsFoundIndicatorBuilder: (context) => Center(
                   child: Padding(
-                padding: EdgeInsets.all(30),
+                padding: const EdgeInsets.all(30),
                 child: Text(
                   'no comments',
                   style: Theme.of(context)

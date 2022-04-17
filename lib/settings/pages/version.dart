@@ -20,13 +20,13 @@ class _VersionDialogState extends State<VersionDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: ConstrainedBox(
-              constraints: BoxConstraints(
+              constraints: const BoxConstraints(
                 maxHeight: 132,
                 maxWidth: 132,
               ),
-              child: Image(
+              child: const Image(
                 image: AssetImage(
                   'assets/icon.png',
                 ),
@@ -41,7 +41,7 @@ class _VersionDialogState extends State<VersionDialog> {
             future: PackageInfo.fromPlatform(),
             builder: (context, AsyncSnapshot<PackageInfo> snapshot) {
               return Padding(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: SafeCrossFade(
                   showChild: snapshot.connectionState == ConnectionState.done &&
                       snapshot.hasData,
@@ -52,7 +52,7 @@ class _VersionDialogState extends State<VersionDialog> {
                         style: Theme.of(context).textTheme.headline6,
                       ),
                       if (branch.isNotEmpty && commit.isNotEmpty)
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.all(8),
                           child: Text('$branch on #$commit'),
                         ),
@@ -62,7 +62,7 @@ class _VersionDialogState extends State<VersionDialog> {
               );
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 32,
           ),
           Text(
@@ -77,7 +77,7 @@ class _VersionDialogState extends State<VersionDialog> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Text(
               'by $developer',
               textAlign: TextAlign.center,

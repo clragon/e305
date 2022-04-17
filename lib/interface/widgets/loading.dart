@@ -14,7 +14,7 @@ class BoxSized extends StatelessWidget {
     return Container(
       height: size,
       width: size,
-      padding: padding ?? EdgeInsets.all(4),
+      padding: padding ?? const EdgeInsets.all(4),
       child: child,
     );
   }
@@ -103,7 +103,7 @@ class _LoadingScreenState<T> extends State<LoadingScreen<T>> {
     return Scaffold(
       appBar: value == null
           ? AppBar(
-              leading: CloseButton(),
+              leading: const CloseButton(),
             )
           : null,
       body: CrossFade(
@@ -111,7 +111,7 @@ class _LoadingScreenState<T> extends State<LoadingScreen<T>> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
-          children: [
+          children: const [
             Icon(
               FontAwesomeIcons.exclamationTriangle,
               size: 20,
@@ -128,7 +128,7 @@ class _LoadingScreenState<T> extends State<LoadingScreen<T>> {
           secondChild: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: const [
               Flexible(
                 child: Center(
                   child: OrbitLoadingIndicator(size: 100),

@@ -5,13 +5,13 @@ import 'package:e305/settings/pages/settings.dart';
 import 'package:flutter/material.dart';
 
 Map<String, WidgetBuilder> routes = {
-  '/': (context) => HomePage(),
-  '/search': (context) => SearchPage(),
-  '/favorites': (context) => FavoritesPage(),
-  '/pools': (context) => Center(child: Text('pools')),
-  '/settings': (context) => SettingsPage(),
+  '/': (context) => const HomePage(),
+  '/search': (context) => const SearchPage(),
+  '/favorites': (context) => const FavoritesPage(),
+  '/pools': (context) => const Center(child: Text('pools')),
+  '/settings': (context) => const SettingsPage(),
 };
 
-extension routeList on Map<String, WidgetBuilder> {
+extension RouteList on Map<String, WidgetBuilder> {
   List<WidgetBuilder> get list => routes.values.toList();
 }

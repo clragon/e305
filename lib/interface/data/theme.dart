@@ -12,12 +12,12 @@ class DefaultScrollBehaviour extends ScrollBehavior {
   const DefaultScrollBehaviour();
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
-    return BouncingScrollPhysics();
+    return const BouncingScrollPhysics();
   }
 }
 
 ThemeData prepareTheme(ThemeData theme) => theme.copyWith(
-      pageTransitionsTheme: PageTransitionsTheme(
+      pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: CupertinoPageTransitionsBuilder(),
           TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
@@ -60,7 +60,7 @@ ThemeData prepareTheme(ThemeData theme) => theme.copyWith(
         foregroundColor: theme.iconTheme.color,
         elevation: 0,
       ),
-      snackBarTheme: SnackBarThemeData(
+      snackBarTheme: const SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -69,11 +69,11 @@ Map<AppTheme, ThemeData> themeMap = {
   AppTheme.dark: prepareTheme(
     ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Color(0xFF152f56),
-        primary: Color(0xFFfdba31),
-        secondary: Color(0xFFfdba31),
-        surface: Color(0xFF152f56),
-        background: Color(0xFF020f23),
+        seedColor: const Color(0xFF152f56),
+        primary: const Color(0xFFfdba31),
+        secondary: const Color(0xFFfdba31),
+        surface: const Color(0xFF152f56),
+        background: const Color(0xFF020f23),
         brightness: Brightness.dark,
       ),
     ),
@@ -81,11 +81,11 @@ Map<AppTheme, ThemeData> themeMap = {
   AppTheme.light: prepareTheme(
     ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Color(0xFF1d3963),
-        primary: Color(0xFFfdba31),
-        secondary: Color(0xFFfdba31),
-        surface: Color(0xFF243c61),
-        background: Color(0xFF1d3963),
+        seedColor: const Color(0xFF1d3963),
+        primary: const Color(0xFFfdba31),
+        secondary: const Color(0xFFfdba31),
+        surface: const Color(0xFF243c61),
+        background: const Color(0xFF1d3963),
         brightness: Brightness.dark,
       ),
     ),

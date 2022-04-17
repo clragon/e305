@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final Duration defaultAnimationDuration = Duration(milliseconds: 200);
+const Duration defaultAnimationDuration = Duration(milliseconds: 200);
 
 class SafeBuilder extends StatelessWidget {
   final bool showChild;
@@ -13,7 +13,7 @@ class SafeBuilder extends StatelessWidget {
     if (showChild) {
       return builder(context);
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }
@@ -37,7 +37,7 @@ class CrossFade extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedCrossFade(
         firstChild: child,
-        secondChild: secondChild ?? SizedBox.shrink(),
+        secondChild: secondChild ?? const SizedBox.shrink(),
         crossFadeState:
             showChild ? CrossFadeState.showFirst : CrossFadeState.showSecond,
         duration: duration ?? defaultAnimationDuration);

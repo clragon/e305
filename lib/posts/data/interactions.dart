@@ -40,7 +40,7 @@ Future<bool> vote({
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('failed to vote on post #${post.id}'),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -71,7 +71,7 @@ Future<bool> toggleFavorite({
           content: Text(favorite
               ? 'failed to favorite post #${post.id}'
               : 'failed to remove favorite post #${post.id}'),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -97,7 +97,7 @@ Future<bool> download({
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('downloaded post #${post.id}'),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -105,7 +105,7 @@ Future<bool> download({
   } on PlatformException {
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('platform not supported'),
           duration: Duration(seconds: 2),
         ),
@@ -116,7 +116,7 @@ Future<bool> download({
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('failed to download #${post.id}'),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
     }
@@ -130,7 +130,7 @@ Future<bool> checkLogin([BuildContext? context]) async {
   } else {
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('you are not logged in'),
           duration: Duration(seconds: 2),
         ),

@@ -63,11 +63,11 @@ class _PoolReaderState extends State<PoolReader> {
           ),
           scrollController: scrollController,
           primary: false,
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           pagingController: controller,
           builderDelegate: PagedChildBuilderDelegate<Post>(
             itemBuilder: (context, item, index) => Padding(
-              padding: EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 4),
               child: PoolReaderTile(
                 post: item,
                 hero: '${hero}_${item.id}',
@@ -88,17 +88,17 @@ class _PoolReaderState extends State<PoolReader> {
                 ),
               ),
             ),
-            firstPageProgressIndicatorBuilder: (context) => Center(
+            firstPageProgressIndicatorBuilder: (context) => const Center(
               child: OrbitLoadingIndicator(size: 100),
             ),
-            newPageProgressIndicatorBuilder: (context) => Padding(
+            newPageProgressIndicatorBuilder: (context) => const Padding(
               padding: EdgeInsets.all(16),
               child: Center(child: PulseLoadingIndicator(size: 60)),
             ),
             noItemsFoundIndicatorBuilder: (context) => Column(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
-              children: [
+              children: const [
                 Icon(FontAwesomeIcons.times),
                 Padding(
                   padding: EdgeInsets.all(8),

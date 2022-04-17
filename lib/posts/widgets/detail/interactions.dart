@@ -57,7 +57,7 @@ class _InteractionDisplayState extends State<InteractionDisplay> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Text(
               getFavCount().toString(),
               style: TextStyle(
@@ -87,7 +87,7 @@ class _InteractionDisplayState extends State<InteractionDisplay> {
     Widget downloadButton() {
       return IconButton(
         onPressed: () => download(context: context, post: widget.post),
-        icon: Icon(
+        icon: const Icon(
           FontAwesomeIcons.download,
           size: 20,
         ),
@@ -113,7 +113,7 @@ class _InteractionDisplayState extends State<InteractionDisplay> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Text(
               getVoteCount(widget.post.score.total).toString(),
               style: TextStyle(color: getVoteColor(voteStatus)),
@@ -141,7 +141,7 @@ class _InteractionDisplayState extends State<InteractionDisplay> {
     return DefaultTextStyle(
       style: Theme.of(context).textTheme.bodyText2!.copyWith(fontSize: 16),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         child: Row(
           children: [
             Expanded(child: scoreButton()),

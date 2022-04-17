@@ -13,9 +13,10 @@ class PostController extends DataController<Post>
         HostableDataMixin,
         RefreshableDataMixin,
         DeniableDataMixin {
+  @override
   final ValueNotifier<String> search;
 
-  PostController({String? search}) : this.search = ValueNotifier(search ?? '');
+  PostController({String? search}) : search = ValueNotifier(search ?? '');
 
   @override
   Future<List<Post>> provide(int page) {
@@ -24,14 +25,15 @@ class PostController extends DataController<Post>
 }
 
 class RecommendationController extends PostController {
+  @override
   final ValueNotifier<String> search;
   final ValueNotifier<List<SlimPost>?> favs;
   final bool sort;
 
   RecommendationController(
       {String? search, List<SlimPost>? favs, this.sort = false})
-      : this.search = ValueNotifier(search ?? ''),
-        this.favs = ValueNotifier(favs);
+      : search = ValueNotifier(search ?? ''),
+        favs = ValueNotifier(favs);
 
   @override
   List<ValueNotifier> getRefreshListeners() =>
@@ -52,7 +54,7 @@ class RecommendationController extends PostController {
   }
 }
 
-extension scores on RecommendationController {
+extension Scores on RecommendationController {
   double maxScore() {
     double maxScore = 0;
     if (itemList != null) {

@@ -18,11 +18,11 @@ class App extends StatelessWidget {
       valueListenable: settings.theme,
       builder: (context, value, child) => ExcludeSemantics(
         child: ScrollConfiguration(
-          behavior: DefaultScrollBehaviour(),
+          behavior: const DefaultScrollBehaviour(),
           child: MaterialApp(
             title: 'e305',
             theme: themeMap[value],
-            home: NavigationPage(),
+            home: const NavigationPage(),
             scrollBehavior: DesktopDragScrollBehaviour(),
           ),
         ),

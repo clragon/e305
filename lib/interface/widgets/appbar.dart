@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 mixin AppBarSizeMixin on Widget implements PreferredSizeWidget {
   @override
-  Size get preferredSize => Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class ScrollToTop extends StatelessWidget with AppBarSizeMixin {
@@ -100,7 +100,7 @@ class TransparentAppBar extends StatelessWidget with AppBarSizeMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
             Colors.black38,
@@ -114,7 +114,7 @@ class TransparentAppBar extends StatelessWidget with AppBarSizeMixin {
       ),
       child: Theme(
         data: Theme.of(context).copyWith(
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         child: Opacity(
           opacity: opacity ?? 1,
@@ -210,7 +210,7 @@ class _SearchableAppBarState extends State<SearchableAppBar> {
       actions: [
         if (widget.canSearch)
           Padding(
-            padding: EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: 8),
             child: Center(
               child: CrossFade(
                 showChild: searching,
@@ -224,7 +224,7 @@ class _SearchableAppBarState extends State<SearchableAppBar> {
                             searching = false;
                           });
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           FontAwesomeIcons.times,
                           size: 20,
                         ),
@@ -233,7 +233,7 @@ class _SearchableAppBarState extends State<SearchableAppBar> {
                     Flexible(
                       child: IconButton(
                         onPressed: submit,
-                        icon: Icon(
+                        icon: const Icon(
                           FontAwesomeIcons.check,
                           size: 20,
                         ),
@@ -243,7 +243,7 @@ class _SearchableAppBarState extends State<SearchableAppBar> {
                 ),
                 secondChild: IconButton(
                   onPressed: request,
-                  icon: Icon(
+                  icon: const Icon(
                     FontAwesomeIcons.search,
                     size: 20,
                   ),

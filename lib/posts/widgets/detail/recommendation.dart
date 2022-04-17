@@ -19,7 +19,7 @@ class RecommendationScoreDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Recommendation'),
+      title: const Text('Recommendation'),
       content: RecommendationBody(
         post: post,
         controller: controller,
@@ -28,7 +28,7 @@ class RecommendationScoreDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: Navigator.of(context).maybePop,
-          child: Text('OK'),
+          child: const Text('OK'),
         ),
       ],
     );
@@ -74,7 +74,7 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
     if (scores == null ||
         widget.post.recommendationValue == null ||
         widget.post.recommendedTags == null) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return Column(
@@ -84,9 +84,9 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
           builder: (context, controller) => ExpandablePanel(
             key: ObjectKey(controller),
             controller: controller,
-            collapsed: SizedBox.shrink(),
+            collapsed: const SizedBox.shrink(),
             header: Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                 'Recommendation',
                 style: Theme.of(context).textTheme.headline6,
@@ -99,7 +99,7 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
             ),
           ),
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }
@@ -125,8 +125,8 @@ class RecommendationBody extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
                 gradient: RadialGradient(
                   colors: [
                     Colors.black54,
@@ -138,7 +138,7 @@ class RecommendationBody extends StatelessWidget {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsets.all(8),
+                padding: const EdgeInsets.all(8),
                 child: Text(
                   post.recommendationValue!.toStringAsFixed(2),
                   style: TextStyle(
@@ -148,9 +148,9 @@ class RecommendationBody extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(
+                valueColor: const AlwaysStoppedAnimation<Color>(
                   Color.fromARGB(255, 255, 215, 0),
                 ),
                 value: relativeScore,
@@ -169,8 +169,8 @@ class RecommendationBody extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 2),
                           child: Text(tag.tag),
                         ),
                         Container(
@@ -179,8 +179,8 @@ class RecommendationBody extends StatelessWidget {
                           height: 14,
                         ),
                         Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 2),
                           child:
                               Text((tag.score * tag.weigth).toStringAsFixed(2)),
                         ),

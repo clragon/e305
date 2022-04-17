@@ -13,7 +13,8 @@ final Recommendations recommendations = Recommendations();
 class Recommendations extends DatabaseUpdater {
   final int required = 200;
 
-  Duration? get stale => Duration(days: 14);
+  @override
+  Duration? get stale => const Duration(days: 14);
 
   Future<void> updateCredentials() async {
     delete();
@@ -70,6 +71,7 @@ abstract class DatabaseUpdater extends DataUpdater<TagDataBase?> {
 
   final ValueNotifier<TagDataBase?> database = ValueNotifier(null);
 
+  @override
   Duration? get stale => defaultStale;
   Future<String> get path;
   PostProvider get provide;
@@ -99,6 +101,7 @@ abstract class DatabaseUpdater extends DataUpdater<TagDataBase?> {
     database.value = null;
   }
 
+  @override
   Future<TagDataBase?> read() async {
     if (await path == '') {
       throw StateError('no database path provided');
@@ -152,7 +155,7 @@ abstract class DatabaseUpdater extends DataUpdater<TagDataBase?> {
           if (!step(slims.length)) {
             return null;
           }
-          await Future.delayed(Duration(milliseconds: 500));
+          await Future.delayed(const Duration(milliseconds: 500));
         } catch (_) {
           if (kDebugMode) {
             rethrow;

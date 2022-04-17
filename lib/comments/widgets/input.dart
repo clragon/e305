@@ -45,7 +45,7 @@ class _CommentInputState extends State<CommentInput> {
                 SnackBar(
                   content: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: [
+                    children: const [
                       Padding(
                         padding: EdgeInsets.all(8),
                         child: Icon(
@@ -62,12 +62,12 @@ class _CommentInputState extends State<CommentInput> {
                       ),
                     ],
                   ),
-                  duration: Duration(seconds: 2),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
             child: Row(
-              children: [
+              children: const [
                 IgnorePointer(child: ProfileButton()),
                 Expanded(
                   child: Padding(
@@ -84,7 +84,7 @@ class _CommentInputState extends State<CommentInput> {
               ],
             ),
           ),
-          Divider(),
+          const Divider(),
         ],
       ),
     );

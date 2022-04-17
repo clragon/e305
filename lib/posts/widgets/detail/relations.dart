@@ -32,9 +32,9 @@ class RelationDisplay extends StatelessWidget {
               ),
             ),
             child: ListTile(
-              leading: Icon(FontAwesomeIcons.layerGroup),
+              leading: const Icon(FontAwesomeIcons.layerGroup),
               title: Text(e.toString()),
-              trailing: Icon(FontAwesomeIcons.caretRight),
+              trailing: const Icon(FontAwesomeIcons.caretRight),
             ),
           ),
         ),
@@ -50,9 +50,9 @@ class RelationDisplay extends StatelessWidget {
             ),
           ),
           child: ListTile(
-            leading: Icon(FontAwesomeIcons.levelUpAlt),
+            leading: const Icon(FontAwesomeIcons.levelUpAlt),
             title: Text(post.relationships.parentId.toString()),
-            trailing: Icon(FontAwesomeIcons.caretRight),
+            trailing: const Icon(FontAwesomeIcons.caretRight),
           ),
         ),
       if (post.relationships.children.isNotEmpty)
@@ -68,9 +68,9 @@ class RelationDisplay extends StatelessWidget {
               ),
             ),
             child: ListTile(
-              leading: Icon(FontAwesomeIcons.levelDownAlt),
+              leading: const Icon(FontAwesomeIcons.levelDownAlt),
               title: Text(e.toString()),
-              trailing: Icon(FontAwesomeIcons.caretRight),
+              trailing: const Icon(FontAwesomeIcons.caretRight),
             ),
           ),
         ),
@@ -78,7 +78,7 @@ class RelationDisplay extends StatelessWidget {
 
     children = children.fold([], (previousValue, element) {
       if (previousValue.isNotEmpty && previousValue.last is! Divider) {
-        previousValue.add(Divider(indent: 4, endIndent: 4));
+        previousValue.add(const Divider(indent: 4, endIndent: 4));
       }
       previousValue.add(element);
       return previousValue;
@@ -91,9 +91,9 @@ class RelationDisplay extends StatelessWidget {
             builder: (context, controller) => ExpandablePanel(
               key: ObjectKey(controller),
               controller: controller,
-              collapsed: SizedBox.shrink(),
+              collapsed: const SizedBox.shrink(),
               header: Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Text(
                   'Relations',
                   style: Theme.of(context).textTheme.headline6,
@@ -104,11 +104,11 @@ class RelationDisplay extends StatelessWidget {
               ),
             ),
           ),
-          Divider(),
+          const Divider(),
         ],
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }

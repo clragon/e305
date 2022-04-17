@@ -7,10 +7,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 class CommentController extends DataController<Comment>
     with RefreshableDataMixin {
   final Post post;
+  @override
   final RefreshController refreshController;
 
   CommentController({required this.post, RefreshController? refreshController})
-      : this.refreshController = refreshController ?? RefreshController();
+      : refreshController = refreshController ?? RefreshController();
 
   @override
   Future<List<Comment>> provide(int page) => client.comments(

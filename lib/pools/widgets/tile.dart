@@ -7,7 +7,7 @@ class PoolTile extends StatelessWidget {
   final Pool pool;
   final VoidCallback? onPressed;
 
-  PoolTile({
+  const PoolTile({
     required this.pool,
     this.onPressed,
   });
@@ -19,21 +19,22 @@ class PoolTile extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
-              padding: EdgeInsets.only(left: 16, top: 8, bottom: 8),
+              padding: const EdgeInsets.only(left: 16, top: 8, bottom: 8),
               child: Text(
                 pool.name.replaceAll('_', ' '),
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                 ),
               ),
             ),
           ),
           Container(
-            margin: EdgeInsets.only(left: 22, top: 8, bottom: 8, right: 12),
+            margin:
+                const EdgeInsets.only(left: 22, top: 8, bottom: 8, right: 12),
             child: Text(
               pool.postIds.length.toString(),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
               ),
             ),
@@ -44,14 +45,14 @@ class PoolTile extends StatelessWidget {
 
     return Card(
       child: InkWell(
-        onTap: this.onPressed,
+        onTap: onPressed,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             title(),
             if (pool.description.isNotEmpty)
               Padding(
-                padding: EdgeInsets.only(
+                padding: const EdgeInsets.only(
                   left: 16,
                   right: 16,
                   top: 0,

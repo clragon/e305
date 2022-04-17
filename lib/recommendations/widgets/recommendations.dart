@@ -96,7 +96,7 @@ class _RecommendationInfoState extends State<RecommendationInfo> {
                   actions: [
                     TextButton(
                       onPressed: Navigator.of(context).maybePop,
-                      child: Text('OK'),
+                      child: const Text('OK'),
                     ),
                   ],
                 ),
@@ -108,7 +108,7 @@ class _RecommendationInfoState extends State<RecommendationInfo> {
           Flexible(
             child: Text(
               hint,
-              style: TextStyle(fontSize: 14),
+              style: const TextStyle(fontSize: 14),
             ),
           ),
           ValueListenableBuilder(
@@ -118,20 +118,20 @@ class _RecommendationInfoState extends State<RecommendationInfo> {
                   recommendations.progress.value > 0,
               child: TweenAnimationBuilder(
                 tween: IntTween(begin: 0, end: recommendations.progress.value),
-                duration: Duration(milliseconds: 500),
+                duration: const Duration(milliseconds: 500),
                 builder: (context, int value, child) => Text(
                   ' $value/${recommendations.limit}',
-                  style: TextStyle(fontSize: 14),
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2)
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2)
                 .copyWith(right: 0),
             child: status == RecommendationStatus.loading
-                ? PulseLoadingIndicator(size: 14)
-                : Icon(
+                ? const PulseLoadingIndicator(size: 14)
+                : const Icon(
                     FontAwesomeIcons.infoCircle,
                     size: 16,
                   ),

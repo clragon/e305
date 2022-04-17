@@ -22,9 +22,9 @@ class TagBody extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Divider(indent: 4, endIndent: 4),
+                      const Divider(indent: 4, endIndent: 4),
                       Padding(
-                        padding: EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(4),
                         child: Text(
                           category.key,
                           style: Theme.of(context)
@@ -40,7 +40,7 @@ class TagBody extends StatelessWidget {
                                 child: InkWell(
                                   onTap: () => onSearch?.call(tag),
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 4, vertical: 2),
                                     child: Text(tag),
                                   ),

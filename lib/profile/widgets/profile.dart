@@ -18,7 +18,7 @@ class _ProfileDetailState extends State<ProfileDetail> {
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: [
+          children: const [
             Padding(
               padding: EdgeInsets.all(8),
               child: Icon(

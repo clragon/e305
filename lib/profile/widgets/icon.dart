@@ -44,7 +44,7 @@ class _ProfileButtonState extends State<ProfileButton> {
             )
           : CircleAvatar(
               backgroundColor: Theme.of(context).cardColor,
-              child: Icon(
+              child: const Icon(
                 FontAwesomeIcons.user,
                 size: 16,
               ),
@@ -53,7 +53,7 @@ class _ProfileButtonState extends State<ProfileButton> {
           ? () {
               Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(
-                  builder: (context) => ProfileDetail(),
+                  builder: (context) => const ProfileDetail(),
                 ),
               );
             }

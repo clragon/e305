@@ -28,7 +28,7 @@ class ThemeDialog extends StatelessWidget {
     }
 
     return SimpleDialog(
-      title: Text('Theme'),
+      title: const Text('Theme'),
       children: [
         Column(
           mainAxisSize: MainAxisSize.min,

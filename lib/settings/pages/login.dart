@@ -22,15 +22,15 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Form(
           child: ListView(
             children: [
               Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: GestureDetector(
                   onTap: () async {
                     if (username != null) {
@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                     constraints: BoxConstraints(
                       maxHeight: MediaQuery.of(context).size.height * 0.3,
                     ),
-                    child: Image(
+                    child: const Image(
                       image: AssetImage(
                         'assets/e6.png',
                       ),
@@ -52,13 +52,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   autocorrect: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Username',
                   ),
-                  autofillHints: [AutofillHints.username],
+                  autofillHints: const [AutofillHints.username],
                   onChanged: (value) => username = value,
                   validator: (value) {
                     if (authFailed) {
@@ -72,14 +72,14 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   autocorrect: false,
                   decoration: InputDecoration(
                     labelText: 'API Key',
                     helperText: 'e.g. $apiKeyExample',
                   ),
-                  autofillHints: [AutofillHints.password],
+                  autofillHints: const [AutofillHints.password],
                   onChanged: (value) => apiKey = value,
                   validator: (value) {
                     if (authFailed) {
@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
+                padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Builder(
                   builder: (context) => Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                                     });
                                     form.validate();
                                     ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
+                                        .showSnackBar(const SnackBar(
                                       duration: Duration(seconds: 3),
                                       content: Text('Failed to login. '
                                           'Check your network connection and login details'),
@@ -177,7 +177,7 @@ class LoginDialog extends StatefulWidget {
   final String apiKey;
   final Function(bool value) onResult;
 
-  LoginDialog(
+  const LoginDialog(
       {required this.username, required this.apiKey, required this.onResult});
 
   @override
@@ -198,18 +198,18 @@ class _LoginDialogState extends State<LoginDialog> {
   Widget build(BuildContext context) {
     return Dialog(
         child: Container(
-      padding: EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(20.0),
       child: Row(children: [
-        Padding(
+        const Padding(
           padding: EdgeInsets.all(4),
-          child: Container(
+          child: SizedBox(
             height: 28,
             width: 28,
             child: CircularProgressIndicator(),
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: 16),
+          padding: const EdgeInsets.only(left: 16),
           child: Text('Logging in as ${widget.username}'),
         )
       ]),

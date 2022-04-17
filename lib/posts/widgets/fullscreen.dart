@@ -19,7 +19,7 @@ class FullScreenPost extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: TransparentAppBar(opacity: 0.3),
+      appBar: const TransparentAppBar(opacity: 0.3),
       body: PhotoView.customChild(
         backgroundDecoration: BoxDecoration(
           color: Theme.of(context).canvasColor,
@@ -56,7 +56,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: TransparentAppBar(opacity: 0.3),
+      appBar: const TransparentAppBar(opacity: 0.3),
       body: Stack(
         children: [
           PagedPageView(
@@ -78,7 +78,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
                   child: FullPostImage(
                     post: item,
                     progressIndicatorBuilder: (context, url, progress) =>
-                        Center(
+                        const Center(
                       child: PulseLoadingIndicator(size: 100),
                     ),
                   ),
@@ -87,10 +87,10 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
                   maxScale: PhotoViewComputedScale.covered * 6,
                 ),
               ),
-              firstPageProgressIndicatorBuilder: (context) => Center(
+              firstPageProgressIndicatorBuilder: (context) => const Center(
                 child: OrbitLoadingIndicator(size: 100),
               ),
-              newPageProgressIndicatorBuilder: (context) => Padding(
+              newPageProgressIndicatorBuilder: (context) => const Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(child: PulseLoadingIndicator(size: 60)),
               ),
@@ -131,8 +131,8 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          padding: EdgeInsets.all(12),
-                          decoration: BoxDecoration(
+                          padding: const EdgeInsets.all(12),
+                          decoration: const BoxDecoration(
                             gradient: RadialGradient(
                               colors: [
                                 Colors.black54,
@@ -144,14 +144,14 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
                             ),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(8),
                             child: Text(
                               '${page + 1}/${widget.controller.itemList!.length}',
                             ),
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(4),
                           child: CircularProgressIndicator(
                             valueColor: AlwaysStoppedAnimation<Color>(
                               Theme.of(context)

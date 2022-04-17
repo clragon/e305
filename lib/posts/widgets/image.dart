@@ -26,10 +26,10 @@ class FullPostImage extends StatelessWidget {
           post: post,
           builder: (context) => CachedNetworkImage(
             fit: BoxFit.contain,
-            fadeInDuration: Duration(milliseconds: 0),
-            fadeOutDuration: Duration(milliseconds: 0),
+            fadeInDuration: const Duration(milliseconds: 0),
+            fadeOutDuration: const Duration(milliseconds: 0),
             imageUrl: post.file.url!,
-            errorWidget: (context, url, error) => Center(
+            errorWidget: (context, url, error) => const Center(
               child: Icon(FontAwesomeIcons.exclamationTriangle, size: 20),
             ),
             progressIndicatorBuilder: (context, url, progress) => Stack(
@@ -76,22 +76,22 @@ class PostImageOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (post.flags.deleted) {
-      return Center(
+      return const Center(
         child: Text('post was deleted'),
       );
     }
     if (post.file.url == null) {
-      return Center(
+      return const Center(
         child: Text('post unavailable in safe mode'),
       );
     }
     if (['webm', 'mp4', 'swf'].contains(post.file.ext)) {
-      return Center(
+      return const Center(
         child: Text('video is not supported'),
       );
     }
     if (post.isBlacklisted ?? false) {
-      return Center(
+      return const Center(
         child: Text('post is blacklisted'),
       );
     }

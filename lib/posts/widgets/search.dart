@@ -18,7 +18,7 @@ class SearchPage extends StatefulWidget {
   final String? title;
   final bool static;
 
-  SearchPage({
+  const SearchPage({
     this.controller,
     this.static = false,
     this.title,
@@ -118,12 +118,12 @@ class _SearchPageState extends State<SearchPage> {
             scrollController: scrollController,
             controller: controller.refreshController,
             onRefresh: () => controller.refresh(background: true),
-            header: ClassicHeader(
+            header: const ClassicHeader(
               refreshingIcon: OrbitLoadingIndicator(size: 40),
             ),
             child: PagedStaggeredGridView<int, Post>(
               key: Key(['posts', crossAxisCount].join('_')),
-              physics: BouncingScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               addAutomaticKeepAlives: false,
               pagingController: controller,
               gridDelegateBuilder: (childCount) =>
@@ -148,10 +148,10 @@ class _SearchPageState extends State<SearchPage> {
                     ),
                   ),
                 ),
-                firstPageProgressIndicatorBuilder: (context) => Center(
+                firstPageProgressIndicatorBuilder: (context) => const Center(
                   child: OrbitLoadingIndicator(size: 100),
                 ),
-                newPageProgressIndicatorBuilder: (context) => Padding(
+                newPageProgressIndicatorBuilder: (context) => const Padding(
                   padding: EdgeInsets.all(16),
                   child: Center(child: PulseLoadingIndicator(size: 60)),
                 ),

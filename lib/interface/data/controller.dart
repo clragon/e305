@@ -6,6 +6,7 @@ import 'package:mutex/mutex.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 abstract class DataController<T> extends PagingController<int, T> {
+  @override
   final int firstPageKey;
   final Mutex requestLock = Mutex();
   bool isRefreshing = false;

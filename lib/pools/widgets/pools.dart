@@ -9,7 +9,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PoolPage extends StatefulWidget {
-  PoolPage();
+  const PoolPage();
 
   @override
   _PoolPageState createState() => _PoolPageState();
@@ -31,7 +31,7 @@ class _PoolPageState extends State<PoolPage> {
       controller: scrollController,
       builder: (context, gesture) => SearchableAppBar(
         label: 'Title',
-        title: gesture(context, Text('Pools')),
+        title: gesture(context, const Text('Pools')),
         getSearch: () => controller.search.value,
         setSearch: (value) => controller.search.value = value,
       ),
@@ -47,11 +47,11 @@ class _PoolPageState extends State<PoolPage> {
         scrollController: scrollController,
         controller: controller.refreshController,
         onRefresh: () => controller.refresh(background: true),
-        header: ClassicHeader(
+        header: const ClassicHeader(
           refreshingIcon: OrbitLoadingIndicator(size: 40),
         ),
         child: PagedListView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           pagingController: controller,
           builderDelegate: PagedChildBuilderDelegate<Pool>(
             itemBuilder: (context, item, index) => PoolTile(
@@ -62,10 +62,10 @@ class _PoolPageState extends State<PoolPage> {
                 ),
               ),
             ),
-            firstPageProgressIndicatorBuilder: (context) => Center(
+            firstPageProgressIndicatorBuilder: (context) => const Center(
               child: OrbitLoadingIndicator(size: 100),
             ),
-            newPageProgressIndicatorBuilder: (context) => Padding(
+            newPageProgressIndicatorBuilder: (context) => const Padding(
               padding: EdgeInsets.all(16),
               child: Center(child: PulseLoadingIndicator(size: 60)),
             ),

@@ -22,6 +22,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'divider_tile.dart';
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage();
+
   @override
   State createState() => _SettingsPageState();
 }
@@ -53,23 +55,23 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Reset database'),
-        content: Text(
+        title: const Text('Reset database'),
+        content: const Text(
             'Are you sure you want to recreate your favorite database?'
             '\nThis should be executed when you have favorited alot of new things.'
             '\nThis action might take a while.'),
         actions: [
           TextButton(
             onPressed: Navigator.of(context).maybePop,
-            child: Text('CANCEL'),
+            child: const Text('CANCEL'),
           ),
           TextButton(
-            child: Text('OK'),
+            child: const Text('OK'),
             onPressed: () async {
               Navigator.of(context).maybePop();
               await recommendations.recreate();
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text('Reset database!'),
                   duration: Duration(milliseconds: 500),
                 ),
@@ -107,14 +109,14 @@ class _SettingsPageState extends State<SettingsPage> {
     String? name = settings.credentials.value?.username;
     await client.logout();
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       content: Text('Forgot login details ${name != null ? 'for $name' : ''}'),
     ));
   }
 
   Widget settingsHeader(String title) {
     return Padding(
-      padding: EdgeInsets.only(left: 68, bottom: 8, top: 8, right: 16),
+      padding: const EdgeInsets.only(left: 68, bottom: 8, top: 8, right: 16),
       child: Text(
         title,
         style: TextStyle(
@@ -129,15 +131,15 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     Widget bodyWidgetBuilder(BuildContext context) {
       return Padding(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         child: ListView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           children: [
             settingsHeader('Account'),
             ValueListenableBuilder<bool>(
               valueListenable: settings.safe,
               builder: (context, safe, child) => SwitchListTile(
-                title: Text('Explicit content'),
+                title: const Text('Explicit content'),
                 subtitle: Text(client.host),
                 secondary: Icon(safe
                     ? FontAwesomeIcons.shieldAlt
@@ -155,16 +157,17 @@ class _SettingsPageState extends State<SettingsPage> {
                   child: snapshot.hasData && snapshot.data!
                       ? DividerListTile(
                           title: Text(settings.credentials.value!.username),
-                          leading: IgnorePointer(
+                          leading: const IgnorePointer(
                             child: ProfileButton(),
                           ),
-                          subtitle: Text('user'),
-                          contentPadding: EdgeInsets.only(left: 8, right: 16),
+                          subtitle: const Text('user'),
+                          contentPadding:
+                              const EdgeInsets.only(left: 8, right: 16),
                           separated: Padding(
-                            padding: EdgeInsets.only(left: 16),
+                            padding: const EdgeInsets.only(left: 16),
                             child: IgnorePointer(
                               child: IconButton(
-                                icon: Icon(FontAwesomeIcons.signOutAlt),
+                                icon: const Icon(FontAwesomeIcons.signOutAlt),
                                 onPressed: () => onLogOut(context),
                               ),
                             ),
@@ -172,14 +175,14 @@ class _SettingsPageState extends State<SettingsPage> {
                           onTap: () =>
                               Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
-                              builder: (context) => ProfileDetail(),
+                              builder: (context) => const ProfileDetail(),
                             ),
                           ),
                           onTapSeparated: () => onLogOut(context),
                         )
                       : ListTile(
-                          title: Text('Login'),
-                          leading: Icon(FontAwesomeIcons.userPlus),
+                          title: const Text('Login'),
+                          leading: const Icon(FontAwesomeIcons.userPlus),
                           onTap: () =>
                               Navigator.of(context, rootNavigator: true).push(
                             MaterialPageRoute(
@@ -190,7 +193,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                 ),
-                secondChild: ListTile(
+                secondChild: const ListTile(
                   leading: PulseLoadingIndicator(size: 32),
                   title: Text('User'),
                 ),
@@ -199,12 +202,12 @@ class _SettingsPageState extends State<SettingsPage> {
             ValueListenableBuilder<bool>(
               valueListenable: settings.blacklisting,
               builder: (context, blacklisting, child) => DividerListTile(
-                title: Text('Blacklist'),
-                subtitle: Text('tags you dont want to see'),
-                leading: Icon(FontAwesomeIcons.ban),
+                title: const Text('Blacklist'),
+                subtitle: const Text('tags you dont want to see'),
+                leading: const Icon(FontAwesomeIcons.ban),
                 onTap: () => Navigator.of(context, rootNavigator: true).push(
                   MaterialPageRoute(
-                    builder: (context) => BlacklistSettings(),
+                    builder: (context) => const BlacklistSettings(),
                   ),
                 ),
                 separated: Switch(
@@ -215,15 +218,15 @@ class _SettingsPageState extends State<SettingsPage> {
                     settings.blacklisting.value = !blacklisting,
               ),
             ),
-            Divider(),
+            const Divider(),
             settingsHeader('Display'),
             ValueListenableBuilder<AppTheme>(
               valueListenable: settings.theme,
               builder: (context, theme, child) {
                 return ListTile(
-                  title: Text('Theme'),
+                  title: const Text('Theme'),
                   subtitle: Text(describeEnum(theme)),
-                  leading: Icon(FontAwesomeIcons.solidLightbulb),
+                  leading: const Icon(FontAwesomeIcons.solidLightbulb),
                   onTap: () {
                     showDialog(
                       context: context,
@@ -237,11 +240,11 @@ class _SettingsPageState extends State<SettingsPage> {
               valueListenable: settings.expanded,
               builder: (context, expanded, child) {
                 return SwitchListTile(
-                  title: Text('Expand details'),
+                  title: const Text('Expand details'),
                   subtitle: CrossFade(
                     showChild: expanded,
-                    child: Text('expanded post details'),
-                    secondChild: Text('collapsed post details'),
+                    child: const Text('expanded post details'),
+                    secondChild: const Text('collapsed post details'),
                   ),
                   secondary: Icon(expanded
                       ? FontAwesomeIcons.expand
@@ -260,17 +263,17 @@ class _SettingsPageState extends State<SettingsPage> {
                   builder: (context) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Divider(),
+                      const Divider(),
                       settingsHeader('Recommendations'),
                       if (status == RecommendationStatus.functional)
                         ValueListenableBuilder<String>(
                           valueListenable: settings.homeTags,
                           builder: (context, homeTags, child) => ListTile(
-                            leading: Icon(
+                            leading: const Icon(
                               FontAwesomeIcons.hashtag,
                               size: 20,
                             ),
-                            title: Text('Home tags'),
+                            title: const Text('Home tags'),
                             subtitle: Text(homeTags),
                             onTap: () => showDialog(
                               context: context,
@@ -288,19 +291,19 @@ class _SettingsPageState extends State<SettingsPage> {
                       ValueListenableBuilder(
                         valueListenable: settings.databaseWeights,
                         builder: (context, databaseWeights, child) => ListTile(
-                          leading: Icon(
+                          leading: const Icon(
                             FontAwesomeIcons.balanceScaleLeft,
                             size: 20,
                           ),
-                          title: Text('Weights'),
-                          subtitle: Text('adjust tag category weights'),
+                          title: const Text('Weights'),
+                          subtitle: const Text('adjust tag category weights'),
                           onTap: () =>
                               ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              duration: Duration(seconds: 2),
+                              duration: const Duration(seconds: 2),
                               content: Row(
                                 mainAxisSize: MainAxisSize.min,
-                                children: [
+                                children: const [
                                   Padding(
                                     padding: EdgeInsets.all(8),
                                     child: Icon(
@@ -322,11 +325,11 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                       ),
                       ListTile(
-                        leading: Icon(
+                        leading: const Icon(
                           FontAwesomeIcons.syncAlt,
                           size: 20,
                         ),
-                        title: Text('Reset database'),
+                        title: const Text('Reset database'),
                         subtitle: RecommendationDatabaseText(status: status),
                         onTap: status != RecommendationStatus.loading
                             ? resetDatabase
@@ -337,7 +340,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 secondChild: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
+                  children: const [
                     Divider(),
                     ListTile(
                       leading: PulseLoadingIndicator(size: 32),
@@ -347,15 +350,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
             ),
-            Divider(),
+            const Divider(),
             settingsHeader('Info'),
             ListTile(
-              title: Text('About'),
-              leading: Icon(FontAwesomeIcons.infoCircle),
+              title: const Text('About'),
+              leading: const Icon(FontAwesomeIcons.infoCircle),
               onTap: () {
                 showDialog(
                   context: context,
-                  builder: (context) => VersionDialog(),
+                  builder: (context) => const VersionDialog(),
                 );
               },
             ),
@@ -366,7 +369,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings'),
+        title: const Text('Settings'),
       ),
       body: Builder(builder: bodyWidgetBuilder),
     );

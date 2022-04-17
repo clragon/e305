@@ -21,12 +21,12 @@ class PostTile extends StatelessWidget {
     this.onPressed,
     String? hero,
     this.controller,
-  }) : this.hero = hero ?? UniqueKey().toString();
+  }) : hero = hero ?? UniqueKey().toString();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(4),
+      padding: const EdgeInsets.all(4),
       child: Container(
         color: Theme.of(context).cardColor,
         child: Stack(
@@ -41,7 +41,8 @@ class PostTile extends StatelessWidget {
                       tag: hero,
                       child: CachedNetworkImage(
                         imageUrl: post.sample.url!,
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -99,8 +100,8 @@ class PostPageTile extends StatelessWidget {
               imageUrl: post.sample.url!,
               fit: BoxFit.cover,
               progressIndicatorBuilder: (context, url, progress) =>
-                  Center(child: PulseLoadingIndicator(size: 80)),
-              errorWidget: (context, url, error) => Center(
+                  const Center(child: PulseLoadingIndicator(size: 80)),
+              errorWidget: (context, url, error) => const Center(
                 child: Icon(
                   FontAwesomeIcons.exclamationTriangle,
                 ),
@@ -135,8 +136,8 @@ class PostPageTile extends StatelessWidget {
           children: [
             Expanded(
               child: Padding(
-                padding:
-                    EdgeInsets.only(left: 20, right: 20, bottom: 32, top: 12),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, bottom: 32, top: 12),
                 child: Card(
                   clipBehavior: Clip.antiAlias,
                   child: Stack(

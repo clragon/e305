@@ -11,7 +11,7 @@ class CommentTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget picture(Comment comment) {
-      return Padding(
+      return const Padding(
         padding: EdgeInsets.only(right: 8, top: 4),
         child: Icon(
           FontAwesomeIcons.user,
@@ -24,7 +24,7 @@ class CommentTile extends StatelessWidget {
       return Row(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 4, bottom: 4),
+            padding: const EdgeInsets.only(top: 4, bottom: 4),
             child: Text(
               comment.creatorName,
               style: TextStyle(
@@ -65,7 +65,7 @@ class CommentTile extends StatelessWidget {
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Text(comment.body),
             ),
           ),
@@ -74,7 +74,7 @@ class CommentTile extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
         children: [
           GestureDetector(
@@ -95,7 +95,7 @@ class CommentTile extends StatelessWidget {
             ),
             onTap: () async {},
           ),
-          Divider(),
+          const Divider(),
         ],
       ),
     );
