@@ -1,6 +1,23 @@
-import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'comment.g.dart';
+
+@JsonSerializable()
 class Comment {
+  final int id;
+  final DateTime createdAt;
+  final int postId;
+  final int creatorId;
+  final String body;
+  final int score;
+  final DateTime updatedAt;
+  final int updaterId;
+  final bool doNotBumpPost;
+  final bool isHidden;
+  final bool isSticky;
+  final String creatorName;
+  final String updaterName;
+
   Comment({
     required this.id,
     required this.createdAt,
@@ -17,53 +34,8 @@ class Comment {
     required this.updaterName,
   });
 
-  int id;
-  DateTime createdAt;
-  int postId;
-  int creatorId;
-  String body;
-  int score;
-  DateTime updatedAt;
-  int updaterId;
-  bool doNotBumpPost;
-  bool isHidden;
-  bool isSticky;
-  String creatorName;
-  String updaterName;
+  factory Comment.fromJson(Map<String, dynamic> json) =>
+      _$CommentFromJson(json);
 
-  factory Comment.fromJson(String str) => Comment.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Comment.fromMap(Map json) => Comment(
-        id: json["id"],
-        createdAt: DateTime.parse(json["created_at"]),
-        postId: json["post_id"],
-        creatorId: json["creator_id"],
-        body: json["body"],
-        score: json["score"],
-        updatedAt: DateTime.parse(json["updated_at"]),
-        updaterId: json["updater_id"],
-        doNotBumpPost: json["do_not_bump_post"],
-        isHidden: json["is_hidden"],
-        isSticky: json["is_sticky"],
-        creatorName: json["creator_name"],
-        updaterName: json["updater_name"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "created_at": createdAt.toIso8601String(),
-        "post_id": postId,
-        "creator_id": creatorId,
-        "body": body,
-        "score": score,
-        "updated_at": updatedAt.toIso8601String(),
-        "updater_id": updaterId,
-        "do_not_bump_post": doNotBumpPost,
-        "is_hidden": isHidden,
-        "is_sticky": isSticky,
-        "creator_name": creatorName,
-        "updater_name": updaterName,
-      };
+  Map<String, dynamic> toJson() => _$CommentToJson(this);
 }

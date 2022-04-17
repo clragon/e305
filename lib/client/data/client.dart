@@ -114,9 +114,9 @@ class Client {
     bool blacklisting = settings.blacklisting.value;
     List<Post> posts = [];
     bool hasPosts = false;
-    for (Map raw in json) {
+    for (Map<String, dynamic> raw in json) {
       hasPosts = true;
-      Post post = Post.fromMap(raw);
+      Post post = Post.fromJson(raw);
       if (post.file.url == null && !post.flags.deleted) {
         continue;
       }
@@ -157,7 +157,7 @@ class Client {
             options: Options())
         .then((response) => response.data);
 
-    Post post = Post.fromMap(body['post']);
+    Post post = Post.fromJson(body['post']);
     return post;
   }
 
@@ -240,16 +240,16 @@ class Client {
   }
 
   Future<List<Comment>> comments(int postID, String page) async {
-    var body = await dio.get('comments.json', queryParameters: {
+    dynamic body = await dio.get('comments.json', queryParameters: {
       'group_by': 'comment',
       'search[post_id]': '$postID',
       'page': page,
     }).then((response) => response.data);
 
     List<Comment> comments = [];
-    if (body is List) {
-      for (Map rawComment in body) {
-        comments.add(Comment.fromMap(rawComment));
+    if (body is List<dynamic>) {
+      for (Map<String, dynamic> raw in body) {
+        comments.add(Comment.fromJson(raw));
       }
     }
 
@@ -257,14 +257,15 @@ class Client {
   }
 
   Future<List<Pool>> pools(int page, {String? search}) async {
-    List body = await dio.get('pools.json', queryParameters: {
+    List<dynamic> body =
+        await dio.get('pools.json', queryParameters: {
       'search[name_matches]': search,
       'page': page,
     }).then((response) => response.data);
 
     List<Pool> pools = [];
-    for (Map rawPool in body) {
-      Pool pool = Pool.fromMap(rawPool);
+    for (final raw in body) {
+      Pool pool = Pool.fromJson(raw);
       pools.add(pool);
     }
 
@@ -272,10 +273,10 @@ class Client {
   }
 
   Future<Pool> pool(int poolId) async {
-    Map body =
+    Map<String, dynamic> body =
         await dio.get('pools/$poolId.json').then((response) => response.data);
 
-    return Pool.fromMap(body);
+    return Pool.fromJson(body);
   }
 
   Future<List<Post>> poolPosts(Pool pool, int page) async {
