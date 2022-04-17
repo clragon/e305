@@ -1,4 +1,4 @@
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 
 Map<Rating, String> ratingMap = {
   Rating.S: 'safe',

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:e305/client/data/client.dart';
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';

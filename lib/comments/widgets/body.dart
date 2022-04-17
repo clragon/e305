@@ -1,5 +1,5 @@
-import 'package:e305/client/models/comment.dart';
-import 'package:e305/client/models/post.dart';
+import 'package:e305/comments/data/comment.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/comments/data/controller.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:flutter/material.dart';

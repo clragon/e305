@@ -1,4 +1,4 @@
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/recommendations/data/score.dart';
 import 'package:e305/tags/data/count.dart';
 import 'package:e305/tags/data/post.dart';

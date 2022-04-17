@@ -1,4 +1,4 @@
-import 'package:e305/client/models/pool.dart';
+import 'package:e305/pools/data/pool.dart';
 import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/pools/data/controller.dart';

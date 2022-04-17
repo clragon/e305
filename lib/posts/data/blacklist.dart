@@ -1,4 +1,4 @@
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 
 bool isBlacklisted(List<String> blacklist, Post post) {
   if (blacklist.isNotEmpty) {

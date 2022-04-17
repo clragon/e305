@@ -1,6 +1,6 @@
 import 'package:e305/client/data/client.dart';
-import 'package:e305/client/models/pool.dart';
-import 'package:e305/client/models/post.dart';
+import 'package:e305/pools/data/pool.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/pools/widgets/reader.dart';
 import 'package:e305/posts/widgets/detail.dart';

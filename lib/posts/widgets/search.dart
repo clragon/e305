@@ -1,4 +1,4 @@
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';

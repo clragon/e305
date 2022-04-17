@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/overlay.dart';

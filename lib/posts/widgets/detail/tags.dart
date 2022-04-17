@@ -1,4 +1,4 @@
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/tags/widgets/body.dart';
 import 'package:expandable/expandable.dart';

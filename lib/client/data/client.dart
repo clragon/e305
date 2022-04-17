@@ -3,9 +3,9 @@ import 'dart:convert' show base64Encode, json, utf8;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:e305/client/models/comment.dart';
-import 'package:e305/client/models/pool.dart';
-import 'package:e305/client/models/post.dart';
+import 'package:e305/comments/data/comment.dart';
+import 'package:e305/pools/data/pool.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/posts/data/blacklist.dart';
 import 'package:e305/settings/data/info.dart';
 import 'package:e305/settings/data/settings.dart';

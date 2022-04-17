@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/tags/data/post.dart';
 
 typedef PostProvider = Future<List<Post>> Function(int page);

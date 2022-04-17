@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 
 class SlimPost {
   SlimPost({

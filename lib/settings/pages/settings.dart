@@ -10,7 +10,7 @@ import 'package:e305/recommendations/data/updater.dart';
 import 'package:e305/recommendations/widgets/recommendations.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:e305/settings/pages/blacklist.dart';
-import 'package:e305/settings/pages/login.dart';
+import 'package:e305/client/widgets/login.dart';
 import 'package:e305/settings/pages/recommendations.dart';
 import 'package:e305/settings/pages/theme.dart';
 import 'package:e305/settings/pages/version.dart';

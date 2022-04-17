@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:e305/client/data/client.dart';
-import 'package:e305/client/models/post.dart';
+import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/data/controller.dart';
 import 'package:e305/recommendations/data/suggestions.dart';
 import 'package:e305/tags/data/post.dart';

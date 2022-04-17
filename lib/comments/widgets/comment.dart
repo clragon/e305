@@ -1,4 +1,4 @@
-import 'package:e305/client/models/comment.dart';
+import 'package:e305/comments/data/comment.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:timeago/timeago.dart';

@@ -2,7 +2,7 @@ import 'package:e305/client/data/client.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/settings/data/settings.dart';
-import 'package:e305/settings/pages/login.dart';
+import 'package:e305/client/widgets/login.dart';
 import 'package:flutter/material.dart';
 
 class FavoritesPage extends StatefulWidget {
