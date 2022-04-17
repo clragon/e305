@@ -137,8 +137,8 @@ class _LoginPageState extends State<LoginPage> {
                             showDialog(
                               context: context,
                               builder: (context) => LoginDialog(
-                                username: username!,
-                                apiKey: apiKey!,
+                                username: username!.trim(),
+                                apiKey: apiKey!.trim(),
                                 onResult: (value) {
                                   if (value) {
                                     widget.onSuccess?.call();
