@@ -45,7 +45,12 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  double? _lastMaxWidth;
   void updatePageController(double maxWidth) {
+    if (maxWidth == _lastMaxWidth) {
+      return;
+    }
+    _lastMaxWidth = maxWidth;
     double oneOrHigher(double value) => (value > 1) ? 1 : value;
     pageController = PageController(
       viewportFraction: oneOrHigher(400 / maxWidth),
