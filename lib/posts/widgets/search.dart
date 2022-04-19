@@ -96,14 +96,14 @@ class _SearchPageState extends State<SearchPage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = notZero(constraints.maxWidth / tileSize).round();
-          return SmartRefresher(
-            controller: controller.refreshController,
-            onRefresh: () => controller.refresh(background: true),
-            header: const ClassicHeader(
-              refreshingIcon: OrbitLoadingIndicator(size: 40),
-            ),
-            child: HeroProvider(
-              builder: (id) => 'search_$hashCode post#$id',
+          return HeroProvider(
+            builder: (id) => 'search_$hashCode post#$id',
+            child: SmartRefresher(
+              controller: controller.refreshController,
+              onRefresh: () => controller.refresh(background: true),
+              header: const ClassicHeader(
+                refreshingIcon: OrbitLoadingIndicator(size: 40),
+              ),
               child: PagedStaggeredGridView<int, Post>(
                 key: Key(['posts', crossAxisCount].join('_')),
                 physics: const BouncingScrollPhysics(),

@@ -94,21 +94,21 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        body: SmartRefresher(
-          controller: controller.refreshController,
-          onRefresh: () async {
-            await controller.refresh(background: true);
-            pageController.animateToPage(0,
-                curve: Curves.easeOut, duration: defaultAnimationDuration);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                updatePageController(constraints.maxWidth);
-                return HeroProvider(
-                  builder: (id) => 'home_$hashCode post#$id',
-                  child: PagedPageView(
+        body: HeroProvider(
+          builder: (id) => 'home_$hashCode post#$id',
+          child: SmartRefresher(
+            controller: controller.refreshController,
+            onRefresh: () async {
+              await controller.refresh(background: true);
+              pageController.animateToPage(0,
+                  curve: Curves.easeOut, duration: defaultAnimationDuration);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  updatePageController(constraints.maxWidth);
+                  return PagedPageView(
                     pageController: pageController,
                     pagingController: controller,
                     builderDelegate: PagedChildBuilderDelegate<Post>(
@@ -164,9 +164,9 @@ class _HomePageState extends State<HomePage> {
                       size: ImageSize.sample,
                       reach: 5,
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ),
         ),
