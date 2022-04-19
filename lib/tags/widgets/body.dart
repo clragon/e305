@@ -2,6 +2,8 @@ import 'package:e305/interface/widgets/search.dart';
 import 'package:e305/posts/data/post.dart';
 import 'package:flutter/material.dart';
 
+import '../data/colors.dart';
+
 class TagBody extends StatelessWidget {
   final Post post;
 
@@ -32,6 +34,11 @@ class TagBody extends StatelessWidget {
                   children: category.value
                       .map(
                         (tag) => Card(
+                          color: HSVColor.fromColor(
+                                  categoryColors[category.key]!
+                                      .withOpacity(0.3))
+                              .withSaturation(0.4)
+                              .toColor(),
                           child: InkWell(
                             onTap: SearchProvider.of(context) != null
                                 ? () => SearchProvider.of(context)!.call(tag)
