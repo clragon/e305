@@ -1,5 +1,4 @@
 import 'dart:async' show Future;
-import 'dart:convert' show base64Encode, json, utf8;
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -11,7 +10,10 @@ import 'package:e305/settings/data/info.dart';
 import 'package:e305/settings/data/settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'credentials.dart';
+
 export 'package:dio/dio.dart' show DioError;
+export 'package:e305/client/data/credentials.dart';
 
 final Client client = Client();
 
@@ -30,55 +32,51 @@ class Client {
   String get host => isSafe ? 'e926.net' : 'e621.net';
 
   Future<bool> initialize() async {
-    Future<bool> init() async {
-      _avatar = null;
-      Credentials? credentials = settings.credentials.value;
-      dio = Dio(
-        BaseOptions(
-          baseUrl: 'https://$host/',
-          sendTimeout: 30000,
-          connectTimeout: 30000,
-          headers: {
-            HttpHeaders.userAgentHeader:
-                '$appName/${(await PackageInfo.fromPlatform()).version} ($developer)',
-          },
-        ),
-      );
-      if (credentials != null &&
-          !dio.options.headers.containsKey(HttpHeaders.authorizationHeader)) {
-        dio.options.headers.addEntries(
-            [MapEntry(HttpHeaders.authorizationHeader, credentials.toAuth())]);
-        try {
-          await tryLogin(credentials.username, credentials.password);
-        } on DioError catch (e) {
-          if (e.type != DioErrorType.other) {
-            logout();
+    return await (initialized = Future(
+      () async {
+        _avatar = null;
+        Credentials? credentials = settings.credentials.value;
+        dio = Dio(
+          BaseOptions(
+            baseUrl: 'https://$host/',
+            sendTimeout: 30000,
+            connectTimeout: 30000,
+            headers: {
+              HttpHeaders.userAgentHeader:
+                  '$appName/${(await PackageInfo.fromPlatform()).version} ($developer)',
+            },
+          ),
+        );
+        if (credentials != null) {
+          dio.options.headers[HttpHeaders.authorizationHeader] =
+              credentials.toAuth();
+          try {
+            await tryLogin(credentials);
+          } on DioError catch (e) {
+            if (e.type != DioErrorType.other) {
+              logout();
+            }
           }
+          return true;
+        } else {
+          return false;
         }
-        return true;
-      } else {
-        return false;
-      }
-    }
-
-    initialized = init();
-    return await initialized;
+      },
+    ));
   }
 
-  Future<void> tryLogin(String username, String password) async {
+  Future<void> tryLogin(Credentials credentials) async {
     await dio.get(
       'favorites.json',
       options: Options(headers: {
-        HttpHeaders.authorizationHeader:
-            Credentials(username: username, password: password).toAuth(),
+        HttpHeaders.authorizationHeader: credentials.toAuth(),
       }),
     );
   }
 
-  Future<bool> saveLogin(String username, String password) async {
-    if (await validateCall(() => tryLogin(username, password))) {
-      settings.credentials.value =
-          Credentials(username: username, password: password);
+  Future<bool> saveLogin(Credentials credentials) async {
+    if (await validateCall(() => tryLogin(credentials))) {
+      settings.credentials.value = credentials;
       return true;
     } else {
       return false;
@@ -209,34 +207,12 @@ class Client {
     );
   }
 
-  Future<Map> user(String name) async {
+  Future<Map<String, dynamic>> user(String name) async {
     await initialized;
-    Map body =
+    Map<String, dynamic> body =
         await dio.get('users/$name.json').then((response) => response.data);
 
     return body;
-  }
-
-  Future<List> autocomplete(String search, {int? category}) async {
-    dynamic body;
-    if (category == null) {
-      body = await dio.get('tags/autocomplete.json', queryParameters: {
-        'search[name_matches]': search,
-      }).then((response) => response.data);
-    } else {
-      body = await dio.get('tags.json', queryParameters: {
-        'search[name_matches]': search + '*',
-        'search[category]': category,
-        'search[order]': 'count',
-        'limit': 3,
-      }).then((response) => response.data);
-    }
-    List tags = [];
-    if (body is List) {
-      tags = body;
-    }
-    tags = tags.take(3).toList();
-    return tags;
   }
 
   Future<List<Comment>> comments(int postID, String page) async {
@@ -305,37 +281,7 @@ class Client {
   }
 }
 
-class Credentials {
-  Credentials({
-    required this.username,
-    required this.password,
-  });
-
-  final String username;
-  final String password;
-
-  factory Credentials.fromJson(String str) =>
-      Credentials.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Credentials.fromMap(Map<String, dynamic> json) => Credentials(
-        username: json["username"],
-        password: json["apikey"],
-      );
-
-  Map<String, dynamic> toMap() => {
-        "username": username,
-        "apikey": password,
-      };
-
-  String toAuth() {
-    String auth = base64Encode(utf8.encode('$username:$password'));
-    return 'Basic $auth';
-  }
-}
-
-Future<bool> validateCall(Future Function() call) async {
+Future<bool> validateCall(Future<void> Function() call) async {
   try {
     await call();
     return true;

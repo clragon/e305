@@ -1,4 +1,5 @@
 import 'package:e305/client/data/client.dart';
+import 'package:e305/interface/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   String? username;
   String? apiKey;
 
-  String apiKeyExample = '1ca1d165e973d7f8d35b7deb7a2ae54c';
+  static const String apiKeyExample = '1ca1d165e973d7f8d35b7deb7a2ae54c';
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: TextFormField(
                   autocorrect: false,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'API Key',
                     helperText: 'e.g. $apiKeyExample',
                   ),
@@ -109,10 +110,8 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            Theme.of(context).colorScheme.secondary,
-                          ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Theme.of(context).colorScheme.secondary,
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -132,8 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                           setState(() {
                             authFailed = false;
                           });
-                          FormState form = Form.of(context)!..save();
-                          if (form.validate()) {
+                          if (Form.of(context)!.validate()) {
                             showDialog(
                               context: context,
                               builder: (context) => LoginDialog(
@@ -146,13 +144,14 @@ class _LoginPageState extends State<LoginPage> {
                                     setState(() {
                                       authFailed = true;
                                     });
-                                    form.validate();
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(const SnackBar(
-                                      duration: Duration(seconds: 3),
-                                      content: Text('Failed to login. '
-                                          'Check your network connection and login details'),
-                                    ));
+                                    Form.of(context)!.validate();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        duration: Duration(seconds: 3),
+                                        content: Text('Failed to login. '
+                                            'Check your network connection and login details'),
+                                      ),
+                                    );
                                   }
                                 },
                               ),
@@ -177,8 +176,11 @@ class LoginDialog extends StatefulWidget {
   final String apiKey;
   final Function(bool value) onResult;
 
-  const LoginDialog(
-      {required this.username, required this.apiKey, required this.onResult});
+  const LoginDialog({
+    required this.username,
+    required this.apiKey,
+    required this.onResult,
+  });
 
   @override
   _LoginDialogState createState() => _LoginDialogState();
@@ -188,31 +190,35 @@ class _LoginDialogState extends State<LoginDialog> {
   @override
   void initState() {
     super.initState();
-    client.saveLogin(widget.username, widget.apiKey).then((value) async {
-      await Navigator.of(context).maybePop();
-      widget.onResult(value);
-    });
+    trylogin();
+  }
+
+  Future<void> trylogin() async {
+    bool result = await client.saveLogin(
+      Credentials(username: widget.username, password: widget.apiKey),
+    );
+    await Navigator.of(context).maybePop();
+    widget.onResult(result);
   }
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
-        child: Container(
-      padding: const EdgeInsets.all(20.0),
-      child: Row(children: [
-        const Padding(
-          padding: EdgeInsets.all(4),
-          child: SizedBox(
-            height: 28,
-            width: 28,
-            child: CircularProgressIndicator(),
-          ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(4),
+              child: SizedCircularProgressIndicator(size: 28),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text('Logging in as ${widget.username}'),
+            )
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Text('Logging in as ${widget.username}'),
-        )
-      ]),
-    ));
+      ),
+    );
   }
 }

@@ -32,7 +32,7 @@ class Persistence {
         getSetting: (prefs, key) {
       String? value = prefs.getString(key);
       if (value != null) {
-        return Credentials.fromJson(value);
+        return Credentials.fromJson(json.decode(value));
       } else {
         return null;
       }
@@ -40,7 +40,7 @@ class Persistence {
       if (value == null) {
         prefs.remove(key);
       } else {
-        prefs.setString(key, value.toJson());
+        prefs.setString(key, json.encode(value));
       }
     });
     theme = createStringSetting<AppTheme>('theme',
