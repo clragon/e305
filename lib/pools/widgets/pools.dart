@@ -18,7 +18,6 @@ class PoolPage extends StatefulWidget {
 class _PoolPageState extends State<PoolPage> {
   bool searching = false;
   PoolController controller = PoolController();
-  ScrollController scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -26,25 +25,16 @@ class _PoolPageState extends State<PoolPage> {
     super.dispose();
   }
 
-  PreferredSizeWidget appBar() {
-    return ScrollToTopAppBar(
-      controller: scrollController,
-      builder: (context, gesture) => SearchableAppBar(
-        label: 'Title',
-        title: gesture(context, const Text('Pools')),
-        getSearch: () => controller.search.value,
-        setSearch: (value) => controller.search.value = value,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appBar(),
+      appBar: SearchableAppBar(
+        label: 'Title',
+        title: const Text('Pools'),
+        getSearch: () => controller.search.value,
+        setSearch: (value) => controller.search.value = value,
+      ),
       body: SmartRefresher(
-        primary: false,
-        scrollController: scrollController,
         controller: controller.refreshController,
         onRefresh: () => controller.refresh(background: true),
         header: const ClassicHeader(

@@ -35,9 +35,20 @@ class _PoolReaderState extends State<PoolReader> {
     return LayoutBuilder(builder: (context, constraints) {
       return Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: ScrollToTopAppBar(
-          controller: scrollController,
-          builder: (context, gesture) => AnimatedBuilder(
+        appBar: AppBarBuilder(
+          child: TransparentAppBar(
+            child: AppBar(
+              title: IgnorePointer(
+                child: Text(
+                  widget.pool.name.replaceAll('_', ' '),
+                ),
+              ),
+              flexibleSpace: ScrollToTop(
+                controller: scrollController,
+              ),
+            ),
+          ),
+          builder: (context, child) => AnimatedBuilder(
             animation: scrollController,
             builder: (context, child) => AnimatedOpacity(
               opacity: scrollController.hasClients
@@ -46,15 +57,9 @@ class _PoolReaderState extends State<PoolReader> {
                       : 0.3
                   : 1,
               duration: defaultAnimationDuration,
-              child: TransparentAppBar(
-                title: gesture(
-                  context,
-                  Text(
-                    widget.pool.name.replaceAll('_', ' '),
-                  ),
-                ),
-              ),
+              child: child,
             ),
+            child: child,
           ),
         ),
         body: PagedListView(

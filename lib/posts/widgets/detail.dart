@@ -44,62 +44,59 @@ class _PostDetailState extends State<PostDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: ScrollToTopAppBar(
-        controller: scrollController,
-        builder: (context, gesture) {
-          return TransparentAppBar(
-            title: gesture(context),
-            actions: [
-              PopupMenuButton<VoidCallback>(
-                icon: const Icon(
-                  Icons.more_vert,
+      appBar: TransparentAppBar(
+        child: AppBar(
+          flexibleSpace: const ScrollToTop(),
+          actions: [
+            PopupMenuButton<VoidCallback>(
+              icon: const Icon(
+                Icons.more_vert,
+              ),
+              onSelected: (value) => value(),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: () async =>
+                      launch('https://${client.host}/posts/${widget.post.id}'),
+                  child: Row(
+                    children: const [
+                      Icon(
+                        FontAwesomeIcons.externalLinkAlt,
+                        size: 20,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16),
+                        child: Text('Browse'),
+                      ),
+                    ],
+                  ),
                 ),
-                onSelected: (value) => value(),
-                itemBuilder: (context) => [
+                if (widget.controller is RecommendationController)
                   PopupMenuItem(
-                    value: () async => launch(
-                        'https://${client.host}/posts/${widget.post.id}'),
+                    value: () async => showDialog(
+                      context: context,
+                      builder: (context) => RecommendationScoreDialog(
+                        post: widget.post,
+                        controller:
+                            widget.controller as RecommendationController,
+                      ),
+                    ),
                     child: Row(
                       children: const [
                         Icon(
-                          FontAwesomeIcons.externalLinkAlt,
+                          FontAwesomeIcons.star,
                           size: 20,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 16),
-                          child: Text('Browse'),
+                          child: Text('Recommendation'),
                         ),
                       ],
                     ),
                   ),
-                  if (widget.controller is RecommendationController)
-                    PopupMenuItem(
-                      value: () async => showDialog(
-                        context: context,
-                        builder: (context) => RecommendationScoreDialog(
-                          post: widget.post,
-                          controller:
-                              widget.controller as RecommendationController,
-                        ),
-                      ),
-                      child: Row(
-                        children: const [
-                          Icon(
-                            FontAwesomeIcons.star,
-                            size: 20,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: Text('Recommendation'),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          );
-        },
+              ],
+            ),
+          ],
+        ),
       ),
       body: MediaQuery.removeViewInsets(
         context: context,

@@ -3,6 +3,7 @@ import 'dart:async' show Future;
 import 'package:e305/client/data/client.dart';
 import 'package:e305/interface/data/theme.dart';
 import 'package:e305/interface/widgets/animation.dart';
+import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/profile/widgets/profile.dart';
@@ -114,28 +115,19 @@ class _SettingsPageState extends State<SettingsPage> {
     ));
   }
 
-  Widget settingsHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 68, bottom: 8, top: 8, right: 16),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    Widget bodyWidgetBuilder(BuildContext context) {
-      return Padding(
+    return Scaffold(
+      appBar: AppBar(
+        title: const IgnorePointer(child: Text('Settings')),
+        flexibleSpace: const ScrollToTop(),
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: ListView(
           physics: const BouncingScrollPhysics(),
           children: [
-            settingsHeader('Account'),
+            const SettingsHeader(title: 'Account'),
             ValueListenableBuilder<bool>(
               valueListenable: settings.safe,
               builder: (context, safe, child) => SwitchListTile(
@@ -219,7 +211,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             const Divider(),
-            settingsHeader('Display'),
+            const SettingsHeader(title: 'Display'),
             ValueListenableBuilder<AppTheme>(
               valueListenable: settings.theme,
               builder: (context, theme, child) {
@@ -264,7 +256,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Divider(),
-                      settingsHeader('Recommendations'),
+                      const SettingsHeader(title: 'Recommendations'),
                       if (status == RecommendationStatus.functional)
                         ValueListenableBuilder<String>(
                           valueListenable: settings.homeTags,
@@ -351,7 +343,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             const Divider(),
-            settingsHeader('Info'),
+            const SettingsHeader(title: 'Info'),
             ListTile(
               title: const Text('About'),
               leading: const Icon(FontAwesomeIcons.infoCircle),
@@ -364,14 +356,27 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
           ],
         ),
-      );
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
       ),
-      body: Builder(builder: bodyWidgetBuilder),
+    );
+  }
+}
+
+class SettingsHeader extends StatelessWidget {
+  final String title;
+
+  const SettingsHeader({Key? key, required this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 68, bottom: 8, top: 8, right: 16),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.secondary,
+          fontSize: 16,
+        ),
+      ),
     );
   }
 }

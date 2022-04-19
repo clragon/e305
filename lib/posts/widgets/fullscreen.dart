@@ -19,7 +19,13 @@ class FullScreenPost extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: const TransparentAppBar(opacity: 0.3),
+      appBar: AppBarBuilder(
+        child: AppBar(),
+        builder: (context, child) => Opacity(
+          opacity: 0.3,
+          child: child,
+        ),
+      ),
       body: PhotoView.customChild(
         backgroundDecoration: BoxDecoration(
           color: Theme.of(context).canvasColor,
@@ -56,7 +62,13 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: const TransparentAppBar(opacity: 0.3),
+      appBar: AppBarBuilder(
+        child: AppBar(),
+        builder: (context, child) => Opacity(
+          opacity: 0.3,
+          child: child,
+        ),
+      ),
       body: Stack(
         children: [
           PagedPageView(

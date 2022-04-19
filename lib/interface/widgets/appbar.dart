@@ -2,99 +2,96 @@ import 'package:e305/interface/widgets/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-mixin AppBarSizeMixin on Widget implements PreferredSizeWidget {
+abstract class AppBarBuilderWidget implements PreferredSizeWidget {
+  abstract final PreferredSizeWidget child;
+
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+  Size get preferredSize => child.preferredSize;
 }
 
-class ScrollToTop extends StatelessWidget with AppBarSizeMixin {
-  final double? height;
-  final ScrollController? controller;
-  final Widget child;
+class AppBarBuilder extends StatelessWidget with AppBarBuilderWidget {
+  @override
+  final PreferredSizeWidget child;
+  final Widget Function(BuildContext context, PreferredSizeWidget child)
+      builder;
 
-  const ScrollToTop({this.controller, required this.child, this.height});
+  const AppBarBuilder({Key? key, required this.child, required this.builder})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: child,
-      onDoubleTap: controller != null
-          ? () => controller!.animateTo(
-                0,
-                duration: defaultAnimationDuration,
-                curve: Curves.easeOut,
-              )
-          : null,
-    );
+    return builder(context, child);
   }
-
-  @override
-  Size get preferredSize =>
-      height != null ? Size.fromHeight(height!) : super.preferredSize;
 }
 
-class ScrollToTopAppBar extends StatelessWidget with AppBarSizeMixin {
-  final Widget Function(
-    BuildContext context,
-    Widget Function(BuildContext context, [Widget? child]) gesture,
-  ) builder;
+class ScrollToTop extends StatelessWidget {
   final ScrollController? controller;
+  final bool primary;
+  final Widget Function(BuildContext context, Widget child)? builder;
+  final Widget? child;
   final double? height;
 
-  const ScrollToTopAppBar(
-      {required this.builder, this.controller, this.height});
+  const ScrollToTop({
+    this.builder,
+    this.child,
+    this.controller,
+    this.height,
+    this.primary = true,
+  });
 
-  Widget tapWrapper(Size size, Widget? child) {
-    return ScrollToTop(
-      controller: controller,
-      child: Container(
-        color: Colors.transparent,
-        height: size.height,
-        width: size.width,
-        child: child != null
-            ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(child: child),
-                      ],
-                    ),
-                  )
-                ],
-              )
+  @override
+  Widget build(BuildContext context) {
+    Widget tapWrapper(Widget? child) {
+      ScrollController? controller = this.controller ??
+          (primary ? PrimaryScrollController.of(context) : null);
+      return GestureDetector(
+        child: Container(
+          height: height,
+          color: Colors.transparent,
+          child: child != null
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(child: child),
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              : null,
+        ),
+        onDoubleTap: controller != null
+            ? () => controller.animateTo(
+                  0,
+                  duration: defaultAnimationDuration,
+                  curve: Curves.easeOut,
+                )
             : null,
-      ),
+      );
+    }
+
+    Widget Function(BuildContext context, Widget child) builder =
+        this.builder ?? (context, child) => child;
+
+    return builder(
+      context,
+      tapWrapper(child),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) => builder(
-        context,
-        (context, [child]) => tapWrapper(constraints.biggest, child),
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize =>
-      height != null ? Size.fromHeight(height!) : super.preferredSize;
 }
 
-class TransparentAppBar extends StatelessWidget with AppBarSizeMixin {
-  final Widget? title;
-  final List<Widget>? actions;
+class TransparentAppBar extends StatelessWidget with AppBarBuilderWidget {
   final bool transparent;
-  final double? opacity;
+
+  @override
+  final PreferredSizeWidget child;
 
   const TransparentAppBar({
-    this.actions,
-    this.opacity,
-    this.title,
     this.transparent = true,
+    required this.child,
   });
 
   @override
@@ -112,33 +109,21 @@ class TransparentAppBar extends StatelessWidget with AppBarSizeMixin {
           tileMode: TileMode.clamp,
         ),
       ),
-      child: Theme(
+      child: AnimatedTheme(
         data: Theme.of(context).copyWith(
-          iconTheme: const IconThemeData(color: Colors.white),
+          iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white),
+          appBarTheme: Theme.of(context).appBarTheme.copyWith(
+                elevation: transparent ? 0 : null,
+                backgroundColor: transparent ? Colors.transparent : null,
+              ),
         ),
-        child: Opacity(
-          opacity: opacity ?? 1,
-          child: TweenAnimationBuilder<Color?>(
-            tween: ColorTween(
-              begin: null,
-              end: transparent
-                  ? Colors.transparent
-                  : Theme.of(context).appBarTheme.backgroundColor,
-            ),
-            duration: defaultAnimationDuration,
-            builder: (context, Color? value, child) => AppBar(
-              backgroundColor: value,
-              title: title,
-              actions: actions,
-            ),
-          ),
-        ),
+        child: child,
       ),
     );
   }
 }
 
-class SearchableAppBar extends StatefulWidget with AppBarSizeMixin {
+class SearchableAppBar extends StatefulWidget with PreferredSizeWidget {
   final Widget title;
   final String label;
   final bool canSearch;
@@ -157,6 +142,9 @@ class SearchableAppBar extends StatefulWidget with AppBarSizeMixin {
 
   @override
   _SearchableAppBarState createState() => _SearchableAppBarState();
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class _SearchableAppBarState extends State<SearchableAppBar> {
@@ -189,69 +177,76 @@ class _SearchableAppBarState extends State<SearchableAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    return TransparentAppBar(
-      transparent: widget.transparent && !searching,
-      title: SafeCrossFade(
-        showChild: searching,
-        builder: (context) => TextField(
-          autofocus: true,
-          controller: controller,
-          maxLines: 1,
-          decoration: InputDecoration(
-            labelText: widget.label,
-            border: InputBorder.none,
-          ),
-          onSubmitted: (_) => submit(),
-        ),
-        secondChild: Row(
-          children: [Expanded(child: widget.title)],
-        ),
-      ),
-      actions: [
-        if (widget.canSearch)
-          Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Center(
-              child: CrossFade(
-                showChild: searching,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            searching = false;
-                          });
-                        },
-                        icon: const Icon(
-                          FontAwesomeIcons.times,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    Flexible(
-                      child: IconButton(
-                        onPressed: submit,
-                        icon: const Icon(
-                          FontAwesomeIcons.check,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                secondChild: IconButton(
-                  onPressed: request,
-                  icon: const Icon(
-                    FontAwesomeIcons.search,
-                    size: 20,
-                  ),
-                ),
+    return ScrollToTop(
+      builder: (context, child) => TransparentAppBar(
+        transparent: widget.transparent && !searching,
+        child: AppBar(
+          flexibleSpace: child,
+          title: SafeCrossFade(
+            showChild: searching,
+            builder: (context) => TextField(
+              autofocus: true,
+              controller: controller,
+              maxLines: 1,
+              decoration: InputDecoration(
+                labelText: widget.label,
+                border: InputBorder.none,
+              ),
+              onSubmitted: (_) => submit(),
+            ),
+            secondChild: IgnorePointer(
+              child: Row(
+                children: [Expanded(child: widget.title)],
               ),
             ),
           ),
-      ],
+          actions: [
+            if (widget.canSearch)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Center(
+                  child: CrossFade(
+                    showChild: searching,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                searching = false;
+                              });
+                            },
+                            icon: const Icon(
+                              FontAwesomeIcons.times,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                        Flexible(
+                          child: IconButton(
+                            onPressed: submit,
+                            icon: const Icon(
+                              FontAwesomeIcons.check,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    secondChild: IconButton(
+                      onPressed: request,
+                      icon: const Icon(
+                        FontAwesomeIcons.search,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

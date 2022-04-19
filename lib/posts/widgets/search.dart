@@ -34,7 +34,6 @@ class _SearchPageState extends State<SearchPage> {
   int tileSize = 200;
   late PostController controller =
       widget.controller ?? RecommendationController();
-  ScrollController scrollController = ScrollController();
 
   Future<void> initializeFavs() async {
     if (controller is RecommendationController) {
@@ -73,20 +72,6 @@ class _SearchPageState extends State<SearchPage> {
     super.dispose();
   }
 
-  PreferredSizeWidget appBar() {
-    return ScrollToTopAppBar(
-      controller: scrollController,
-      builder: (context, gesture) => SearchableAppBar(
-        canSearch: widget.canSearch,
-        transparent: true,
-        label: 'Tags',
-        title: gesture(context, Text(widget.title ?? 'Search')),
-        getSearch: () => controller.search.value,
-        setSearch: (value) => controller.search.value = value,
-      ),
-    );
-  }
-
   StaggeredTile? tileBuilder(int index) {
     if (index < (controller.itemList?.length ?? 0)) {
       Sample sample = controller.itemList![index].sample;
@@ -100,14 +85,19 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: appBar(),
+      appBar: SearchableAppBar(
+        canSearch: widget.canSearch,
+        transparent: true,
+        label: 'Tags',
+        title: Text(widget.title ?? 'Search'),
+        getSearch: () => controller.search.value,
+        setSearch: (value) => controller.search.value = value,
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = notZero(constraints.maxWidth / tileSize).round();
 
           return SmartRefresher(
-            primary: false,
-            scrollController: scrollController,
             controller: controller.refreshController,
             onRefresh: () => controller.refresh(background: true),
             header: const ClassicHeader(
