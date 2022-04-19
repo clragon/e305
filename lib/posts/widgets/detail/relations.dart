@@ -5,6 +5,7 @@ import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/pools/widgets/reader.dart';
 import 'package:e305/posts/widgets/detail.dart';
+import 'package:e305/posts/widgets/hero.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -41,13 +42,17 @@ class RelationDisplay extends StatelessWidget {
         InkWell(
           onTap: () {
             SearchCallback? searchProvider = SearchProvider.of(context);
+            HeroBuilder? heroBuilder = HeroProvider.of(context);
             Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
                 builder: (context) => LoadingScreen<Post>(
                   provide: () => client.post(post.relationships.parentId!),
                   builder: (context, value) => SearchProvider(
                     callback: searchProvider,
-                    child: PostDetail(post: value),
+                    child: HeroProvider(
+                      builder: heroBuilder,
+                      child: PostDetail(post: value),
+                    ),
                   ),
                 ),
               ),
@@ -64,13 +69,17 @@ class RelationDisplay extends StatelessWidget {
           (e) => InkWell(
             onTap: () {
               SearchCallback? searchProvider = SearchProvider.of(context);
+              HeroBuilder? heroBuilder = HeroProvider.of(context);
               Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(
                   builder: (context) => LoadingScreen<Post>(
                     provide: () => client.post(e),
                     builder: (context, value) => SearchProvider(
                       callback: searchProvider,
-                      child: PostDetail(post: value),
+                      child: HeroProvider(
+                        builder: heroBuilder,
+                        child: PostDetail(post: value),
+                      ),
                     ),
                   ),
                 ),

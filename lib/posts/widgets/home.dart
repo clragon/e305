@@ -28,7 +28,6 @@ class _HomePageState extends State<HomePage> {
   RecommendationController controller =
       RecommendationController(search: 'score:>=20', sort: true);
   PageController pageController = PageController();
-  String hero = 'home_screen_${UniqueKey()}';
 
   double? _lastMaxWidth;
   void updatePageController(double maxWidth) {

@@ -13,16 +13,14 @@ import 'image.dart';
 
 class PostTile extends StatelessWidget {
   final Post post;
-  final String hero;
   final VoidCallback? onPressed;
   final PostController? controller;
 
-  PostTile({
+  const PostTile({
     required this.post,
     this.onPressed,
-    String? hero,
     this.controller,
-  }) : hero = hero ?? UniqueKey().toString();
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,8 @@ class PostTile extends StatelessWidget {
                   child: PostImageOverlay(
                     post: post,
                     builder: (context) => Hero(
-                      tag: hero,
+                      tag: HeroProvider.of(context)?.call(post.id) ??
+                          UniqueKey(),
                       child: CachedNetworkImage(
                         imageUrl: post.sample.url!,
                         errorWidget: (context, url, error) =>
