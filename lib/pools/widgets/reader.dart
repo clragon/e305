@@ -104,7 +104,7 @@ class _PoolReaderState extends State<PoolReader> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.max,
               children: const [
-                Icon(FontAwesomeIcons.times),
+                Icon(FontAwesomeIcons.folderOpen),
                 Padding(
                   padding: EdgeInsets.all(8),
                   child: Text('no posts'),
