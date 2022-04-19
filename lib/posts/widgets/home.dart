@@ -1,11 +1,11 @@
 import 'package:e305/client/data/client.dart';
+import 'package:e305/interface/widgets/search.dart';
 import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/animation.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/data/image.dart';
 import 'package:e305/posts/widgets/detail.dart';
-import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/posts/widgets/tile.dart';
 import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/recommendations/data/updater.dart';
@@ -17,9 +17,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class HomePage extends StatefulWidget {
-  final SearchCallback? onSearch;
-
-  const HomePage({this.onSearch});
+  const HomePage();
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -32,12 +30,6 @@ class _HomePageState extends State<HomePage> {
   String hero = 'home_screen_${UniqueKey()}';
 
   Future<bool> hasLogin = client.hasLogin;
-
-  void onSearch(String search) {
-    Navigator.of(context, rootNavigator: true)
-        .popUntil((route) => route.isFirst);
-    return widget.onSearch?.call(search);
-  }
 
   void updateLogin() {
     setState(() {
@@ -105,16 +97,21 @@ class _HomePageState extends State<HomePage> {
                   controller: controller,
                   post: controller.itemList![index],
                   hero: '${hero}_${controller.itemList![index].id}',
-                  onTap: () => Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (context) => PostDetail(
-                        post: controller.itemList![index],
-                        hero: '${hero}_${controller.itemList![index].id}',
-                        onSearch: onSearch,
-                        controller: controller,
+                  onTap: () {
+                    SearchCallback? searchProvider = SearchProvider.of(context);
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => SearchProvider(
+                          callback: searchProvider,
+                          child: PostDetail(
+                            post: controller.itemList![index],
+                            hero: '${hero}_${controller.itemList![index].id}',
+                            controller: controller,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 firstPageProgressIndicatorBuilder: (context) => const Center(
                   child: OrbitLoadingIndicator(size: 100),

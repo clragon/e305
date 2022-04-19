@@ -4,7 +4,6 @@ import 'package:e305/comments/widgets/body.dart';
 import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/data/image.dart';
-import 'package:e305/posts/widgets/search.dart';
 import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,13 +19,11 @@ import 'detail/relations.dart';
 import 'detail/tags.dart';
 
 class PostDetail extends StatefulWidget {
-  final SearchCallback onSearch;
   final String? hero;
   final Post post;
   final PostController? controller;
 
-  const PostDetail(
-      {required this.post, this.hero, required this.onSearch, this.controller});
+  const PostDetail({required this.post, this.hero, this.controller});
 
   @override
   _PostDetailState createState() => _PostDetailState();
@@ -83,7 +80,6 @@ class _PostDetailState extends State<PostDetail> {
                           post: widget.post,
                           controller:
                               widget.controller as RecommendationController,
-                          onSearch: widget.onSearch,
                         ),
                       ),
                       child: Row(
@@ -127,10 +123,7 @@ class _PostDetailState extends State<PostDetail> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      ArtistDisplay(
-                        post: widget.post,
-                        onSearch: widget.onSearch,
-                      ),
+                      ArtistDisplay(post: widget.post),
                       const Divider(),
                       InteractionDisplay(post: widget.post),
                       const Divider(),
@@ -138,15 +131,9 @@ class _PostDetailState extends State<PostDetail> {
                         post: widget.post,
                       ),
                       // no divider here
-                      RelationDisplay(
-                        post: widget.post,
-                        onSearch: widget.onSearch,
-                      ),
+                      RelationDisplay(post: widget.post),
                       // no divider here
-                      TagDisplay(
-                        post: widget.post,
-                        onSearch: widget.onSearch,
-                      ),
+                      TagDisplay(post: widget.post),
                       const Divider(),
                       FileDisplay(post: widget.post),
                       const Divider(),

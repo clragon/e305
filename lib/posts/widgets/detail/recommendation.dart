@@ -1,6 +1,6 @@
+import 'package:e305/interface/widgets/search.dart';
 import 'package:e305/posts/data/post.dart';
 import 'package:e305/posts/data/controller.dart';
-import 'package:e305/posts/widgets/search.dart';
 import 'package:e305/recommendations/data/score.dart';
 import 'package:e305/tags/data/count.dart';
 import 'package:expandable/expandable.dart';
@@ -11,10 +11,11 @@ import 'expand.dart';
 class RecommendationScoreDialog extends StatelessWidget {
   final Post post;
   final RecommendationController controller;
-  final void Function(String search)? onSearch;
 
-  const RecommendationScoreDialog(
-      {required this.post, required this.controller, this.onSearch});
+  const RecommendationScoreDialog({
+    required this.post,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +24,6 @@ class RecommendationScoreDialog extends StatelessWidget {
       content: RecommendationBody(
         post: post,
         controller: controller,
-        onSearch: onSearch,
       ),
       actions: [
         TextButton(
@@ -95,7 +95,6 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
             expanded: RecommendationBody(
               post: widget.post,
               controller: widget.controller as RecommendationController,
-              onSearch: widget.onSearch,
             ),
           ),
         ),
@@ -108,10 +107,8 @@ class _RecommendationDisplayState extends State<RecommendationDisplay> {
 class RecommendationBody extends StatelessWidget {
   final Post post;
   final RecommendationController controller;
-  final void Function(String search)? onSearch;
 
-  const RecommendationBody(
-      {required this.post, required this.controller, this.onSearch});
+  const RecommendationBody({required this.post, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +161,9 @@ class RecommendationBody extends StatelessWidget {
               (tag) {
                 return Card(
                   child: InkWell(
-                    onTap: () => onSearch?.call(tag.tag),
+                    onTap: SearchProvider.of(context) != null
+                        ? () => SearchProvider.of(context)!.call(tag.tag)
+                        : null,
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

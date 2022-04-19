@@ -257,8 +257,7 @@ class Client {
   }
 
   Future<List<Pool>> pools(int page, {String? search}) async {
-    List<dynamic> body =
-        await dio.get('pools.json', queryParameters: {
+    List<dynamic> body = await dio.get('pools.json', queryParameters: {
       'search[name_matches]': search,
       'page': page,
     }).then((response) => response.data);

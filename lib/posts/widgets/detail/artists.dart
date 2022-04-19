@@ -1,13 +1,12 @@
+import 'package:e305/interface/widgets/search.dart';
 import 'package:e305/posts/data/post.dart';
-import 'package:e305/posts/widgets/search.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ArtistDisplay extends StatelessWidget {
   final Post post;
-  final SearchCallback onSearch;
 
-  const ArtistDisplay({required this.post, required this.onSearch});
+  const ArtistDisplay({required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +32,10 @@ class ArtistDisplay extends StatelessWidget {
           ),
           artists?.isNotEmpty ?? false
               ? InkWell(
-                  onTap: () {
-                    Navigator.of(context).maybePop();
-                    onSearch(artists!.join(' '));
-                  },
+                  onTap: SearchProvider.of(context) != null
+                      ? () =>
+                          SearchProvider.of(context)!.call(artists!.join(' '))
+                      : null,
                   child: Text(
                     artists!.join(', '),
                   ),

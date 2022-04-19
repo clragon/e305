@@ -6,9 +6,7 @@ import 'package:e305/client/widgets/login.dart';
 import 'package:flutter/material.dart';
 
 class FavoritesPage extends StatefulWidget {
-  final SearchCallback? onSearch;
-
-  const FavoritesPage({this.onSearch});
+  const FavoritesPage();
 
   @override
   _FavoritesPageState createState() => _FavoritesPageState();
@@ -27,8 +25,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           return SearchPage(
             title: 'Favorites',
             controller: controller,
-            onSearch: widget.onSearch,
-            static: true,
+            canSearch: true,
           );
         },
       );

@@ -1,3 +1,4 @@
+import 'package:e305/interface/widgets/search.dart';
 import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/interface/widgets/loading.dart';
@@ -10,19 +11,17 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-typedef SearchCallback = void Function(String search);
-
 class SearchPage extends StatefulWidget {
-  final SearchCallback? onSearch;
   final PostController? controller;
   final String? title;
-  final bool static;
+  final bool canSearch;
+  final bool root;
 
   const SearchPage({
     this.controller,
-    this.static = false,
     this.title,
-    this.onSearch,
+    this.canSearch = true,
+    this.root = false,
   });
 
   @override
@@ -36,7 +35,6 @@ class _SearchPageState extends State<SearchPage> {
   late PostController controller =
       widget.controller ?? RecommendationController();
   ScrollController scrollController = ScrollController();
-  TextEditingController textController = TextEditingController();
 
   Future<void> initializeFavs() async {
     if (controller is RecommendationController) {
@@ -50,7 +48,7 @@ class _SearchPageState extends State<SearchPage> {
 
   double notZero(double value) => value < 1 ? 1 : value;
 
-  void defaultOnSearch(String search) async {
+  void searchInRoute(String search) {
     Navigator.of(context, rootNavigator: true)
         .popUntil((route) => route.isFirst);
     Navigator.of(context).push(
@@ -62,22 +60,16 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  void ensureIsFirst() {
-    Navigator.of(context).popUntil((route) => route.isFirst);
-  }
-
   @override
   void initState() {
     super.initState();
     initializeFavs();
     recommendations.database.addListener(initializeFavs);
-    controller.search.addListener(ensureIsFirst);
   }
 
   @override
   void dispose() {
     recommendations.database.removeListener(initializeFavs);
-    controller.search.removeListener(ensureIsFirst);
     super.dispose();
   }
 
@@ -85,7 +77,7 @@ class _SearchPageState extends State<SearchPage> {
     return ScrollToTopAppBar(
       controller: scrollController,
       builder: (context, gesture) => SearchableAppBar(
-        canSearch: !widget.static,
+        canSearch: widget.canSearch,
         transparent: true,
         label: 'Tags',
         title: gesture(context, Text(widget.title ?? 'Search')),
@@ -136,17 +128,26 @@ class _SearchPageState extends State<SearchPage> {
                   post: item,
                   hero: '${hero}_${item.id}',
                   controller: controller,
-                  onPressed: () =>
-                      Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (context) => PostDetail(
-                        post: controller.itemList![index],
-                        hero: '${hero}_${item.id}',
-                        onSearch: widget.onSearch ?? defaultOnSearch,
-                        controller: controller,
+                  onPressed: () {
+                    SearchCallback? searchProvider;
+                    if (widget.root) {
+                      searchProvider = searchInRoute;
+                    } else {
+                      searchProvider = SearchProvider.of(context);
+                    }
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => SearchProvider(
+                          callback: searchProvider,
+                          child: PostDetail(
+                            post: controller.itemList![index],
+                            hero: '${hero}_${item.id}',
+                            controller: controller,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 firstPageProgressIndicatorBuilder: (context) => const Center(
                   child: OrbitLoadingIndicator(size: 100),
