@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
+import 'package:e305/posts/widgets/hero.dart';
 import 'package:e305/posts/widgets/overlay.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -70,7 +71,6 @@ class PostTile extends StatelessWidget {
 
 class PostPageTile extends StatelessWidget {
   final Post post;
-  final String? hero;
   final VoidCallback onTap;
   final PostController controller;
 
@@ -78,7 +78,6 @@ class PostPageTile extends StatelessWidget {
     required this.controller,
     required this.post,
     required this.onTap,
-    this.hero,
   });
 
   final double distance = 0.25;
@@ -94,7 +93,7 @@ class PostPageTile extends StatelessWidget {
 
         Widget image() {
           return Hero(
-            tag: hero ?? UniqueKey(),
+            tag: HeroProvider.of(context)?.call(post.id) ?? UniqueKey(),
             transitionOnUserGestures: true,
             child: CachedNetworkImage(
               imageUrl: post.sample.url!,

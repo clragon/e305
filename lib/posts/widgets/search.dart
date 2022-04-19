@@ -4,6 +4,7 @@ import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/widgets/detail.dart';
+import 'package:e305/posts/widgets/hero.dart';
 import 'package:e305/posts/widgets/tile.dart';
 import 'package:e305/recommendations/data/updater.dart';
 import 'package:e305/tags/data/post.dart';
@@ -29,7 +30,6 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String hero = 'post_search_${UniqueKey()}';
   bool searching = false;
   int tileSize = 200;
   late PostController controller =
@@ -96,55 +96,59 @@ class _SearchPageState extends State<SearchPage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           int crossAxisCount = notZero(constraints.maxWidth / tileSize).round();
-
           return SmartRefresher(
             controller: controller.refreshController,
             onRefresh: () => controller.refresh(background: true),
             header: const ClassicHeader(
               refreshingIcon: OrbitLoadingIndicator(size: 40),
             ),
-            child: PagedStaggeredGridView<int, Post>(
-              key: Key(['posts', crossAxisCount].join('_')),
-              physics: const BouncingScrollPhysics(),
-              addAutomaticKeepAlives: false,
-              pagingController: controller,
-              gridDelegateBuilder: (childCount) =>
-                  SliverStaggeredGridDelegateWithFixedCrossAxisCount(
-                staggeredTileBuilder: tileBuilder,
-                crossAxisCount: crossAxisCount,
-              ),
-              builderDelegate: PagedChildBuilderDelegate<Post>(
-                itemBuilder: (context, item, index) => PostTile(
-                  post: item,
-                  hero: '${hero}_${item.id}',
-                  controller: controller,
-                  onPressed: () {
-                    SearchCallback? searchProvider;
-                    if (widget.root) {
-                      searchProvider = searchInRoute;
-                    } else {
-                      searchProvider = SearchProvider.of(context);
-                    }
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => SearchProvider(
-                          callback: searchProvider,
-                          child: PostDetail(
-                            post: controller.itemList![index],
-                            hero: '${hero}_${item.id}',
-                            controller: controller,
+            child: HeroProvider(
+              builder: (id) => 'search_$hashCode post#$id',
+              child: PagedStaggeredGridView<int, Post>(
+                key: Key(['posts', crossAxisCount].join('_')),
+                physics: const BouncingScrollPhysics(),
+                addAutomaticKeepAlives: false,
+                pagingController: controller,
+                gridDelegateBuilder: (childCount) =>
+                    SliverStaggeredGridDelegateWithFixedCrossAxisCount(
+                  staggeredTileBuilder: tileBuilder,
+                  crossAxisCount: crossAxisCount,
+                ),
+                builderDelegate: PagedChildBuilderDelegate<Post>(
+                  itemBuilder: (context, item, index) => PostTile(
+                    post: item,
+                    controller: controller,
+                    onPressed: () {
+                      SearchCallback? searchProvider;
+                      if (widget.root) {
+                        searchProvider = searchInRoute;
+                      } else {
+                        searchProvider = SearchProvider.of(context);
+                      }
+                      HeroBuilder? heroBuilder = HeroProvider.of(context);
+                      Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (context) => SearchProvider(
+                            callback: searchProvider,
+                            child: HeroProvider(
+                              builder: heroBuilder,
+                              child: PostDetail(
+                                post: controller.itemList![index],
+                                controller: controller,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                firstPageProgressIndicatorBuilder: (context) => const Center(
-                  child: OrbitLoadingIndicator(size: 100),
-                ),
-                newPageProgressIndicatorBuilder: (context) => const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Center(child: PulseLoadingIndicator(size: 60)),
+                      );
+                    },
+                  ),
+                  firstPageProgressIndicatorBuilder: (context) => const Center(
+                    child: OrbitLoadingIndicator(size: 100),
+                  ),
+                  newPageProgressIndicatorBuilder: (context) => const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: PulseLoadingIndicator(size: 60)),
+                  ),
                 ),
               ),
             ),

@@ -19,11 +19,10 @@ import 'detail/relations.dart';
 import 'detail/tags.dart';
 
 class PostDetail extends StatefulWidget {
-  final String? hero;
   final Post post;
   final PostController? controller;
 
-  const PostDetail({required this.post, this.hero, this.controller});
+  const PostDetail({required this.post, this.controller});
 
   @override
   _PostDetailState createState() => _PostDetailState();
@@ -113,7 +112,7 @@ class _PostDetailState extends State<PostDetail> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: ImageDisplay(post: widget.post, hero: widget.hero),
+                  child: ImageDisplay(post: widget.post),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),

@@ -2,18 +2,19 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e305/posts/data/post.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/widgets/fullscreen.dart';
+import 'package:e305/posts/widgets/hero.dart';
 import 'package:e305/posts/widgets/image.dart';
 import 'package:flutter/material.dart';
 
 class ImageDisplay extends StatelessWidget {
   final Post post;
-  final String? hero;
 
-  const ImageDisplay({required this.post, this.hero});
+  const ImageDisplay({required this.post});
 
   @override
   Widget build(BuildContext context) {
-    String hero = this.hero ?? UniqueKey().toString();
+    String hero =
+        HeroProvider.of(context)?.call(post.id) ?? UniqueKey().toString();
     Size screenSize = MediaQuery.of(context).size;
 
     return Stack(
@@ -60,14 +61,17 @@ class ImageDisplay extends StatelessWidget {
           child: Material(
             type: MaterialType.transparency,
             child: InkWell(
-              onTap: () => Navigator.of(context, rootNavigator: true).push(
-                MaterialPageRoute(
-                  builder: (context) => FullScreenPost(
-                    post: post,
-                    hero: hero,
+              onTap: () {
+                HeroBuilder? heroBuilder = HeroProvider.of(context);
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (context) => HeroProvider(
+                      builder: heroBuilder,
+                      child: FullScreenPost(post: post),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         )

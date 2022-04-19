@@ -6,6 +6,7 @@ import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/data/image.dart';
 import 'package:e305/posts/widgets/detail.dart';
+import 'package:e305/posts/widgets/hero.dart';
 import 'package:e305/posts/widgets/tile.dart';
 import 'package:e305/profile/widgets/icon.dart';
 import 'package:e305/recommendations/data/updater.dart';
@@ -106,59 +107,64 @@ class _HomePageState extends State<HomePage> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 updatePageController(constraints.maxWidth);
-                return PagedPageView(
-                  pageController: pageController,
-                  pagingController: controller,
-                  builderDelegate: PagedChildBuilderDelegate(
-                    itemBuilder: (context, Post item, index) => PostPageTile(
-                      controller: controller,
-                      post: controller.itemList![index],
-                      hero: '${hero}_${controller.itemList![index].id}',
-                      onTap: () {
-                        SearchCallback? searchProvider =
-                            SearchProvider.of(context);
-                        Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute(
-                            builder: (context) => SearchProvider(
-                              callback: searchProvider,
-                              child: PostDetail(
-                                post: controller.itemList![index],
-                                hero:
-                                    '${hero}_${controller.itemList![index].id}',
-                                controller: controller,
+                return HeroProvider(
+                  builder: (id) => 'home_$hashCode post#$id',
+                  child: PagedPageView(
+                    pageController: pageController,
+                    pagingController: controller,
+                    builderDelegate: PagedChildBuilderDelegate<Post>(
+                      itemBuilder: (context, item, index) => PostPageTile(
+                        controller: controller,
+                        post: controller.itemList![index],
+                        onTap: () {
+                          SearchCallback? searchProvider =
+                              SearchProvider.of(context);
+                          HeroBuilder? heroBuilder = HeroProvider.of(context);
+                          Navigator.of(context, rootNavigator: true).push(
+                            MaterialPageRoute(
+                              builder: (context) => SearchProvider(
+                                callback: searchProvider,
+                                child: HeroProvider(
+                                  builder: heroBuilder,
+                                  child: PostDetail(
+                                    post: controller.itemList![index],
+                                    controller: controller,
+                                  ),
+                                ),
                               ),
                             ),
+                          );
+                        },
+                      ),
+                      firstPageProgressIndicatorBuilder: (context) =>
+                          const Center(
+                        child: OrbitLoadingIndicator(size: 100),
+                      ),
+                      newPageProgressIndicatorBuilder: (context) =>
+                          const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Center(child: PulseLoadingIndicator(size: 60)),
+                      ),
+                      noItemsFoundIndicatorBuilder: (context) => Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Text(
+                            'no posts',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(fontSize: 16),
                           ),
-                        );
-                      },
-                    ),
-                    firstPageProgressIndicatorBuilder: (context) =>
-                        const Center(
-                      child: OrbitLoadingIndicator(size: 100),
-                    ),
-                    newPageProgressIndicatorBuilder: (context) => const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Center(child: PulseLoadingIndicator(size: 60)),
-                    ),
-                    noItemsFoundIndicatorBuilder: (context) => Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          'no posts',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(fontSize: 16),
                         ),
                       ),
                     ),
-                  ),
-                  onPageChanged: (index) => preloadImages(
-                    context: context,
-                    index: index,
-                    posts: controller.itemList!,
-                    size: ImageSize.sample,
-                    reach: 5,
+                    onPageChanged: (index) => preloadImages(
+                      context: context,
+                      index: index,
+                      posts: controller.itemList!,
+                      size: ImageSize.sample,
+                      reach: 5,
+                    ),
                   ),
                 );
               },

@@ -4,6 +4,7 @@ import 'package:e305/interface/widgets/appbar.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:e305/posts/data/controller.dart';
 import 'package:e305/posts/data/image.dart';
+import 'package:e305/posts/widgets/hero.dart';
 import 'package:e305/posts/widgets/image.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -11,16 +12,15 @@ import 'package:photo_view/photo_view.dart';
 
 class FullScreenPost extends StatelessWidget {
   final Post post;
-  final String? hero;
 
-  const FullScreenPost({required this.post, this.hero});
+  const FullScreenPost({required this.post});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBarBuilder(
-        child: AppBar(),
+        child: TransparentAppBar(child: AppBar()),
         builder: (context, child) => Opacity(
           opacity: 0.3,
           child: child,
@@ -31,7 +31,8 @@ class FullScreenPost extends StatelessWidget {
           color: Theme.of(context).canvasColor,
         ),
         heroAttributes: PhotoViewHeroAttributes(
-          tag: hero ?? UniqueKey(),
+          tag: HeroProvider.of(context)?.call(post.id) ?? UniqueKey(),
+          transitionOnUserGestures: true,
         ),
         childSize:
             Size(post.file.width.toDouble(), post.file.height.toDouble()),
@@ -63,7 +64,7 @@ class _FullScreenGalleryState extends State<FullScreenGallery> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBarBuilder(
-        child: AppBar(),
+        child: TransparentAppBar(child: AppBar()),
         builder: (context, child) => Opacity(
           opacity: 0.3,
           child: child,
