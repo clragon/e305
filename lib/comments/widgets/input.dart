@@ -67,15 +67,22 @@ class _CommentInputState extends State<CommentInput> {
               );
             },
             child: Row(
-              children: const [
-                IgnorePointer(child: ProfileButton()),
+              children: [
+                const IgnorePointer(child: ProfileButton()),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(left: 4, right: 8),
+                    padding: const EdgeInsets.only(left: 4, right: 8),
                     child: TextField(
                       enabled: false,
                       decoration: InputDecoration(
                         labelText: 'write a comment...',
+                        labelStyle: TextStyle(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .color!
+                              .withOpacity(0.6),
+                        ),
                         border: InputBorder.none,
                       ),
                     ),

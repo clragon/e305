@@ -3,6 +3,7 @@ import 'package:e305/posts/data/post.dart';
 import 'package:e305/comments/data/controller.dart';
 import 'package:e305/interface/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import 'comment.dart';
@@ -76,12 +77,21 @@ class _CommentAppenderState extends State<CommentAppender> {
               noItemsFoundIndicatorBuilder: (context) => Center(
                   child: Padding(
                 padding: const EdgeInsets.all(30),
-                child: Text(
-                  'no comments',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText2!
-                      .copyWith(fontSize: 16),
+                child: Column(
+                  children: [
+                    Text(
+                      'no comments',
+                      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+                            fontSize: 16,
+                          ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: FaIcon(
+                        FontAwesomeIcons.folderOpen,
+                      ),
+                    ),
+                  ],
                 ),
               )),
             ),
