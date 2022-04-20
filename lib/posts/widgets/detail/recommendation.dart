@@ -129,9 +129,7 @@ class RecommendationBody extends StatelessWidget {
                     Colors.black54,
                     Colors.transparent,
                   ],
-                  radius: 0.5,
                   stops: [0.0, 1.0],
-                  tileMode: TileMode.clamp,
                 ),
               ),
               child: Padding(

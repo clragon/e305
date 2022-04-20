@@ -5,3 +5,4 @@ linter:
   rules:
     overridden_fields: false
     use_key_in_widget_constructors: false
+    avoid_redundant_argument_values: true

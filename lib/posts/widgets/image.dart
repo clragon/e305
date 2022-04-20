@@ -26,8 +26,8 @@ class FullPostImage extends StatelessWidget {
           post: post,
           builder: (context) => CachedNetworkImage(
             fit: BoxFit.contain,
-            fadeInDuration: const Duration(milliseconds: 0),
-            fadeOutDuration: const Duration(milliseconds: 0),
+            fadeInDuration: Duration.zero,
+            fadeOutDuration: Duration.zero,
             imageUrl: post.file.url!,
             errorWidget: (context, url, error) => const Center(
               child: Icon(FontAwesomeIcons.exclamationTriangle, size: 20),

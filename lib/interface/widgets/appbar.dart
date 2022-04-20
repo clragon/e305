@@ -106,7 +106,6 @@ class TransparentAppBar extends StatelessWidget with AppBarBuilderWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           stops: [0.0, 1.0],
-          tileMode: TileMode.clamp,
         ),
       ),
       child: AnimatedTheme(
@@ -187,7 +186,6 @@ class _SearchableAppBarState extends State<SearchableAppBar> {
             builder: (context) => TextField(
               autofocus: true,
               controller: controller,
-              maxLines: 1,
               decoration: InputDecoration(
                 labelText: widget.label,
                 border: InputBorder.none,

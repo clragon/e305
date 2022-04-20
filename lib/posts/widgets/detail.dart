@@ -117,7 +117,6 @@ class _PostDetailState extends State<PostDetail> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Column(
-                    mainAxisSize: MainAxisSize.max,
                     children: [
                       ArtistDisplay(post: widget.post),
                       const Divider(),

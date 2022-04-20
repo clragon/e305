@@ -53,7 +53,6 @@ class _BlacklistSettingsState extends State<BlacklistSettings> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Row(
-                            mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
                                 child: Padding(

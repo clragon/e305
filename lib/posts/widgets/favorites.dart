@@ -25,7 +25,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
           return SearchPage(
             title: 'Favorites',
             controller: controller,
-            canSearch: true,
           );
         },
       );

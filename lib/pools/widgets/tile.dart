@@ -55,7 +55,6 @@ class PoolTile extends StatelessWidget {
                 padding: const EdgeInsets.only(
                   left: 16,
                   right: 16,
-                  top: 0,
                   bottom: 8,
                 ),
                 child: IgnorePointer(

@@ -63,7 +63,6 @@ class _NavigationPageState extends State<NavigationPage> {
         context,
         controller: controller,
         onWillPop: onTryPop,
-        resizeToAvoidBottomInset: true,
         navBarStyle: NavBarStyle.style12,
         screens: [
           const HomePage(),
@@ -107,8 +106,6 @@ class _NavigationPageState extends State<NavigationPage> {
         ],
         screenTransitionAnimation: const ScreenTransitionAnimation(
           animateTabTransition: true,
-          curve: Curves.ease,
-          duration: Duration(milliseconds: 200),
         ),
       ),
     );

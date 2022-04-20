@@ -107,7 +107,6 @@ class _LoginPageState extends State<LoginPage> {
                 child: Builder(
                   builder: (context) => Row(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.max,
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(

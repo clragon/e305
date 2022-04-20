@@ -110,7 +110,6 @@ class _LoadingScreenState<T> extends State<LoadingScreen<T>> {
         showChild: error != null,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
           children: const [
             Icon(
               FontAwesomeIcons.exclamationTriangle,

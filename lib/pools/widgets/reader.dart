@@ -102,7 +102,6 @@ class _PoolReaderState extends State<PoolReader> {
             ),
             noItemsFoundIndicatorBuilder: (context) => Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
               children: const [
                 Icon(FontAwesomeIcons.folderOpen),
                 Padding(
